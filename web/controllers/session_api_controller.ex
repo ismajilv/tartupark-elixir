@@ -1,4 +1,4 @@
-defmodule Takso.SessionAPIController do
-    use Takso.Web, :controller
+defmodule Tartupark.SessionAPIController do
+    use Tartupark.Web, :controller
 
   end

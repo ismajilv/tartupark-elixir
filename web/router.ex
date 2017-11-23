@@ -40,16 +40,16 @@ defmodule Tartupark.Router do
   end
 
   pipeline :auth_api do
-    plug Guardian.Plug.EnsureAuthenticated, handler: Takso.SessionAPIController
+    plug Guardian.Plug.EnsureAuthenticated, handler: Tartupark.SessionAPIController
     plug :guardian_current_user
   end
 
-  scope "/api", Takso do
+  scope "/api", Tartupark do
     pipe_through :api
     post "/sessions", SessionAPIController, :create
   end
 
-  scope "/api", Takso do
+  scope "/api", Tartupark do
     pipe_through [:api, :auth_api]
     delete "/sessions/:id", SessionAPIController, :delete
     post "/bookings", BookingAPIController, :create
