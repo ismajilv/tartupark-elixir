@@ -19,4 +19,4 @@ config :tartupark, Tartupark.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 
 # config :takso, decision_timeout: 3000   # 3 seconds
-config :takso, :http_client, Takso.HTTPoisonMock
+config :tartupark, :http_client, Takso.HTTPoisonMock
