@@ -56,4 +56,4 @@ config :tartupark, Tartupark.Repo,
   pool_size: 10
 
 # config :takso, decision_timeout: 30000   # 30 seconds
-config :takso, :http_client, HTTPoison
+config :tartupark, :http_client, HTTPoison

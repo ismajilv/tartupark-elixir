@@ -62,4 +62,4 @@ config :logger, level: :info
 import_config "prod.secret.exs"
 
 # config :takso, decision_timeout: 30000   # 30 seconds
-config :takso, :http_client, HTTPoison
+config :tartupark, :http_client, HTTPoison
