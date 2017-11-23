@@ -10,7 +10,7 @@ Feature: Parking allocation
           | Vaksali     | Zone B |
           | Umera       | Parking time of 60 |
           | Pargi       | Parking time of 120 |
-    When I enter my destination of "<destinations>",
+    When I enter my destination of "<destinations>"
     And I want to park my car in "<street choice>"
     And I want my parking time start in "<start_time_choice>" and last until "<end_time_choice>"
     And I enter the parking information on the STRS Customer app
