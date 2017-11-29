@@ -6,17 +6,8 @@ defmodule Tartupark.SessionAPIController do
       IO.inspect username
       user = Repo.get_by(User, username: username)
       case Authentication.check_credentials(conn, user, password) do
-        {:ok, conn} ->
-            {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user, :token)
-            conn
-            |> put_status(201)
-            |> json(%{token: jwt, role: user.role})
-        {:error, conn} ->
-            conn
-            |> put_status(400)
-            |> json(%{message: "Wrong credentials"})
-      end
-    end
+
+   end
 
     def delete(conn, _params) do
       {:ok, claims} = Guardian.Plug.claims(conn)
