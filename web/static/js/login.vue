@@ -59,7 +59,7 @@
         }
         axios.post("/api/sessions", login_data)
           .then(response => {
-            console.log(response);
+            // console.log(response);
           })
           .catch( error => {
               console.log(error);
