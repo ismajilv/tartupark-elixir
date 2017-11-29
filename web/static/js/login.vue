@@ -15,6 +15,7 @@
     <div class="form">
       <h2>Create an account</h2>
       <form>
+        <input type="text" placeholder="Full Name" id="reg-fullname" v-model="reg_fullname"/>
         <input type="text" placeholder="Username" id="reg-username" v-model="reg_username"/>
         <input type="password" placeholder="Password" id="reg-password" v-model="reg_password"/>
         <input type="email" placeholder="Email Address" id="reg-email" v-model="reg_email"/>
@@ -33,10 +34,6 @@
 <style lang="css">
 </style>
 
-<script type="text/javascrip">
-
-</script>
-
 <script>
   import auth from "./auth";
   import axios from "axios";
@@ -46,6 +43,7 @@
       return {
           log_username: "",
           log_password: "",
+          reg_fullname: "",
           reg_username: "",
           reg_password: "",
           reg_email: ""
@@ -59,14 +57,27 @@
         }
         axios.post("/api/sessions", login_data)
           .then(response => {
-            // console.log(response);
+            console.log(response);
           })
           .catch( error => {
               console.log(error);
           });
       },
       signup: function(){
-
+        let registration_data = {
+          username: this.reg_username,
+          password: this.reg_password,
+          fullName: this.reg_fullname,
+          email: this.reg_email
+        }
+        // console.log(registration_data);
+        axios.post("/api/register", registration_data)
+          .then(response => {
+            console.log(response);
+          })
+          .catch( error => {
+              console.log(error);
+          });
       }
     }
   }
