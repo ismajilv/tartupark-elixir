@@ -1,23 +1,22 @@
 defmodule Tartupark.User do
-  use Ecto.Schema
-  import Ecto.Changeset
-  alias Tartupark.User
-
+  use Tartupark.Web, :model
 
   schema "users" do
-    field :encrypted_password, :string
-    field :name, :string
     field :username, :string
     field :password, :string, virtual: true
-
+    field :encrypted_password, :string
+    field :email, :string
     timestamps()
   end
 
-  @doc false
-  def changeset(%User{} = user, attrs) do
-    user
-    |> cast(attrs, [:name, :username, :encrypted_password])
-    |> validate_required([:name, :username, :encrypted_password])
+  @doc """
+  Builds a changeset based on the `struct` and `params`.
+  """
+  def changeset(struct, params \\ %{}) do
+    struct
+    |> cast(params, [:username, :password, :email])
+    |> validate_required([:username, :password, :email])
+    |> validate_format(:email, ~r/@/)
     |> encrypt_password
   end
 
@@ -28,4 +27,5 @@ defmodule Tartupark.User do
       changeset
     end
   end
+
 end

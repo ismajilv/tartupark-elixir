@@ -7,6 +7,7 @@ import main from "./main";
 import "phoenix";
 import "axios";
 import "./socket";
+import $ from "jquery";
 
 import auth from './auth'
 
@@ -41,4 +42,23 @@ var router = new VueRouter({
 
 new Vue({
     router
-}).$mount("#takso-app");
+}).$mount("#tartupark-app");
+
+
+
+$(".toggle").click(function() {
+  // Switches the Icon
+  $(this)
+    .children("i")
+    .toggleClass("fa-pencil");
+  // Switches the forms
+  $(".form").animate(
+      {
+        height: "toggle",
+        "padding-top": "toggle",
+        "padding-bottom": "toggle",
+        opacity: "toggle"
+      },
+      "slow"
+    );
+});

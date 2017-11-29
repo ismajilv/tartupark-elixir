@@ -1,8 +1,6 @@
 <template>
   <div>
-    <p class="pull-right">Already tired?
-      <a href="/login" @click.prevent="logout">Log out!</a>
-    </p>
+    <a href="/login" @click.prevent="logout">Log out!</a>
   </div>
 </template>
 

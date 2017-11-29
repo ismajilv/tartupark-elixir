@@ -2,13 +2,12 @@ import axios from "axios";
 import {Socket} from "phoenix";
 
 export default {
-  user: { role: "", username: "" },
+  user: { username: "" },
   socket: null,
   login: function (context, creds, redirect) {
     axios.post("/api/sessions", creds)
       .then(response => {
         this.username = creds.username;
-        this.user.role = response.data.role;
         window.localStorage.setItem('token-'+this.user.username, response.data.token);
 
         this.socket = new Socket("/socket", {params: {token: response.data.token}});

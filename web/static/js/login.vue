@@ -1,34 +1,73 @@
 <template>
-  <div class="row">
-  <div class="well col-sm-offset-3 col-sm-6">
-  <h2>Please log in</h2>
-  <div>
-    <div class="form-group">
-      <label for="username">Username:</label>
-      <input type="text" class="form-control" id="username" v-model="username">
+  <div class="module form-module">
+    <div class="toggle"><i class="fa fa-times fa-pencil"></i>
+      <div class="tooltip">Click Me</div>
     </div>
-    <div class="form-group">
-      <label for="password">Password:</label>
-      <input type="text" class="form-control" id="password" v-model="password">
+    <div class="form">
+      <h2>Login to your account</h2>
+      <form>
+        <input type="text" placeholder="Username" id="log-username" v-model="log_username"/>
+        <input type="password" placeholder="Password" id="log-password" v-model="log_password"/>
+        <button type="submit" v-on:click="login">Login</button>
+      </form>
     </div>
-    <button type="submit" class="btn btn-default" v-on:click="login">Submit</button>
-  </div>
-  </div>
+
+    <div class="form">
+      <h2>Create an account</h2>
+      <form>
+        <input type="text" placeholder="Username" id="reg-username" v-model="reg_username"/>
+        <input type="password" placeholder="Password" id="reg-password" v-model="reg_password"/>
+        <input type="email" placeholder="Email Address" id="reg-email" v-model="reg_email"/>
+        <button type="submit" v-on:click="signup">Register</button>
+      </form>
+    </div>
+
   </div>
 </template>
+
+<script>
+  export default {
+  }
+</script>
+
+<style lang="css">
+</style>
+
+<script type="text/javascrip">
+
+</script>
+
 <script>
   import auth from "./auth";
+  import axios from "axios";
 
   export default {
-    user: { username: "" },
-    login: function (context, creds, redirect) {
-      axios.post("/api/sessions", creds)
-        .then(response => {
-          console.log(response);
-        })
-        .catch( error => {
-            console.log(error);
-        });
+    user: function(){
+      return {
+          log_username: "",
+          log_password: "",
+          reg_username: "",
+          reg_password: "",
+          reg_email: ""
+      }
+    },
+    methods:{
+      login: function (context, _creds, redirect) {
+        let login_data = {
+          username: this.log_username,
+          password: this.log_password
+        }
+        axios.post("/api/sessions", login_data)
+          .then(response => {
+            console.log(response);
+          })
+          .catch( error => {
+              console.log(error);
+          });
+      },
+      signup: function(){
+
+      }
     }
-}
+  }
 </script>
