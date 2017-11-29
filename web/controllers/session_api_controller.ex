@@ -3,14 +3,14 @@ defmodule Tartupark.SessionAPIController do
     alias Tartupark.{Repo, User, Authentication}
 
     def create(conn, %{"username" => username, "password" => password}) do
-      IO.inspect username
       user = Repo.get_by(User, username: username)
       case Authentication.check_credentials(conn, user, password) do
         {:ok, conn} ->
             {:ok, jwt, _full_claims} = Guardian.encode_and_sign(user, :token)
             conn
             |> put_status(201)
-            |> json(%{token: jwt, role: user.role})
+            |> json(%{token: jwt})
+            |> redirect(to: page_path(conn, :index))
         {:error, conn} ->
             conn
             |> put_status(400)
