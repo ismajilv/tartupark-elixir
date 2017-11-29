@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 import login from "./login";
 import main from "./main";
+import booking from "./booking";
 
 import "phoenix";
 import "axios";
@@ -12,6 +13,7 @@ import $ from "jquery";
 import auth from './auth'
 
 Vue.use(VueRouter);
+Vue.component("booking", booking);
 
 const requireAuth = (to, _from, next) => {
   if (!auth.authenticated()) {

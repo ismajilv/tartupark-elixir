@@ -10,7 +10,6 @@ defmodule Tartupark.SessionAPIController do
             conn
             |> put_status(201)
             |> json(%{token: jwt})
-            |> redirect(to: page_path(conn, :index))
         {:error, conn} ->
             conn
             |> put_status(400)
@@ -19,6 +18,7 @@ defmodule Tartupark.SessionAPIController do
     end
 
     def delete(conn, _params) do
+      IO.puts "-------------LOGGING OUT"
       {:ok, claims} = Guardian.Plug.claims(conn)
       conn
       |> Guardian.Plug.current_token

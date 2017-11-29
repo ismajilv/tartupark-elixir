@@ -6,8 +6,8 @@
     <div class="form">
       <h2>Login to your account</h2>
       <form>
-        <input type="text" placeholder="Username" id="log-username" v-model="log_username"/>
-        <input type="password" placeholder="Password" id="log-password" v-model="log_password"/>
+        <input type="text" placeholder="Username" id="log-username" v-model="username"/>
+        <input type="password" placeholder="Password" id="log-password" v-model="password"/>
         <button type="submit" v-on:click="login">Login</button>
       </form>
     </div>
@@ -41,8 +41,8 @@
   export default {
     user: function(){
       return {
-          log_username: "",
-          log_password: "",
+          username: "",
+          password: "",
           reg_fullname: "",
           reg_username: "",
           reg_password: "",
@@ -50,18 +50,13 @@
       }
     },
     methods:{
-      login: function (context, _creds, redirect) {
+      login: function () {
         let login_data = {
-          username: this.log_username,
-          password: this.log_password
+          username: this.username,
+          password: this.password
         }
-        axios.post("/api/sessions", login_data)
-          .then(response => {
-            console.log(response);
-          })
-          .catch( error => {
-              console.log(error);
-          });
+        // console.log(`Username ${this.username}, password ${this.password}`);
+        auth.login(this, login_data, "/");
       },
       signup: function(){
         let registration_data = {
@@ -73,7 +68,9 @@
         // console.log(registration_data);
         axios.post("/api/register", registration_data)
           .then(response => {
-            console.log(response);
+            if(response.status == 201){
+              auth.login(this, registration_data, "/");
+            }
           })
           .catch( error => {
               console.log(error);

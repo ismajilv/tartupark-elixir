@@ -1,7 +1,6 @@
 defmodule Tartupark.UserAPIController do
   use Tartupark.Web, :controller
-  import Ecto.Query, only: [from: 2]
-  alias Tartupark.{Repo, User, Authentication}
+  alias Tartupark.{Repo, User}
 
   def create(conn, params) do
     %{"username" => username,  "email" => email} = params

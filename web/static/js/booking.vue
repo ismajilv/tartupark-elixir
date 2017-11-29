@@ -12,17 +12,18 @@
     </div>
   </div>
 
-<!--   
+<!--
   <div class="col-sm-12" style="bcc-removed:f4f7ff;height:40pt">{{messages}}</div>
-  <div id="map" style="width:100%;height:300px"></div> 
+  <div id="map" style="width:100%;height:300px"></div>
 -->
 
   <div id="map" style="width=100%; height: 500px;"></div>
 
 </div>
 
-<script async defer 
-        src="https://maps.googleapis.com/maps/api/js?key=<%= Application.get_env(:tartupark, :gmaps_api_key) %>"  
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=<%= Application.get_env(:tartupark, :gmaps_api_key) %>"
         type="text/javascript"></script>
 
 

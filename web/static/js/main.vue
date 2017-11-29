@@ -1,13 +1,13 @@
 <template>
   <div>
-    <a href="/login" @click.prevent="logout">Log out!</a>
+    <p class="pull-right" <a href="/login" @click.prevent="logout">Log out!</a></p>
+    <booking></booking>
   </div>
 </template>
 
 
 <script>
   import auth from "./auth";
-
   export default {
       methods: {
           logout: function() {
