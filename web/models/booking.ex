@@ -6,7 +6,7 @@ defmodule Tartupark.Booking do
     field :endDateTime, :naive_datetime
     belongs_to :place, Tartupark.Place
     belongs_to :user, Tartupark.User
-    has_one :payment, Tartu.Payment
+    has_one :payment, Tartupark.Payment
     timestamps()
   end
 

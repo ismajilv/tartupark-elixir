@@ -3,6 +3,7 @@ defmodule Tartupark.Repo.Migrations.CreateUsersTable do
 
   def change do
     create table(:users) do
+      add :fullName, :string
       add :username, :string
       add :encrypted_password, :string
       add :email, :string

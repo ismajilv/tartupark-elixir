@@ -2,6 +2,7 @@ defmodule Tartupark.User do
   use Tartupark.Web, :model
 
   schema "users" do
+    field :fullName, :string
     field :username, :string
     field :password, :string, virtual: true
     field :encrypted_password, :string
@@ -14,8 +15,8 @@ defmodule Tartupark.User do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:username, :password, :email])
-    |> validate_required([:username, :password, :email])
+    |> cast(params, [:fullName, :username, :password, :email])
+    |> validate_required([:fullName, :username, :password, :email])
     |> validate_format(:email, ~r/@/)
     |> encrypt_password
   end
