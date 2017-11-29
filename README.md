@@ -1,23 +1,49 @@
-# Tartupark
 
-To start your Phoenix app:
+#### DATABASE TABLES ####
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
-  * Install Node.js dependencies with `npm install`
-  * Start Phoenix endpoint with `mix phoenix.server`
+~~ Places ~~
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
-
-## Learn more
-
-  * Official website: http://www.phoenixframework.org/
-  * Guides: http://phoenixframework.org/docs/overview
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+:latitude,  :float
+:longitude, :float
+:capacity,  :integer
+:status,    :string, default: "available"
+:zone_id,    references(:zones)
 
 
-# this is polad edition
+~~ Zones ~~
+
+:name, 			:string  
+:costHourly,    :float
+:costRealTime,  :float
+:busFree, 		:boolean, default: false
+:motoFree, 		:boolean, default: false
+
+
+~~ Booking ~~
+
+:startDateTime, :naive_datetime
+:endDateTime,   :naive_datetime
+:place_id, 		references(:places)
+:user_id, 		references(:users)
+
+
+
+~~ User ~~
+
+:username, 	     	 :string
+:encrypted_password, :string
+:email, 	     	     :string
+
+
+~~ Payment ~~
+
+:type, 	     :string (realTime | Hourly)
+:cost, 	     :float
+:status,     :string, default: "dept"
+:booking_id, references(:bookings)
+
+
+
+
+DateTime cast
+https://hexdocs.pm/ecto/Ecto.DateTime.html#cast/1

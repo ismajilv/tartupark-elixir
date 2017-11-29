@@ -47,6 +47,7 @@ defmodule Tartupark.Router do
   scope "/api", Tartupark do
     pipe_through :api
     post "/sessions", SessionAPIController, :create
+    post "/register", UserAPIController, :create
   end
 
   scope "/api", Tartupark do
