@@ -26,11 +26,13 @@ config :logger, :console,
     issuer: "Tartupark",
     ttl: {30, :days},
     allowed_drift: 2000,
-    secret_key: "QascedMpwFpFlTos8fDBlF7IKH/OIvhO/I0S93hFZlks5wYjrnh0KavRs0MMqXUI",
+    secret_key: "quiHI7/LPs8hKGYtoPJjpztLil67l3oPFlY9EVDkpFHq9hOQ8/9/zSlQY8wj+Jiy",
     serializer: Tartupark.GuardianSerializer
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
+
+config :tartupark, Tartupark.Repo, extensions: [{Geo.PostGIS.Extension, library: Geo}]
 
 config :tartupark, gmaps_api_key: "AIzaSyCDEm-ZYWAGGfLsX54mAjVV-GbyRI-_CDU"

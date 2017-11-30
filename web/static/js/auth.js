@@ -21,6 +21,7 @@ export default {
       });
   },
   logout: function(context, options) {
+    console.log(options);
     axios.delete("/api/sessions/1", options)
       .then(response => {
         window.localStorage.removeItem('token-'+this.user.username);
