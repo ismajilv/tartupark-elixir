@@ -47,12 +47,13 @@ defmodule Tartupark.Router do
   scope "/api", Tartupark do
     pipe_through :api
     post "/sessions", SessionAPIController, :create
+    post "/register", UserAPIController, :create
   end
 
   scope "/api", Tartupark do
     pipe_through [:api, :auth_api]
     delete "/sessions/:id", SessionAPIController, :delete
-    post "/bookings", BookingAPIController, :create
-    patch "/bookings/:id", BookingAPIController, :update
+    # post "/bookings", BookingAPIController, :create
+    # patch "/bookings/:id", BookingAPIController, :update
   end
 end

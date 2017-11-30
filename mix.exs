@@ -51,7 +51,9 @@ defmodule Tartupark.Mixfile do
       {:ex_machina, "~> 2.1", only: :test},
       {:faker, "~> 0.9", only: :test},
       {:httpoison, "~> 0.13"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:font_awesome_phoenix, "~> 0.1"},
+      {:geo, "~> 1.0"}
     ]
   end
 
