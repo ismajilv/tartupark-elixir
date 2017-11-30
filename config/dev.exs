@@ -53,7 +53,8 @@ config :tartupark, Tartupark.Repo,
   password: "postgres",
   database: "tartupark_dev",
   hostname: "localhost",
-  pool_size: 10
+  pool_size: 10,
+  extensions: [{Geo.PostGIS.Extension, library: Geo}]
 
 # config :takso, decision_timeout: 30000   # 30 seconds
 config :tartupark, :http_client, HTTPoison
