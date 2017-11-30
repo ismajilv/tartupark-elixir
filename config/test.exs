@@ -16,7 +16,8 @@ config :tartupark, Tartupark.Repo,
   password: "Georgia12",
   database: "tartupark_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  extensions: [{Geo.PostGIS.Extension, library: Geo}]
 
 # config :takso, decision_timeout: 3000   # 3 seconds
 config :tartupark, :http_client, Takso.HTTPoisonMock

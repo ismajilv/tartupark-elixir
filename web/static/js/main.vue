@@ -7,12 +7,13 @@
 
 
 <script>
-  import auth from "./auth";
-  export default {
-      methods: {
-          logout: function() {
-              auth.logout(this, { headers: auth.getAuthHeader() });
-          }
-      }
-  }
+import auth from "./auth";
+
+export default {
+    methods: {
+        logout: function() {
+            auth.logout(this, { headers: auth.getAuthHeader() });
+        }
+    }
+}
 </script>
