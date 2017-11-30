@@ -3,7 +3,6 @@ import VueRouter from "vue-router";
 
 import login from "./login";
 import main from "./main";
-import booking from "./booking";
 
 import "phoenix";
 import "axios";
@@ -45,7 +44,6 @@ var router = new VueRouter({
 new Vue({
     router
 }).$mount("#tartupark-app");
-
 
 
 $(".toggle").click(function() {

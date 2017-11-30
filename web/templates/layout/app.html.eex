@@ -29,6 +29,9 @@
       </main>
 
     </div> <!-- /container -->
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=<%= Application.get_env(:tartupark, :gmaps_api_key)%>&v=3.29" 
+                        type="text/javascript"></script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
