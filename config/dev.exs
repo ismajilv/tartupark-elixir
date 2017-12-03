@@ -50,11 +50,7 @@ config :phoenix, :stacktrace_depth, 20
 config :tartupark, Tartupark.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "Georgia12",
+  password: "postgres",
   database: "tartupark_dev",
   hostname: "localhost",
-  pool_size: 10,
-  extensions: [{Geo.PostGIS.Extension, library: Geo}]
-
-# config :takso, decision_timeout: 30000   # 30 seconds
-config :tartupark, :http_client, HTTPoison
+  pool_size: 10

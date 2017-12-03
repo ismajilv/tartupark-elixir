@@ -1,81 +1,36 @@
 <template>
-  <div class="module form-module">
-    <div class="toggle"><i class="fa fa-times fa-pencil"></i>
-      <div class="tooltip">Click Me</div>
-    </div>
-    <div class="form">
-      <h2>Login to your account</h2>
-      <form>
-        <input type="text" placeholder="Username" id="log-username" v-model="username"/>
-        <input type="password" placeholder="Password" id="log-password" v-model="password"/>
-        <button type="submit" v-on:click="login">Login</button>
-      </form>
-    </div>
-
-    <div class="form">
-      <h2>Create an account</h2>
-      <form>
-        <input type="text" placeholder="Full Name" id="reg-fullname" v-model="reg_fullname"/>
-        <input type="text" placeholder="Username" id="reg-username" v-model="reg_username"/>
-        <input type="password" placeholder="Password" id="reg-password" v-model="reg_password"/>
-        <input type="email" placeholder="Email Address" id="reg-email" v-model="reg_email"/>
-        <button type="submit" v-on:click="signup">Register</button>
-      </form>
-    </div>
-
+<div class="row">
+<div class="well col-sm-offset-3 col-sm-6">
+<h2>Please log in</h2>
+<div>
+  <div class="form-group">
+    <label for="username">Username:</label>
+    <input type="text" class="form-control" id="username" v-model="username">
   </div>
+  <div class="form-group">
+    <label for="password">Password:</label>
+    <input type="text" class="form-control" id="password" v-model="password">
+  </div>
+  <button type="submit" class="btn btn-default" v-on:click="login">Submit</button>
+</div>
+</div>
+</div>
 </template>
-
 <script>
-  export default {
-  }
-</script>
-
-<style lang="css">
-</style>
-
-<script>
-  import auth from "./auth";
-  import axios from "axios";
-
-  export default {
-    user: function(){
-      return {
-          username: "",
-          password: "",
-          reg_fullname: "",
-          reg_username: "",
-          reg_password: "",
-          reg_email: ""
-      }
+import auth from "./auth";
+ 
+export default {
+    data: function () {
+        return {
+            username: "fred",
+            password: "parool"
+        }
     },
-    methods:{
-      login: function () {
-        let login_data = {
-          username: this.username,
-          password: this.password
+    methods: {
+        login: function() {
+            console.log(`Username ${this.username}, password ${this.password}`);
+            auth.login(this, {username: this.username, password: this.password}, "/");
         }
-        // console.log(`Username ${this.username}, password ${this.password}`);
-        auth.login(this, login_data, "/");
-      },
-      signup: function(){
-        let registration_data = {
-          username: this.reg_username,
-          password: this.reg_password,
-          fullName: this.reg_fullname,
-          email: this.reg_email
-        }
-        // console.log(registration_data);
-        axios.post("/api/register", registration_data)
-          .then(response => {
-            if(response.status == 201){
-              auth.login(this, registration_data, "/");
-            }
-          })
-          .catch( error => {
-              console.log(error);
-          });
-      }
     }
-  }
+}
 </script>

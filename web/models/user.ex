@@ -2,11 +2,11 @@ defmodule Tartupark.User do
   use Tartupark.Web, :model
 
   schema "users" do
-    field :fullName, :string
+    field :name, :string
     field :username, :string
-    field :password, :string, virtual: true
-    field :encrypted_password, :string
-    field :email, :string
+    field :password, :string
+    has_many :bookings, Tartupark.Booking
+    field :role, :string
     timestamps()
   end
 
@@ -15,15 +15,15 @@ defmodule Tartupark.User do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:fullName, :username, :password, :email])
-    |> validate_required([:fullName, :username, :password, :email])
-    |> validate_format(:email, ~r/@/)
-    |> encrypt_password
+    |> cast(params, [:name, :username, :password, :role])
+    |> validate_required([:name, :username, :password, :role])
+    |> encrypted_password
   end
 
-  def encrypt_password(changeset) do
+  def encrypted_password(changeset) do
     if changeset.valid? do
-      put_change(changeset, :encrypted_password, Comeonin.Pbkdf2.hashpwsalt(changeset.changes[:password]))
+      put_change(changeset, :password,
+                Comeonin.Pbkdf2.hashpwsalt(changeset.changes[:password]))
     else
       changeset
     end

@@ -60,6 +60,3 @@ config :logger, level: :info
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 import_config "prod.secret.exs"
-
-# config :takso, decision_timeout: 30000   # 30 seconds
-config :tartupark, :http_client, HTTPoison

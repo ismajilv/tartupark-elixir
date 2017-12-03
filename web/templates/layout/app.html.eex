@@ -7,18 +7,19 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Tartupark</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>"></head>
+    <title>Hello Tartupark!</title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+  </head>
 
   <body>
     <div class="container">
       <header class="header">
         <nav role="navigation">
           <ul class="nav nav-pills pull-right">
-
-
+            <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
           </ul>
         </nav>
+        <span class="logo"></span>
       </header>
 
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
@@ -29,9 +30,7 @@
       </main>
 
     </div> <!-- /container -->
-
-    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=<%= Application.get_env(:tartupark, :gmaps_api_key)%>&v=3.29" 
-                        type="text/javascript"></script>
+    <script src="//maps.googleapis.com/maps/api/js?key=<%= Application.get_env(:tartupark, :gmaps_api_key) %>"></script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

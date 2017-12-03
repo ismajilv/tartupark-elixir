@@ -12,7 +12,7 @@ config :tartupark,
 # Configures the endpoint
 config :tartupark, Tartupark.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "EpETStUwarxTanYsLPjBjuHErWoRmLAKYEwCeFpkhAAljk6terWMmCzbyM5DQ16x",
+  secret_key_base: "wDGgJJfQL3xIk2Ze7KhPuT8Oo56jIY9N7H3TcN+H3b2KuEjMeDlYIhkc2FIUgPRv",
   render_errors: [view: Tartupark.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Tartupark.PubSub,
            adapter: Phoenix.PubSub.PG2]
@@ -22,17 +22,15 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-  config :guardian, Guardian,
-    issuer: "Tartupark",
-    ttl: {30, :days},
-    allowed_drift: 2000,
-    secret_key: "quiHI7/LPs8hKGYtoPJjpztLil67l3oPFlY9EVDkpFHq9hOQ8/9/zSlQY8wj+Jiy",
-    serializer: Tartupark.GuardianSerializer
-
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
 
-config :tartupark, Tartupark.Repo, extensions: [{Geo.PostGIS.Extension, library: Geo}]
+config :guardian, Guardian,
+  issuer: "Tartupark",
+  ttl: {30, :days},
+  allowed_drift: 200,
+  secret_key: "hL16o3nOa7wP4PGW9HaQKGDBl5Kb/zkKP6L/DmFyix8hyWmWzTGSBAKCBmnwg+RL",
+  serializer: Tartupark.GuardianSerializer
 
-config :tartupark, gmaps_api_key: "AIzaSyCDEm-ZYWAGGfLsX54mAjVV-GbyRI-_CDU"
+config :tartupark, gmaps_api_key: "AIzaSyDV4MrzXfmtCp3nC9gfjQsyPebydgk65c8"

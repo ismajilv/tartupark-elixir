@@ -65,10 +65,6 @@ exports.config = {
 
   npm: {
     enabled: true,
-    aliases: { vue: "vue/dist/vue.common.js" },
-    globals: {
-      $: 'jquery',
-      jQuery: 'jquery'
-    }
+    aliases: { vue: "vue/dist/vue.common.js" }
   }
 };

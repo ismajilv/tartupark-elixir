@@ -36,7 +36,7 @@ defmodule Tartupark.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_tartupark_key",
-    signing_salt: "bgXtNBbP"
+    signing_salt: "QuvPZB4R"
 
   plug Tartupark.Router
 end

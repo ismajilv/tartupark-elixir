@@ -4,7 +4,7 @@ use Mix.Config
 # you can enable the server option below.
 config :tartupark, Tartupark.Endpoint,
   http: [port: 4001],
-  server: false
+  server: true
 
 # Print only warnings and errors during test
 config :logger, level: :warn
@@ -13,11 +13,11 @@ config :logger, level: :warn
 config :tartupark, Tartupark.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "Georgia12",
+  password: "postgres",
   database: "tartupark_test",
   hostname: "localhost",
-  pool: Ecto.Adapters.SQL.Sandbox,
-  extensions: [{Geo.PostGIS.Extension, library: Geo}]
+  pool: Ecto.Adapters.SQL.Sandbox
 
-# config :takso, decision_timeout: 3000   # 3 seconds
-config :tartupark, :http_client, Takso.HTTPoisonMock
+
+config :hound, driver: "chrome_driver"
+config :tartupark, sql_sandbox: true
