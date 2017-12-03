@@ -15,7 +15,7 @@ defmodule Tartupark.Payment do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:type, :cost, :status])
-    |> validate_required([:startTime])
+    |> validate_required([:type, :cost, :status])
   end
 
 end

@@ -3,9 +3,9 @@ defmodule Tartupark.UserAPIController do
   alias Tartupark.{Repo, User}
 
   def create(conn, params) do
-    %{"username" => username,  "email" => email} = params
+    %{"username" => username,  "email" => email, "license_number" => license_number} = params
     query = from user in User,
-            where: user.username == ^username or user.email == ^email,
+            where: user.username == ^username or user.email == ^email or user.license_number == ^license_number,
             select: user
     identical_users = Repo.all(query)
     if length(identical_users) == 0 do

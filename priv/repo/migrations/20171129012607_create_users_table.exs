@@ -7,6 +7,7 @@ defmodule Tartupark.Repo.Migrations.CreateUsersTable do
       add :username, :string
       add :encrypted_password, :string
       add :email, :string
+      add :license_number, :string
 
       timestamps()
     end

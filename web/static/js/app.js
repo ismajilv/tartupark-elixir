@@ -6,11 +6,12 @@ import "./socket";
 import "phoenix";
 import auth from "./auth";
 
-import customer from "./customer";
+import booking from "./booking";
 // import driver from "./driver";
 // import mymap from "./mymap";
 import login from "./login";
 import main from "./main";
+import $ from "jquery";
 
 const requireAuth = (to, _from, next) => {
     if(!auth.authenticated()){
@@ -33,11 +34,7 @@ const afterAuth = (_to, from, next) => {
 
 Vue.use(VueRouter);
 
-Vue.component("customer", customer);
-// Vue.component("driver", driver);
-// Vue.component("mymap", mymap);
-// Vue.component("login", login);
-// Vue.component("main", main);
+Vue.component("booking", booking);
 
 var router = new VueRouter({
     routes:[
@@ -48,5 +45,21 @@ var router = new VueRouter({
 });
 
 new Vue({ router }).$mount("#tartupark-app");
-// new Vue({ el: "#tartupark-app" });
 
+
+$(".toggle").click(function() {
+  // Switches the Icon
+  $(this)
+    .children("i")
+    .toggleClass("glyphicon-certificate");
+  // Switches the forms
+  $(".form").animate(
+      {
+        height: "toggle",
+        "padding-top": "toggle",
+        "padding-bottom": "toggle",
+        opacity: "toggle"
+      },
+      "slow"
+    );
+});
