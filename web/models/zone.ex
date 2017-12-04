@@ -2,11 +2,11 @@ defmodule Tartupark.Zone do
   use Tartupark.Web, :model
 
   schema "zones" do
-    field :name, :string
+    field :description, :string
     field :costHourly, :float
     field :costRealTime, :float
-    field :busFree, :boolean, default: false
-    field :motoFree, :boolean, default: false
+    field :freeTimeLimit, :integer
+    field :tag, :string
     has_many :places, Tartupark.Place
 
     timestamps()
@@ -17,8 +17,8 @@ defmodule Tartupark.Zone do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :costHourly, :costRealTime, :busFree, :motoFree])
-    |> validate_required([:name, :costHourly, :costRealTime, :busFree, :motoFree])
+    |> cast(params, [:description, :costHourly, :costRealTime, :freeTimeLimit, :tag])
+    |> validate_required([:description, :costHourly, :costRealTime, :freeTimeLimit, :tag])
   end
 
 end

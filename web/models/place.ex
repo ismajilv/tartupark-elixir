@@ -17,7 +17,7 @@ defmodule Tartupark.Place do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:area, :capacity, :status, :shape])
-    |> validate_required([:area, :capacity, :shape])
+    |> validate_required([:area, :capacity, :status, :shape])
   end
 
   def within(query, point, radius_in_m) do
