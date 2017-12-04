@@ -54,7 +54,7 @@ export default {
                   .then(response => {
                       var locations = response.data;
                       var map = new google.maps.Map(document.getElementById('map'), {
-                          zoom: 17,
+                          zoom: 15,
                           center: lngLat,
                           mapTypeId: google.maps.MapTypeId.ROADMAP
                       });
@@ -69,8 +69,8 @@ export default {
                             strokeWeight: 6
                           });
                         }else{
-                          let polynomCoords = area.area.push(area.area[0];
-                          // console.log(polynomCoords);
+                          let polynomCoords = area.area.push(area.area[0]);
+                          console.log(area.area[0]);
                           var flightPath = new google.maps.Polygon({
                             paths: polynomCoords,
                             strokeColor: '#FF0000',
