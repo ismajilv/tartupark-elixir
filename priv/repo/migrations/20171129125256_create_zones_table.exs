@@ -6,8 +6,10 @@ defmodule Tartupark.Repo.Migrations.CreateZonesTable do
       add :name, :string
       add :costHourly, :float
       add :costRealTime, :float
-      add :busFree, :boolean, default: false
-      add :motoFree, :boolean, default: false
+      add :busFree, :boolean
+      add :motoFree, :boolean
+      add :freeTimeLimit, :integer
+      add :tag, :string
 
       timestamps()
     end

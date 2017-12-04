@@ -7,11 +7,10 @@ import "phoenix";
 import auth from "./auth";
 
 import booking from "./booking";
-// import driver from "./driver";
-// import mymap from "./mymap";
 import login from "./login";
 import main from "./main";
 import $ from "jquery";
+import "jquery";
 
 const requireAuth = (to, _from, next) => {
     if(!auth.authenticated()){
@@ -63,3 +62,11 @@ $(".toggle").click(function() {
       "slow"
     );
 });
+
+// $( ".selector" ).slider({
+//   max: 5000,
+//   min: 0,
+//   range: true,
+//   step: 100,
+//   value: 300
+// });

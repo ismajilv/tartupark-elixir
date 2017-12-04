@@ -15,7 +15,7 @@ alias Tartupark.{Repo, Zone, Place}
 # field :capacity, :integer
 # field :status, :string, default: "available"
 # belongs_to :zone, Tartupark.Zone
-[%{capacity: 100, area: %Geo.MultiPoint{coordinates: [{26.718892, 58.384039}, {26.719535, 58.384194}, {26.720025, 58.383635}, {26.719102, 58.383500}], srid: 4326}},
-%{capacity: 100, area:  %Geo.MultiPoint{coordinates: [{26.721306, 58.383761}, {26.721508, 58.383485}, {26.721539, 58.383325}], srid: 4326}}]
+[%{capacity: 100, shape: "polygon", area: %Geo.MultiPoint{coordinates: [{26.718892, 58.384039}, {26.719535, 58.384194}, {26.720025, 58.383635}, {26.719102, 58.383500}], srid: 4326}},
+%{capacity: 100, shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.721306, 58.383761}, {26.721508, 58.383485}, {26.721539, 58.383325}], srid: 4326}}]
 |> Enum.map(fn user_data -> Place.changeset(%Place{}, user_data) end)
 |> Enum.each(fn changeset -> Repo.insert!(changeset) end)

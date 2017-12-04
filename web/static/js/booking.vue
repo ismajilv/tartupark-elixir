@@ -24,95 +24,85 @@ import auth from "./auth";
 export default {
     data: function() {
         return {
-            parking_address: ""
+            parking_address: "",
+            message: ""
         }
     },
     methods: {
         submit: function() {
-            console.log(auth.getAuthHeader());
-            axios.post("/api/bookings",
-                {parking_address: this.parking_address},
-                {headers: auth.getAuthHeader()})
-                .then(response => {
-                    console.log(response);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+          axios.post("/api/bookings",
+              {parking_address: this.parking_address},
+              {headers: auth.getAuthHeader()})
+              .then(response => {
+                  console.log(response);
+              })
+              .catch(error => {
+                  console.log(error);
+              });
         },
         search: function() {
-            axios.post("/api/search",
-                {parking_address: this.parking_address},
-                {headers: auth.getAuthHeader()})
-                .then(response => {
-                    // console.log(response.data.loc[0]);
-                    var locations = response.data.loc;
-                    console.log(locations);
-                    var map = new google.maps.Map(document.getElementById('map'), {
-                        zoom: 13,
-                        center: new google.maps.LatLng(58.3791179,26.7241151),
-                        mapTypeId: google.maps.MapTypeId.ROADMAP
-                    });
+          this.geocoder = new google.maps.Geocoder;
+          this.geocoder.geocode({address:this.parking_address}, (results, status)=>{
+            if (status == 'OK') {
+              var lngLat = {
+                lng: results[0].geometry.location.lng(),
+                lat: results[0].geometry.location.lat()
+              }
+              axios.post("/api/search",
+                  {lngLat: lngLat},
+                  {headers: auth.getAuthHeader()})
+                  .then(response => {
+                      var locations = response.data;
+                      var map = new google.maps.Map(document.getElementById('map'), {
+                          zoom: 17,
+                          center: lngLat,
+                          mapTypeId: google.maps.MapTypeId.ROADMAP
+                      });
+                      // console.log(locations);
+                      locations.map(function(area){
+                        if(area.shape == "line"){
+                          var flightPath = new google.maps.Polyline({
+                            path: area.area,
+                            geodesic: true,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 0.4,
+                            strokeWeight: 6
+                          });
+                        }else{
+                          let polynomCoords = area.area.push(area.area[0];
+                          // console.log(polynomCoords);
+                          var flightPath = new google.maps.Polygon({
+                            paths: polynomCoords,
+                            strokeColor: '#FF0000',
+                            strokeOpacity: 0.8,
+                            strokeWeight: 2,
+                            fillColor: '#FF0000',
+                            fillOpacity: 0.35
+                          });
+                        }
+                        flightPath.setMap(map);
+                      })
 
-                    var infowindow = new google.maps.InfoWindow();
-                    var marker, i;
-
-                    for (i = 0; i < locations.length; i++) {
-                        marker = new google.maps.Marker({
-                            position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-                            map: map
-                        });
-
-                        google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                            return function() {
-                                infowindow.setContent(locations[i][0]);
-                                infowindow.open(map, marker);
-                            }})
-                        (marker, i));
-                    }
-
-                    this.message = response.data.msg;
-                }).catch(error => {
-                    console.log(error);
-                });
+                  }).catch(error => {
+                      console.log(error);
+                  });
+                }else {
+                  alert('Geocode was not successful for the following reason: ' + status);
+                }
+              }); // end of geocode
         }
     },
     mounted: function() {
-
-        // var locations = [
-        //     ['Tartu Ülikool', 58.3816146,26.716936,15],
-        //     ['Fortumo OÜ', 58.3791179,26.7241151],
-        //     ['Shooters Tartu', 58.3717589,26.7024541]
-        // ];
-
-        // var map = new google.maps.Map(document.getElementById('map'), {
-        //     zoom: 13,
-        //     center: new google.maps.LatLng(58.3791179,26.7241151),
-        //     mapTypeId: google.maps.MapTypeId.ROADMAP
-        // });
-
-        // var infowindow = new google.maps.InfoWindow();
-        // var marker, i;
-
-        // for (i = 0; i < locations.length; i++) {
-        //     marker = new google.maps.Marker({
-        //         position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-        //         map: map
-        // });
-
-        // google.maps.event.addListener(marker, 'click', (function(marker, i) {
-        //     return function() {
-        //         infowindow.setContent(locations[i][0]);
-        //         infowindow.open(map, marker);
-        //     }})(marker, i));
-        // }
 
         navigator.geolocation.getCurrentPosition(position => {
           let loc = {lat: position.coords.latitude, lng: position.coords.longitude};
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({location: loc}, (results, status) => {
-              if (status === "OK" && results[0])
-                this.pickup_address = results[0].formatted_address;
+              if (status === "OK" && results[0]){
+                this.parking_address = results[0].formatted_address;
+              }else {
+                alert('Geocode was not successful for the following reason: ' + status);
+              }
             });
           this.map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: loc});
           new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});

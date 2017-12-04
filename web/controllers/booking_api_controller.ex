@@ -1,6 +1,7 @@
 defmodule Tartupark.BookingAPIController do
   use Tartupark.Web, :controller
   import Ecto.Query, only: [from: 2]
+  alias Tartupark.Place
 
   Postgrex.Types.define(Tartupark.PostgresTypes,
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
@@ -18,15 +19,32 @@ defmodule Tartupark.BookingAPIController do
     |> json(%{msg: "Notification sent to the customer"})
   end
 
-  def search(conn, _params) do
-    locations = [
-      ['Tartu Ülikool', 58.3816146, 26.716936],
-      ['Fortumo OÜ', 58.3791179, 26.7241151],
-      ['Shooters Tartu', 58.3717589, 26.7024541]
-    ]
+  def search(conn, params) do
+    %{"lngLat" => %{"lat" => lat, "lng" => lng}} =  params
+    point = %Geo.Point{coordinates: {lng, lat}, srid: 4326}
+    radius = 10_000
+    parkings = Place.within(Place, point, radius)
+    |> Place.order_by_nearest(point)
+    |> Place.select_with_distance(point)
+    |> Repo.all
+
+    # IO.inspect parkings
+
+    locations = Enum.map(parkings,
+                        (fn park_place ->
+                          %{shape: park_place.shape,
+                            capacity: park_place.capacity,
+                            distance: park_place.distance,
+                            id: park_place.id,
+                            area: Enum.map(park_place.area.coordinates,
+                                           fn point -> {lng, lat} = point
+                                              %{lng: lng, lat: lat}
+                                           end)
+                          }
+                          end))
 
     conn
     |> put_status(200)
-    |> json(%{loc: locations})
+    |> json(locations)
   end
 end
