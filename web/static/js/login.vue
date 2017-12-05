@@ -1,6 +1,6 @@
 <template>
   <div class="module form-module">
-    <div class="toggle"><i class="glyphicon glyphicon-certificate"></i>
+    <div class="toggle"><i class="glyphicon glyphicon-arrow-up"></i>
       <div class="tooltip">Click Me</div>
     </div>
     <div class="form">

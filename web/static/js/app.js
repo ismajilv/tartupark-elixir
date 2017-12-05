@@ -58,7 +58,7 @@ $(".toggle").click(function() {
     // Switches the Icon
     $(this)
       .children("i")
-      .toggleClass("glyphicon-certificate");
+      .toggleClass("glyphicon-arrow-down");
     // Switches the forms
     $(".form").animate(
         {
