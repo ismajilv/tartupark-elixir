@@ -6,13 +6,48 @@
       <input type="text" class="form-control" id="parking_address" v-model="parking_address">
     </div>
   </div>
+
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="start_time" style="margin: 10px auto;">Start Date:</label>
+    <div class="col-sm-9">
+      <date-picker v-model="start_date" :config="config" id="start_time" style="margin: 10px auto;"></date-picker>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="end_time" style="margin-bottom: 10px;">End Date:</label>
+    <div class="col-sm-9">
+      <date-picker v-model="end_date" :config="config" id="end_time" style="margin-bottom: 10px;"></date-picker>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
+    
+    <input type="radio" id="hourly" value="Hourly" v-model="picked">
+    <label for="hourly">Hourly</label>
+    
+    <input type="radio" id="realtime" value="Real Time" checked="checked" v-model="picked">
+    <label for="realtime">Real Time</label>
+  </div>
+  
+  <div class="form-group">
+    <label class="control-label col-sm-3" style="margin-right: 15px;">Search Radius:</label>
+    <select v-model="selected">
+      <option disabled value="">Please select redius</option>
+      <option>100 meters</option>
+      <option>500 meters</option>
+      <option>1000 meters</option>
+    </select>
+  </div>
+
   <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
       <button class="btn btn-default" v-on:click="search">Search</button>
       <button class="btn btn-default" v-on:click="submit">Submit</button>
     </div>
   </div>
-  <div id="map" style="width:100%;height:300px; margin-top:10px"></div>
+  <div id="map" style="width:100%;height:300px; margin-top:75px"></div>
 </div>
 </template>
 
@@ -25,7 +60,17 @@ export default {
     data: function() {
         return {
             parking_address: "",
-            message: ""
+            message: "",
+            picked: "Real Time",
+            start_date: new Date(),
+            end_date: new Date(),
+            selected: '100 meters',
+            config: {
+              format: 'DD/MM/YYYY H:m:s',
+              useCurrent: false,
+              showClear: true,
+              showClose: true,
+            }
         }
     },
     methods: {
@@ -48,8 +93,16 @@ export default {
                 lng: results[0].geometry.location.lng(),
                 lat: results[0].geometry.location.lat()
               }
+
+              console.log("startdate: "+this.start_date + " - enddate: " + this.end_date
+                          + " - picked: " + this.picked + " - selected: " + this.selected);
+
               axios.post("/api/search",
-                  {lngLat: lngLat},
+                  { lngLat: lngLat, 
+                    start_date: this.start_date,
+                    end_date: this.end_date,
+                    picked: this.picked,
+                    selected: this.selected},
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var locations = response.data;

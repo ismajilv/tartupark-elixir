@@ -1,4 +1,4 @@
-alias Tartupark.{Repo, Zone, Place}
+alias Tartupark.{Repo, Zone, Place, User}
 
 [%{description: "Zone A", tag: "ZA", costHourly: 2.0, costRealTime: 0.16, freeTimeLimit: 15},
 %{description: "Zone B", tag: "ZB", costHourly: 1.0, costRealTime: 0.08, freeTimeLimit: 90},
@@ -8,6 +8,10 @@ alias Tartupark.{Repo, Zone, Place}
 %{description: "Free parking spot for buses", tag: "BUS", costHourly: 0.0, costRealTime: 0.0, freeTimeLimit: -1},
 %{description: "Free parking spot for motocycles and mopeds", tag: "MOTO", costHourly: 0.0, costRealTime: 0.0, freeTimeLimit: -1}]
 |> Enum.map(fn zone_data -> Zone.changeset(%Zone{}, zone_data) end)
+|> Enum.each(fn changeset -> Repo.insert!(changeset) end)
+
+[%{fullName: "Soltan Garayev", username: "soltankara", password: "parool", email: "soltankara@gmail.com", license_number: "111SSS000"}]
+|> Enum.map(fn user_data -> User.changeset(%User{}, user_data) end)
 |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
 
 

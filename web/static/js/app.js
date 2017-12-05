@@ -1,6 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+const jQuery = window.jQuery || require("jquery");
+const moment = window.moment || require("moment");
+
+import datePicker from 'vue-bootstrap-datetimepicker';
+Vue.use(datePicker);
+
+import 'eonasdan-bootstrap-datetimepicker';
+
 import "axios";
 import "./socket";
 import "phoenix";
@@ -11,7 +19,6 @@ import login from "./login";
 import main from "./main";
 import $ from "jquery";
 import "jquery";
-
 
 const requireAuth = (to, _from, next) => {
     if(!auth.authenticated()){
@@ -71,4 +78,3 @@ $(".toggle").click(function() {
   //   step: 100,
   //   value: 300
   // });
-  
