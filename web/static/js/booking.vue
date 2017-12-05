@@ -123,26 +123,31 @@ export default {
                 var e_date = null;
                 var hps = null;
                 var rtps = this.rt_payment_selected;
+                var p_type = this.rt_payment_selected;
               } else {
                 var s_date = this.parking_start_time;
                 var e_date = this.parking_end_time;
                 var hps = this.h_payment_selected;
                 var rtps = null;
+                var p_type = this.h_payment_selected;
               }
 
-              console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + 
-                          " - enddate: " + e_date + " - parking_type: " + this.parking_type + 
-                          " - selected: " + this.parking_search_radius + 
-                          " - hps: " + hps + " - rtps: " + rtps);
+              // console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + 
+              //             " - enddate: " + e_date + " - parking_type: " + this.parking_type + 
+              //             " - selected: " + this.parking_search_radius + 
+              //             " - hps: " + hps + " - rtps: " + rtps);
+              console.log("parking type: "+p_type);
 
               axios.post("/api/search",
                   { lngLat: lngLat, 
                     parkingStartTime: s_date,
                     parkingEndTime: e_date,
                     parkingSearchRadius: this.parking_search_radius,
-                    parkingType: this.parking_type,
-                    hourlyPaymentType: hps,
-                    realTimePaymentType: rtps},
+                    parkingType: p_type
+                    // ,
+                    // hourlyPaymentType: hps,
+                    // realTimePaymentType: rtps
+                    },
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var locations = response.data;
