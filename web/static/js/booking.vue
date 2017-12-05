@@ -8,23 +8,23 @@
   </div>
 
   <div class="form-group">
-    <label class="control-label col-sm-3" for="start_time" style="margin: 10px auto;">Start Date:</label>
+    <label class="control-label col-sm-3" for="parking_start_time" style="margin: 10px auto;">Start Date:</label>
     <div class="col-sm-9">
-      <date-picker v-model="start_date" :config="config" id="start_time" style="margin: 10px auto;"></date-picker>
+      <date-picker v-model="parking_start_time" :config="config" id="parking_start_time" style="margin: 10px auto;"></date-picker>
     </div>
   </div>
 
   <div class="form-group">
-    <label class="control-label col-sm-3" for="end_time" style="margin-bottom: 10px;">End Date:</label>
+    <label class="control-label col-sm-3" for="parking_end_time" style="margin-bottom: 10px;">End Date:</label>
     <div class="col-sm-9">
-      <date-picker v-model="end_date" :config="config" id="end_time" style="margin-bottom: 10px;"></date-picker>
+      <date-picker v-model="parking_end_time" :config="config" id="parking_end_time" style="margin-bottom: 10px;"></date-picker>
     </div>
   </div>
 
   <div class="form-group">
     <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
     
-    <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="picked">
+    <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="parking_type">
     <label for="hourly">Hourly</label>
     <select v-model="h_payment_selected" id="hourly_payment_type">
       <option disabled value="">When will you pay?</option>
@@ -32,7 +32,7 @@
       <option>After Parking</option>
     </select>
     
-    <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="picked">
+    <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="parking_type">
     <label for="realtime">Real Time</label>
     <select v-model="rt_payment_selected" id="real_time_payment_type">
       <option disabled value="">When will you pay?</option>
@@ -43,7 +43,7 @@
   
   <div class="form-group">
     <label class="control-label col-sm-3" style="margin-right: 15px;">Search Radius:</label>
-    <select v-model="selected">
+    <select v-model="parking_search_radius">
       <option disabled value="">Please select redius</option>
       <option>100 meters</option>
       <option>500 meters</option>
@@ -71,10 +71,10 @@ export default {
         return {
             parking_address: "",
             message: "",
-            picked: "Real Time",
-            start_date: new Date(),
-            end_date: new Date(),
-            selected: '100 meters',
+            parking_type: "Real Time",
+            parking_start_time: new Date(),
+            parking_end_time: new Date(),
+            parking_search_radius: '100 meters',
             h_payment_selected: "Before Parking",
             rt_payment_selected: "On the Spot",
             config: {
@@ -98,14 +98,14 @@ export default {
               });
         },
         dateTimeStatusRead: function(){
-          document.getElementById("start_time").readOnly = true;
-          document.getElementById("end_time").readOnly = true;
+          document.getElementById("parking_start_time").readOnly = true;
+          document.getElementById("parking_end_time").readOnly = true;
           document.getElementById("hourly_payment_type").style.visibility = "hidden";
           document.getElementById("real_time_payment_type").style.visibility = "visible";
         },
         dateTimeStatusWrite: function(){
-          document.getElementById("start_time").readOnly = false;
-          document.getElementById("end_time").readOnly = false;
+          document.getElementById("parking_start_time").readOnly = false;
+          document.getElementById("parking_end_time").readOnly = false;
           document.getElementById("hourly_payment_type").style.visibility = "visible";
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
@@ -124,24 +124,25 @@ export default {
                 var hps = null;
                 var rtps = this.rt_payment_selected;
               } else {
-                var s_date = this.start_date;
-                var e_date = this.end_date;
+                var s_date = this.parking_start_time;
+                var e_date = this.parking_end_time;
                 var hps = this.h_payment_selected;
                 var rtps = null;
               }
 
-              console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + " - enddate: " + e_date
-                          + " - picked: " + this.picked + " - selected: " + this.selected + 
+              console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + 
+                          " - enddate: " + e_date + " - parking_type: " + this.parking_type + 
+                          " - selected: " + this.parking_search_radius + 
                           " - hps: " + hps + " - rtps: " + rtps);
 
               axios.post("/api/search",
                   { lngLat: lngLat, 
-                    start_date: s_date,
-                    end_date: e_date,
-                    picked: this.picked,
-                    selected: this.selected,
-                    hourly_payment_type: hps,
-                    real_time_payment_type: rtps},
+                    parkingStartTime: s_date,
+                    parkingEndTime: e_date,
+                    parkingSearchRadius: this.parking_search_radius,
+                    parkingType: this.parking_type,
+                    hourlyPaymentType: hps,
+                    realTimePaymentType: rtps},
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var locations = response.data;
@@ -202,14 +203,14 @@ export default {
           new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});
         });
 
-        if (this.picked == "Real Time"){
-          document.getElementById("start_time").readOnly = true;
-          document.getElementById("end_time").readOnly = true;
+        if (this.parking_type == "Real Time"){
+          document.getElementById("parking_start_time").readOnly = true;
+          document.getElementById("parking_end_time").readOnly = true;
           document.getElementById("hourly_payment_type").style.visibility = "hidden";
           document.getElementById("real_time_payment_type").style.visibility = "visible";
         } else {
-          document.getElementById("start_time").readOnly = false;
-          document.getElementById("end_time").readOnly = false;
+          document.getElementById("parking_start_time").readOnly = false;
+          document.getElementById("parking_end_time").readOnly = false;
           document.getElementById("hourly_payment_type").style.visibility = "visible";
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
         }

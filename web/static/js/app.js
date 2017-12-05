@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 
 const jQuery = window.jQuery || require("jquery");
-const moment = window.moment || require("moment");
+// const moment = window.moment || require("moment");
 
 import datePicker from 'vue-bootstrap-datetimepicker';
 Vue.use(datePicker);
