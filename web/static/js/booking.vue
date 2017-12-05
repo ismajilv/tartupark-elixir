@@ -143,7 +143,7 @@ export default {
                     parkingStartTime: s_date,
                     parkingEndTime: e_date,
                     parkingSearchRadius: this.parking_search_radius,
-                    parkingType: p_type
+                    paymentTime: p_type
                     // ,
                     // hourlyPaymentType: hps,
                     // realTimePaymentType: rtps
