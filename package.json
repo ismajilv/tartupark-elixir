@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
+    "bootstrap": "^3.3.7",
     "glyphicons": "^0.2.0",
     "jquery": "3.0",
     "jquery-ui": "^1.11.4",
@@ -25,6 +26,7 @@
     "clean-css-brunch": "2.10.0",
     "uglify-js-brunch": "2.10.0",
     "vue-brunch": "^2.0.1",
-    "vue-icons": "^2.0.0"
+    "vue-icons": "^2.0.0",
+    "webpack": "^3.10.0"
   }
 }

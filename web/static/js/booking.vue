@@ -24,10 +24,10 @@
   <div class="form-group">
     <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
     
-    <input type="radio" id="hourly" value="Hourly" v-model="picked">
+    <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="picked">
     <label for="hourly">Hourly</label>
     
-    <input type="radio" id="realtime" value="Real Time" checked="checked" v-model="picked">
+    <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="picked">
     <label for="realtime">Real Time</label>
   </div>
   
@@ -85,6 +85,14 @@ export default {
                   console.log(error);
               });
         },
+        dateTimeStatusRead: function(){
+          document.getElementById("start_time").readOnly = true;
+          document.getElementById("end_time").readOnly = true;
+        },
+        dateTimeStatusWrite: function(){
+          document.getElementById("start_time").readOnly = false;
+          document.getElementById("end_time").readOnly = false;
+        },
         search: function() {
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({address:this.parking_address}, (results, status)=>{
@@ -94,13 +102,21 @@ export default {
                 lat: results[0].geometry.location.lat()
               }
 
-              console.log("startdate: "+this.start_date + " - enddate: " + this.end_date
+              if (this.picked == "Real Time"){
+                var s_date = null;
+                var e_date = null;
+              } else {
+                var s_date = this.start_date;
+                var e_date = this.end_date;
+              }
+
+              console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + " - enddate: " + e_date
                           + " - picked: " + this.picked + " - selected: " + this.selected);
 
               axios.post("/api/search",
                   { lngLat: lngLat, 
-                    start_date: this.start_date,
-                    end_date: this.end_date,
+                    start_date: s_date,
+                    end_date: e_date,
                     picked: this.picked,
                     selected: this.selected},
                   {headers: auth.getAuthHeader()})
@@ -162,6 +178,14 @@ export default {
           this.map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: loc});
           new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});
         });
+
+        if (this.picked == "Real Time"){
+          document.getElementById("start_time").readOnly = true;
+          document.getElementById("end_time").readOnly = true;
+        } else {
+          document.getElementById("start_time").readOnly = false;
+          document.getElementById("end_time").readOnly = false;
+        }
 
         // var channel = socket.channel("customer:lobby", {});
         // channel.join()
