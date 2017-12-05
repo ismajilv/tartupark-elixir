@@ -26,9 +26,19 @@
     
     <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="picked">
     <label for="hourly">Hourly</label>
+    <select v-model="h_payment_selected" id="hourly_payment_type">
+      <option disabled value="">When will you pay?</option>
+      <option>Before Parking</option>
+      <option>After Parking</option>
+    </select>
     
     <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="picked">
     <label for="realtime">Real Time</label>
+    <select v-model="rt_payment_selected" id="real_time_payment_type">
+      <option disabled value="">When will you pay?</option>
+      <option>On the Spot</option>
+      <option>End of Month</option>
+    </select>
   </div>
   
   <div class="form-group">
@@ -65,6 +75,8 @@ export default {
             start_date: new Date(),
             end_date: new Date(),
             selected: '100 meters',
+            h_payment_selected: "Before Parking",
+            rt_payment_selected: "On the Spot",
             config: {
               format: 'DD/MM/YYYY H:m:s',
               useCurrent: false,
@@ -88,10 +100,14 @@ export default {
         dateTimeStatusRead: function(){
           document.getElementById("start_time").readOnly = true;
           document.getElementById("end_time").readOnly = true;
+          document.getElementById("hourly_payment_type").style.visibility = "hidden";
+          document.getElementById("real_time_payment_type").style.visibility = "visible";
         },
         dateTimeStatusWrite: function(){
           document.getElementById("start_time").readOnly = false;
           document.getElementById("end_time").readOnly = false;
+          document.getElementById("hourly_payment_type").style.visibility = "visible";
+          document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
         search: function() {
           this.geocoder = new google.maps.Geocoder;
@@ -105,20 +121,27 @@ export default {
               if (this.picked == "Real Time"){
                 var s_date = null;
                 var e_date = null;
+                var hps = null;
+                var rtps = this.rt_payment_selected;
               } else {
                 var s_date = this.start_date;
                 var e_date = this.end_date;
+                var hps = this.h_payment_selected;
+                var rtps = null;
               }
 
               console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + " - enddate: " + e_date
-                          + " - picked: " + this.picked + " - selected: " + this.selected);
+                          + " - picked: " + this.picked + " - selected: " + this.selected + 
+                          " - hps: " + hps + " - rtps: " + rtps);
 
               axios.post("/api/search",
                   { lngLat: lngLat, 
                     start_date: s_date,
                     end_date: e_date,
                     picked: this.picked,
-                    selected: this.selected},
+                    selected: this.selected,
+                    hourly_payment_type: hps,
+                    real_time_payment_type: rtps},
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var locations = response.data;
@@ -182,9 +205,13 @@ export default {
         if (this.picked == "Real Time"){
           document.getElementById("start_time").readOnly = true;
           document.getElementById("end_time").readOnly = true;
+          document.getElementById("hourly_payment_type").style.visibility = "hidden";
+          document.getElementById("real_time_payment_type").style.visibility = "visible";
         } else {
           document.getElementById("start_time").readOnly = false;
           document.getElementById("end_time").readOnly = false;
+          document.getElementById("hourly_payment_type").style.visibility = "visible";
+          document.getElementById("real_time_payment_type").style.visibility = "hidden";
         }
 
         // var channel = socket.channel("customer:lobby", {});
