@@ -27,6 +27,7 @@ defmodule Tartupark.BookingAPIController do
     |> Place.order_by_nearest(point)
     |> Place.select_with_distance(point)
     |> Repo.all
+    |> Repo.preload :zone
 
     # IO.inspect parkings
 
@@ -39,7 +40,15 @@ defmodule Tartupark.BookingAPIController do
                             area: Enum.map(park_place.area.coordinates,
                                            fn point -> {lng, lat} = point
                                               %{lng: lng, lat: lat}
-                                           end)
+                                           end),
+                            zone:  %{
+                                      costHourly: park_place.zone.costHourly,
+                                      costRealTime: park_place.zone.costRealTime,
+                                      description: park_place.zone.description,
+                                      freeTimeLimit: park_place.zone.freeTimeLimit,
+                                      zone_id: park_place.zone.id,
+                                      tag: park_place.zone.tag
+                                    }
                           }
                           end))
 

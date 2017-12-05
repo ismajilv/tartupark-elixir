@@ -58,7 +58,7 @@ export default {
                           center: lngLat,
                           mapTypeId: google.maps.MapTypeId.ROADMAP
                       });
-                      // console.log(locations);
+                      console.log(locations);
                       locations.map(function(area){
                         if(area.shape == "line"){
                           var flightPath = new google.maps.Polyline({
