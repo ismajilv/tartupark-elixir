@@ -1,19 +1,16 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+// import VeeValidate from 'vee-validate';
 
 const jQuery = window.jQuery || require("jquery");
 // const moment = window.moment || require("moment");
 
 import datePicker from 'vue-bootstrap-datetimepicker';
-Vue.use(datePicker);
-
 import 'eonasdan-bootstrap-datetimepicker';
-
 import "axios";
 import "./socket";
 import "phoenix";
 import auth from "./auth";
-
 import booking from "./booking";
 import login from "./login";
 import main from "./main";
@@ -40,6 +37,8 @@ const afterAuth = (_to, from, next) => {
 }
 
 Vue.use(VueRouter);
+//Vue.use(VeeValidate);
+Vue.use(datePicker);
 
 Vue.component("booking", booking);
 

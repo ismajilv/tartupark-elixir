@@ -1,9 +1,9 @@
 <template>
 <div>
-  <div class="form-group">
+  <div class="form-group" >
     <label class="control-label col-sm-3" for="parking_address">Parking address:</label>
     <div class="col-sm-9">
-      <input type="text" class="form-control" id="parking_address" v-model="parking_address">
+      <input type="text" class="form-control" id="parking_address" v-model="parking_address" required> 
     </div>
   </div>
 
@@ -36,7 +36,6 @@
     <label for="realtime">Real Time</label>
     <select v-model="rt_payment_selected" id="real_time_payment_type">
       <option disabled value="">When will you pay?</option>
-      <option>On the Spot</option>
       <option>End of Month</option>
     </select>
   </div>
@@ -76,7 +75,7 @@ export default {
             parking_end_time: new Date(),
             parking_search_radius: '100 meters',
             h_payment_selected: "Before Parking",
-            rt_payment_selected: "On the Spot",
+            rt_payment_selected: "End of Month",
             config: {
               format: 'DD/MM/YYYY H:m:s',
               useCurrent: false,
@@ -123,27 +122,29 @@ export default {
                 var e_date = null;
                 var hps = null;
                 var rtps = this.rt_payment_selected;
-                var p_type = this.rt_payment_selected;
+                var p_time = this.rt_payment_selected;
               } else {
                 var s_date = this.parking_start_time;
                 var e_date = this.parking_end_time;
                 var hps = this.h_payment_selected;
                 var rtps = null;
-                var p_type = this.h_payment_selected;
+                var p_time = this.h_payment_selected;
               }
 
               // console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + 
               //             " - enddate: " + e_date + " - parking_type: " + this.parking_type + 
               //             " - selected: " + this.parking_search_radius + 
               //             " - hps: " + hps + " - rtps: " + rtps);
-              console.log("parking type: "+p_type);
+              console.log("payment time: "+p_time);
+              console.log("payment type: "+this.parking_type);
 
               axios.post("/api/search",
                   { lngLat: lngLat, 
                     parkingStartTime: s_date,
                     parkingEndTime: e_date,
                     parkingSearchRadius: this.parking_search_radius,
-                    paymentTime: p_type
+                    paymentTime: p_time,
+                    paymentType: this.parking_type
                     // ,
                     // hourlyPaymentType: hps,
                     // realTimePaymentType: rtps
