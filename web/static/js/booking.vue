@@ -118,7 +118,7 @@ export default {
                 lat: results[0].geometry.location.lat()
               }
 
-              if (this.picked == "Real Time"){
+              if (this.parking_type == "Real Time"){
                 var s_date = null;
                 var e_date = null;
                 var hps = null;
