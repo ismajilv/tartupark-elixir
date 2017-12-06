@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 // import VeeValidate from 'vee-validate';
 
 const jQuery = window.jQuery || require("jquery");
-// const moment = window.moment || require("moment");
+const moment = window.moment || require("moment");
 
 import datePicker from 'vue-bootstrap-datetimepicker';
 import 'eonasdan-bootstrap-datetimepicker';
@@ -69,7 +69,7 @@ $(".toggle").click(function() {
         "slow"
       );
   });
-  
+
   // $( ".selector" ).slider({
   //   max: 5000,
   //   min: 0,
