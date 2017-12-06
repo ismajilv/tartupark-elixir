@@ -59,7 +59,7 @@
       </div>
     </div>
   </div> <!--  end of form-group -->
-  <div id="map" style="width:100%;height:300px; margin-top:75px"></div>
+  <div id="map" style="width:100%;height:500px; margin-top:75px"></div>
 </div>
 </template>
 
@@ -253,15 +253,15 @@ export default {
 
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
-                          var contenString = "Hourly payment is " + coordsForMarker[i][3] +   ". Euro <br>" +
-                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" +
-                                              "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>" +
-                                              "Free time limit is " + coordsForMarker[i][6] +    ". <br>" +
-                                              // "Parking starts at " + coordsForMarker[i][7] +    "<br>" +
-                                              // "Parking ends at " + coordsForMarker[i][8] +    "<br>" +
-                                              "Payment time is " + coordsForMarker[i][9] +    ". <br>" +
-                                              "Payment type is " + coordsForMarker[i][10] + ". <br>" +
-                                              "<button type='submit' class='btn btn-default'>Choose</button>"
+                          var contenString = "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"                                    
+
+                          if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
+                            contenString += "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>" +
+                                              "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>" +
+                                              "Free time limit is " + coordsForMarker[i][6] +    " minutes. <br>"
+                          }
+
+                          contenString += "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
                             infowindow.setContent(contenString);
