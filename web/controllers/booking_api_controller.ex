@@ -78,10 +78,6 @@ defmodule Tartupark.BookingAPIController do
                             paymentType: params["paymentType"]
                           }
                           end))
-
-                          IO.inspect "****************************************"
-                          IO.inspect locations
-                          IO.inspect "****************************************"
     conn
     |> put_status(200)
     |> json(locations)
