@@ -137,13 +137,6 @@ export default {
                 var realTimePaymentStatus = null;
                 var paymentTime = this.h_payment_selected;
               }
-              
-              // console.log("lngltd: "+lngLat);
-              // console.log("parkingStartTime: " + parkingStartTime);
-              // console.log("parkingEndTime: "+parkingEndTime);
-              // console.log("parkingSearchRadius: "+this.parking_search_radius);
-              // console.log("paymentTime: "+paymentTime);
-              // console.log("paymentType: "+this.payment_type);
 
               axios.post("/api/search",
                   { lngLat: lngLat,
@@ -168,12 +161,18 @@ export default {
                           mapTypeId: google.maps.MapTypeId.ROADMAP
                       });
                       var coordsForMarker = [];
-                      // console.log("area: " + this.searchingResults[0].area);
-                      // console.log("lenght: " + this.searchingResults[0].area.length);  
+
+                      var zoneA = "Zone A";
+                      var zoneB = "Zone B";
+                      var freeZone = "Free zone";
+                      var Building60 = "Building parking spot for 60 min";
+                      var Building120 = "Building parking spot for 120 min";
+                      var FreeForBus = "Free parking spot for buses";
+                      var FreeForMotorAndMoped = "Free parking spot for motocycles and mopeds";
 
                       for(var j = 0; j < searchingResults.length; j++){
                         for(var i = 0; i < searchingResults[j].area.length; i++){
-                          var coord = [i+j, searchingResults[j].area[i].lat, searchingResults[j].area[i].lng, 
+                          var coord = [i+j, searchingResults[j].area[i].lat, searchingResults[j].area[i].lng,
                                         searchingResults[j].zone.costHourly,
                                         searchingResults[j].zone.costRealTime,
                                         searchingResults[j].zone.description,
@@ -181,58 +180,79 @@ export default {
                                         searchingResults[j].parkingStartTime,
                                         searchingResults[j].parkingEndTime,
                                         searchingResults[j].paymentTime,
-                                        searchingResults[j].paymentType];
+                                        searchingResults[j].paymentType,
+                                        searchingResults[j].shape];
                         }
                         coordsForMarker[j] = coord;
-                      }  
-                      // console.log(coordsForMarker);
+                      }
 
-                      searchingResults.map(function(area){
-                        if(area.shape == "line"){
+                      for(var j = 0; j < searchingResults.length; j++){
+
+                        var color = "#FF0000";
+                        var shape = searchingResults[j].shape;
+
+                        var flightPlanCoordinates = [];
+                        for(var x = 0; x < searchingResults[j].area.length; x++){
+                            var coortinates = {lat: searchingResults[j].area[x].lat, lng: searchingResults[j].area[x].lng}
+                            flightPlanCoordinates[x] = coortinates;
+                        }
+
+                        if(coordsForMarker[j][5] == zoneB){
+                          color = "#4286f4";
+                        } else if(coordsForMarker[j][5] == freeZone){
+                          color = "#92a06b";
+                        } else if(coordsForMarker[j][5] == Building60){
+                          color = "#ff810c";
+                        } else if(coordsForMarker[j][5] == Building120){
+                          color = "#b50594";
+                        } else if(coordsForMarker[j][5] == FreeForBus){
+                          color = "#100b7c";
+                        } else if(coordsForMarker[j][5] == FreeForMotorAndMoped){
+                          color = "#3b3799";
+                        }
+
+                        if(shape == "polygon"){
+                           var flightPath = new google.maps.Polygon({
+                              paths: flightPlanCoordinates,
+                              strokeColor: color,
+                              strokeOpacity: 0.8,
+                              strokeWeight: 2,
+                              fillColor: color,
+                              fillOpacity: 0.35
+                          });
+                        } else{
                           var flightPath = new google.maps.Polyline({
-                            path: area.area,
+                            path: flightPlanCoordinates,
                             geodesic: true,
-                            strokeColor: '#FF0000',
-                            strokeOpacity: 0.5,
+                            strokeColor: color,
+                            strokeOpacity: 1.0,
                             strokeWeight: 6
                           });
-                        }else{
-                          let polynomCoords = area.area;
-                          polynomCoords.push(polynomCoords[0]);
-                          // console.log("1: --> " + polynomCoords);
-                          // console.log("2: --> " + polynomCoords[0]);
-                          var flightPath = new google.maps.Polygon({
-                            paths: polynomCoords,
-                            strokeColor: '#FF0000',
-                            strokeOpacity: 0.8,
-                            strokeWeight: 2,
-                            fillColor: '#FF0000',
-                            fillOpacity: 0.35
-                          });
                         }
-                        
+
                         flightPath.setMap(map);
-                      });
+                      }
 
                       var marker;
-                      for (var i = 0; i < coordsForMarker.length; i++) {  
+                      for (var i = 0; i < coordsForMarker.length; i++) {
                         marker = new google.maps.Marker({
                           position: new google.maps.LatLng(coordsForMarker[i][1], coordsForMarker[i][2]),
                           map: map
                         });
-                                        
+
                         var infowindow = new google.maps.InfoWindow({});
-                        
+
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                          
+
                           var contenString = "Hourly payment is " + coordsForMarker[i][3] +   ". Euro <br>" +
-                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" + 
+                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" +
                                               "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>" +
                                               "Free time limit is " + coordsForMarker[i][6] +    ". <br>" +
                                               // "Parking starts at " + coordsForMarker[i][7] +    "<br>" +
                                               // "Parking ends at " + coordsForMarker[i][8] +    "<br>" +
                                               "Payment time is " + coordsForMarker[i][9] +    ". <br>" +
-                                              "Payment type is " + coordsForMarker[i][10] + "."
+                                              "Payment type is " + coordsForMarker[i][10] + ". <br>" +
+                                              "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
                             infowindow.setContent(contenString);
@@ -253,7 +273,6 @@ export default {
     mounted: function() {
 
         navigator.geolocation.getCurrentPosition(position => {
-          // console.log(position);
           let loc = {lat: position.coords.latitude, lng: position.coords.longitude};
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({location: loc}, (results, status) => {
