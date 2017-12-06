@@ -74,7 +74,7 @@ export default {
             parking_start_time: new Date(),
             parking_end_time: new Date(),
             parking_search_radius: '100 meters',
-            h_payment_selected: "Before Parking",
+            h_payment_selected: "After Parking",
             rt_payment_selected: "End of Month",
             config: {
               format: 'DD/MM/YYYY H:m:s',
