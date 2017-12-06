@@ -153,8 +153,6 @@ export default {
                   .then(response => {
                       var searchingResults = response.data;
                       this.searchingResults = [searchingResults[0]];
-                      // console.log("search1: " + searchingResults);
-                      // console.log("search2: " + searchingResults[0].zone.costHourly);
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
@@ -172,7 +170,7 @@ export default {
 
                       for(var j = 0; j < searchingResults.length; j++){
                         for(var i = 0; i < searchingResults[j].area.length; i++){
-                          var coord = [i+j, searchingResults[j].area[i].lat, searchingResults[j].area[i].lng,
+                          var coord = [i+j, searchingResults[j].area[i].lat, searchingResults[j].area[i].lng, 
                                         searchingResults[j].zone.costHourly,
                                         searchingResults[j].zone.costRealTime,
                                         searchingResults[j].zone.description,
@@ -184,13 +182,13 @@ export default {
                                         searchingResults[j].shape];
                         }
                         coordsForMarker[j] = coord;
-                      }
+                      }  
 
                       for(var j = 0; j < searchingResults.length; j++){
 
                         var color = "#FF0000";
                         var shape = searchingResults[j].shape;
-
+                        
                         var flightPlanCoordinates = [];
                         for(var x = 0; x < searchingResults[j].area.length; x++){
                             var coortinates = {lat: searchingResults[j].area[x].lat, lng: searchingResults[j].area[x].lng}
@@ -234,25 +232,25 @@ export default {
                       }
 
                       var marker;
-                      for (var i = 0; i < coordsForMarker.length; i++) {
+                      for (var i = 0; i < coordsForMarker.length; i++) {  
                         marker = new google.maps.Marker({
                           position: new google.maps.LatLng(coordsForMarker[i][1], coordsForMarker[i][2]),
                           map: map
                         });
-
+                                        
                         var infowindow = new google.maps.InfoWindow({});
-
+                        
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
-
+                          
                           var contenString = "Hourly payment is " + coordsForMarker[i][3] +   ". Euro <br>" +
-                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" +
+                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" + 
                                               "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>" +
                                               "Free time limit is " + coordsForMarker[i][6] +    ". <br>" +
                                               // "Parking starts at " + coordsForMarker[i][7] +    "<br>" +
                                               // "Parking ends at " + coordsForMarker[i][8] +    "<br>" +
                                               "Payment time is " + coordsForMarker[i][9] +    ". <br>" +
-                                              "Payment type is " + coordsForMarker[i][10] + ". <br>" +
-                                              "<button type='submit' class='btn btn-default'>Choose</button>"
+                                              "Payment type is " + coordsForMarker[i][10] + ". <br>" + 
+                                              "<button type='submit' class='btn btn-default'>Choose</button>" 
 
                           return function() {
                             infowindow.setContent(contenString);
