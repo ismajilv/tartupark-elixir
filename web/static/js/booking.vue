@@ -139,6 +139,8 @@ export default {
                 var paymentTime = this.h_payment_selected;
               }
 
+              console.log(parkingStartTime.toISOString());
+
               axios.post("/api/search",
                   { lngLat: lngLat,
                     parkingStartTime: parkingStartTime,
