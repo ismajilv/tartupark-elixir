@@ -261,7 +261,7 @@ export default {
                           contenString += "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
-                            infowindow.setContent(contenString);
+                            infowindow.setContent(contenString); 
                             infowindow.open(map, marker);
                           }
                         })(marker, i));
