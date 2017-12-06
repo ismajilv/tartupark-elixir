@@ -22,7 +22,7 @@ defmodule Tartupark.BookingAPIController do
   def search(conn, params) do
     %{"lngLat" => %{"lat" => lat, "lng" => lng}} =  params
     point = %Geo.Point{coordinates: {lng, lat}, srid: 4326}
-    radius = Regex.run(~/\d+/, params.parkingSearchRadius) |> Integer.parse
+    radius = Regex.run(~r/\d+/, params["parkingSearchRadius"]) |> List.first |> Integer.parse |> elem(0)
     parkings = Place.within(Place, point, radius)
     |> Place.order_by_nearest(point)
     |> Place.select_with_distance(point)
@@ -49,11 +49,11 @@ defmodule Tartupark.BookingAPIController do
                                       zone_id: park_place.zone.id,
                                       tag: park_place.zone.tag
                                     },
-                            parkingStartTime: params.parkingStartTime,
-                            parkingEndTime: params.parkingEndTime,
-                            parkingSearchRadius: params.parkingSearchRadius,
-                            paymentTime: params.paymentTime,
-                            paymentType: params.paymentType
+                            parkingStartTime: params["parkingStartTime"],
+                            parkingEndTime: params["parkingEndTime"],
+                            parkingSearchRadius: params["parkingSearchRadius"],
+                            paymentTime: params["paymentTime"],
+                            paymentType: params["paymentType"]
                           }
                           end))
     conn
