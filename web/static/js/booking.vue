@@ -54,7 +54,7 @@
     <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
-        <button type="submit" class="btn btn-default" v-on:click="submit" v-if="!!searchingResults && (searchingResults.length == 1)">Submit</button>
+        <button type="submit" class="btn btn-default" v-on:click="submit" v-if="(searchingResults != null) && (searchingResults.length == 1)">Submit</button>
       </div>
     </div>
   </div> <!--  end of form-group -->
@@ -89,15 +89,17 @@ export default {
     },
     methods: {
         submit: function() {
-          axios.post("/api/bookings",
-              {parking_address: this.parking_address},
-              {headers: auth.getAuthHeader()})
-              .then(response => {
-                  console.log(response);
-              })
-              .catch(error => {
-                  console.log(error);
-              });
+          if(this.searchingResults != null){
+            axios.post("/api/bookings",
+                {parking_address: this.searchingResults},
+                {headers: auth.getAuthHeader()})
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            }
         },
         dateTimeStatusRead: function(){
           document.getElementById("parking_start_time").readOnly = true;
@@ -156,13 +158,13 @@ export default {
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var searchingResults = response.data;
-                      this.searchingResults = searchingResults;
+                      this.searchingResults = [searchingResults[0]];
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
                           mapTypeId: google.maps.MapTypeId.ROADMAP
                       });
-                      // console.log(searchingResults);
+                      console.log(this.searchingResults);
                       searchingResults.map(function(area){
                         if(area.shape == "line"){
                           var flightPath = new google.maps.Polyline({
