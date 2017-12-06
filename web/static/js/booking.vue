@@ -123,35 +123,35 @@ export default {
 
               if (this.parking_type == "Real Time"){
                 var s_date = null;
-                var e_date = null;
-                var hps = null;
-                var rtps = this.rt_payment_selected;
-                var p_time = this.rt_payment_selected;
+                var parkingEndTime = null;
+                var hourlyPaymentStatus = null;
+                var realTimePaymentStatus = this.rt_payment_selected;
+                var paymentTime = this.rt_payment_selected;
               } else {
-                var s_date = this.parking_start_time;
-                var e_date = this.parking_end_time;
-                var hps = this.h_payment_selected;
-                var rtps = null;
-                var p_time = this.h_payment_selected;
+                var parkingStartTime = this.parking_start_time;
+                var parkingEndTime = this.parking_end_time;
+                var hourlyPaymentStatus = this.h_payment_selected;
+                var realTimePaymentStatus = null;
+                var paymentTime = this.h_payment_selected;
               }
 
-              console.log("parking address: " + this.parking_address +" - startdate: "+ s_date +
-                          " - enddate: " + e_date + " - parking_type: " + this.parking_type +
-                          " - selected: " + this.parking_search_radius +
-                          " - hps: " + hps + " - rtps: " + rtps);
-              // console.log("payment time: "+p_time);
+              // console.log("parking address: " + this.parking_address +" - startdate: "+ parkingStartTime +
+              //             " - enddate: " + parkingEndTime + " - parking_type: " + this.parking_type +
+              //             " - selected: " + this.parking_search_radius +
+              //             " - hourlyPaymentStatus: " + hourlyPaymentStatus + " - realTimePaymentStatus: " + realTimePaymentStatus);
+              // console.log("payment time: "+paymentTime);
               // console.log("payment type: "+this.parking_type);
 
               axios.post("/api/search",
                   { lngLat: lngLat,
-                    parkingStartTime: s_date,
-                    parkingEndTime: e_date,
+                    parkingStartTime: parkingStartTime,
+                    parkingEndTime: parkingEndTime,
                     parkingSearchRadius: this.parking_search_radius,
-                    paymentTime: p_time,
+                    paymentTime: paymentTime,
                     paymentType: this.parking_type
                     // ,
-                    // hourlyPaymentType: hps,
-                    // realTimePaymentType: rtps
+                    // hourlyPaymentType: hourlyPaymentStatus,
+                    // realTimePaymentType: realTimePaymentStatus
                     },
                   {headers: auth.getAuthHeader()})
                   .then(response => {
@@ -186,6 +186,7 @@ export default {
                           });
                         }
                         flightPath.setMap(map);
+                        // new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});
                       })
 
                   }).catch(error => {
