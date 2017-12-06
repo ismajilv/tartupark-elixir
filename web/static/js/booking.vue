@@ -1,61 +1,64 @@
 <template>
 <div>
-  <div class="form-group" >
-    <label class="control-label col-sm-3" for="parking_address">Parking address:</label>
-    <div class="col-sm-9">
-      <input type="text" class="form-control" id="parking_address" v-model="parking_address" required> 
+  <div class="form-group">
+    <div class="row">
+      <label class="control-label col-sm-3" for="parking_address">Parking address:</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" id="parking_address" v-model="parking_address" required>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label class="control-label col-sm-3" for="parking_start_time" style="margin: 10px auto;">Start Date:</label>
-    <div class="col-sm-9">
-      <date-picker v-model="parking_start_time" :config="config" id="parking_start_time" style="margin: 10px auto;"></date-picker>
+    <div class="row">
+      <label class="control-label col-sm-3" for="parking_start_time" style="margin: 10px auto;">Start Date:</label>
+      <div class="col-sm-9">
+        <date-picker v-model="parking_start_time" :config="config" id="parking_start_time" style="margin: 10px auto;"></date-picker>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label class="control-label col-sm-3" for="parking_end_time" style="margin-bottom: 10px;">End Date:</label>
-    <div class="col-sm-9">
-      <date-picker v-model="parking_end_time" :config="config" id="parking_end_time" style="margin-bottom: 10px;"></date-picker>
+    <div class="row">
+      <label class="control-label col-sm-3" for="parking_end_time" style="margin-bottom: 10px;">End Date:</label>
+      <div class="col-sm-9">
+        <date-picker v-model="parking_end_time" :config="config" id="parking_end_time" style="margin-bottom: 10px;"></date-picker>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
-    
-    <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="parking_type">
-    <label for="hourly">Hourly</label>
-    <select v-model="h_payment_selected" id="hourly_payment_type">
-      <option disabled value="">When will you pay?</option>
-      <option>Before Parking</option>
-      <option>After Parking</option>
-    </select>
-    
-    <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="parking_type">
-    <label for="realtime">Real Time</label>
-    <select v-model="rt_payment_selected" id="real_time_payment_type">
-      <option disabled value="">When will you pay?</option>
-      <option>End of Month</option>
-    </select>
-  </div>
-  
-  <div class="form-group">
-    <label class="control-label col-sm-3" style="margin-right: 15px;">Search Radius:</label>
-    <select v-model="parking_search_radius">
-      <option disabled value="">Please select redius</option>
-      <option>100 meters</option>
-      <option>500 meters</option>
-      <option>1000 meters</option>
-    </select>
-  </div>
+    <div class="row">
+      <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
 
-  <div class="form-group">
-    <div class="col-sm-offset-3 col-sm-9">
-      <button class="btn btn-default" v-on:click="search">Search</button>
-      <button class="btn btn-default" v-on:click="submit">Submit</button>
+      <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="parking_type">
+      <label for="hourly">Hourly</label>
+      <select v-model="h_payment_selected" id="hourly_payment_type">
+        <option disabled value="">When will you pay?</option>
+        <option>Before Parking</option>
+        <option>After Parking</option>
+      </select>
+
+      <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="parking_type">
+      <label for="realtime">Real Time</label>
+      <select v-model="rt_payment_selected" id="real_time_payment_type">
+        <option disabled value="">When will you pay?</option>
+        <option>End of Month</option>
+      </select>
     </div>
-  </div>
+
+    <div class="row">
+      <label class="control-label col-sm-3" style="margin-right: 15px;">Search Radius:</label>
+      <select v-model="parking_search_radius">
+        <option disabled value="">Please select redius</option>
+        <option>100 meters</option>
+        <option>500 meters</option>
+        <option>1000 meters</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-default" v-on:click="search" v-if="!searchingResults">Search</button>
+        <button class="btn btn-default" v-on:click="new_search" v-if="!!searchingResults">New Search</button>
+        <button type="submit" class="btn btn-default" v-on:click="submit" v-if="!!searchingResults && (searchingResults.length == 1)">Submit</button>
+      </div>
+    </div>
+  </div> <!--  end of form-group -->
   <div id="map" style="width:100%;height:300px; margin-top:75px"></div>
 </div>
 </template>
@@ -81,7 +84,8 @@ export default {
               useCurrent: false,
               showClear: true,
               showClose: true,
-            }
+            },
+            searchingResults: null
         }
     },
     methods: {
@@ -108,6 +112,9 @@ export default {
           document.getElementById("hourly_payment_type").style.visibility = "visible";
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
+        new_search: function(){
+          this.searchingResults = null;
+        },
         search: function() {
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({address:this.parking_address}, (results, status)=>{
@@ -131,15 +138,15 @@ export default {
                 var p_time = this.h_payment_selected;
               }
 
-              // console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + 
-              //             " - enddate: " + e_date + " - parking_type: " + this.parking_type + 
-              //             " - selected: " + this.parking_search_radius + 
+              // console.log("parking address: " + this.parking_address +" - startdate: "+ s_date +
+              //             " - enddate: " + e_date + " - parking_type: " + this.parking_type +
+              //             " - selected: " + this.parking_search_radius +
               //             " - hps: " + hps + " - rtps: " + rtps);
               console.log("payment time: "+p_time);
               console.log("payment type: "+this.parking_type);
 
               axios.post("/api/search",
-                  { lngLat: lngLat, 
+                  { lngLat: lngLat,
                     parkingStartTime: s_date,
                     parkingEndTime: e_date,
                     parkingSearchRadius: this.parking_search_radius,
@@ -151,14 +158,15 @@ export default {
                     },
                   {headers: auth.getAuthHeader()})
                   .then(response => {
-                      var locations = response.data;
+                      var searchingResults = response.data;
+                      this.searchingResults = searchingResults;
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
                           mapTypeId: google.maps.MapTypeId.ROADMAP
                       });
-                      console.log(locations);
-                      locations.map(function(area){
+                      // console.log(searchingResults);
+                      searchingResults.map(function(area){
                         if(area.shape == "line"){
                           var flightPath = new google.maps.Polyline({
                             path: area.area,
