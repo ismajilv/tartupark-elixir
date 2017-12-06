@@ -139,10 +139,13 @@ export default {
                 var paymentTime = this.h_payment_selected;
               }
 
+              var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
+              var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
+
               axios.post("/api/search",
                   { lngLat: lngLat,
-                    parkingStartTime: parkingStartTime,
-                    parkingEndTime: parkingEndTime,
+                    parkingStartTime: startTime,
+                    parkingEndTime: endTime,
                     parkingSearchRadius: this.parking_search_radius,
                     paymentTime: paymentTime,
                     paymentType: this.payment_type
