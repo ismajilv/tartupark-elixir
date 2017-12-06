@@ -8,6 +8,7 @@ defmodule Tartupark.User do
     field :encrypted_password, :string
     field :email, :string
     field :license_number, :string
+    has_many :bookings, Tartupark.Booking
     timestamps()
   end
 

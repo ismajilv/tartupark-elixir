@@ -1,7 +1,7 @@
 defmodule Tartupark.BookingAPIController do
   use Tartupark.Web, :controller
   import Ecto.Query, only: [from: 2]
-  alias Tartupark.Place
+  alias Tartupark.{Place, Booking}
 
   Postgrex.Types.define(Tartupark.PostgresTypes,
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
@@ -14,6 +14,7 @@ defmodule Tartupark.BookingAPIController do
        "capacity" => capacity,
        "distance" => distance,
        "id" => place_id,
+       "parkingStartTime" => parkingStartTime,
        "parkingEndTime" => parkingEndTime,
        "parkingSearchRadius" => parkingSearchRadius,
        "paymentTime" => paymentTime,
@@ -22,20 +23,16 @@ defmodule Tartupark.BookingAPIController do
        "zone" => %{"zone_id" => zone_id}
      } = params
 
-     # BOOKING
-     # field :startDateTime, :naive_datetime
-     # field :endDateTime, :naive_datetime
-     # field :paymentTime, :string
-     # belongs_to :place, Tartupark.Place
-     # belongs_to :user, Tartupark.User
-     # has_one :payment, Tartupark.Payment
+     start_time = parseToNaiveDateTime(parkingStartTime)
+     end_time = parseToNaiveDateTime(parkingEndTime)
+     booking_params = %{startDateTime: start_time, endDateTime: end_time, paymentTime: paymentTime, paymentType: paymentType}
+     booking_place_bind = Ecto.build_assoc(Repo.get(Place, place_id), :bookings, booking_params)
+     booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
+               |> Repo.insert!
 
-     # %{startDateTime:, endDateTime:, paymentTime:}
-
-
-      conn
-      |> put_status(201)
-      |> json(%{msg: "We are processing your request"})
+    conn
+    |> put_status(201)
+    |> json(%{msg: "We are processing your request", booking_id: booking.id})
   end
 
   def update(conn, _params) do
@@ -81,8 +78,20 @@ defmodule Tartupark.BookingAPIController do
                             paymentType: params["paymentType"]
                           }
                           end))
+
+                          IO.inspect "****************************************"
+                          IO.inspect locations
+                          IO.inspect "****************************************"
     conn
     |> put_status(200)
     |> json(locations)
+  end
+
+  def parseToNaiveDateTime(dateTime) do
+    scannedDateTime = Regex.scan(~r/\d+/, dateTime, trim: true)
+    |> List.flatten
+    |> Enum.map(fn calendarElem -> Integer.parse(calendarElem) |> elem(0)  end)
+    [year, month, day, hour, minute, second, microsecond] = scannedDateTime
+    NaiveDateTime.new(year, month, day, hour, minute, second, microsecond) |> elem(1)
   end
 end

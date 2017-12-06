@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-// import VeeValidate from 'vee-validate';
 
 const jQuery = window.jQuery || require("jquery");
 const moment = window.moment || require("moment");
@@ -37,7 +36,6 @@ const afterAuth = (_to, from, next) => {
 }
 
 Vue.use(VueRouter);
-//Vue.use(VeeValidate);
 Vue.use(datePicker);
 
 Vue.component("booking", booking);

@@ -10,7 +10,8 @@ alias Tartupark.{Repo, Zone, Place, User}
 |> Enum.map(fn zone_data -> Zone.changeset(%Zone{}, zone_data) end)
 |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
 
-[%{fullName: "Soltan Garayev", username: "soltankara", password: "parool", email: "soltankara@gmail.com", license_number: "111SSS000"}]
+[%{fullName: "Soltan Garayev", username: "soltankara", password: "parool", email: "soltankara@gmail.com", license_number: "111SSS000"},
+ %{username: "eldar", password: "parool", fullName: "Eldar Hasanov", email: "email@example.com", license_number: "AAASSSDDD2233"}]
 |> Enum.map(fn user_data -> User.changeset(%User{}, user_data) end)
 |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
 

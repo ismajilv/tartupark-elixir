@@ -25,7 +25,7 @@
     <div class="row">
       <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
 
-      <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="parking_type">
+      <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="payment_type">
       <label for="hourly">Hourly</label>
       <select v-model="h_payment_selected" id="hourly_payment_type">
         <option disabled value="">When will you pay?</option>
@@ -33,10 +33,11 @@
         <option>After Parking</option>
       </select>
 
-      <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="parking_type">
+      <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="payment_type">
       <label for="realtime">Real Time</label>
       <select v-model="rt_payment_selected" id="real_time_payment_type">
         <option disabled value="">When will you pay?</option>
+        <option>After Parking</option>
         <option>End of Month</option>
       </select>
     </div>
@@ -72,11 +73,11 @@ export default {
         return {
             parking_address: "",
             message: "",
-            parking_type: "Real Time",
+            payment_type: "Real Time",
             parking_start_time: new Date(),
             parking_end_time: new Date(),
             parking_search_radius: '100 meters',
-            h_payment_selected: "After Parking",
+            h_payment_selected: "Before Parking",
             rt_payment_selected: "End of Month",
             config: {
               format: 'DD/MM/YYYY H:m:s',
@@ -102,13 +103,13 @@ export default {
             }
         },
         dateTimeStatusRead: function(){
-          document.getElementById("parking_start_time").readOnly = true;
+          // document.getElementById("parking_start_time").readOnly = true;
           document.getElementById("parking_end_time").readOnly = true;
           document.getElementById("hourly_payment_type").style.visibility = "hidden";
           document.getElementById("real_time_payment_type").style.visibility = "visible";
         },
         dateTimeStatusWrite: function(){
-          document.getElementById("parking_start_time").readOnly = false;
+          // document.getElementById("parking_start_time").readOnly = false;
           document.getElementById("parking_end_time").readOnly = false;
           document.getElementById("hourly_payment_type").style.visibility = "visible";
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
@@ -123,48 +124,69 @@ export default {
                 lat: results[0].geometry.location.lat()
               }
 
-              if (this.parking_type == "Real Time"){
-                var s_date = null;
-                var e_date = null;
-                var hps = null;
-                var rtps = this.rt_payment_selected;
-                var p_time = this.rt_payment_selected;
+              if (this.payment_type == "Real Time"){
+                var parkingStartTime = this.parking_start_time;
+                var parkingEndTime = null;
+                var hourlyPaymentStatus = null;
+                var realTimePaymentStatus = this.rt_payment_selected;
+                var paymentTime = this.rt_payment_selected;
               } else {
-                var s_date = this.parking_start_time;
-                var e_date = this.parking_end_time;
-                var hps = this.h_payment_selected;
-                var rtps = null;
-                var p_time = this.h_payment_selected;
+                var parkingStartTime = this.parking_start_time;
+                var parkingEndTime = this.parking_end_time;
+                var hourlyPaymentStatus = this.h_payment_selected;
+                var realTimePaymentStatus = null;
+                var paymentTime = this.h_payment_selected;
               }
-
-              console.log("parking address: " + this.parking_address +" - startdate: "+ s_date +
-                          " - enddate: " + e_date + " - parking_type: " + this.parking_type +
-                          " - selected: " + this.parking_search_radius +
-                          " - hps: " + hps + " - rtps: " + rtps);
-              // console.log("payment time: "+p_time);
-              // console.log("payment type: "+this.parking_type);
+              
+              // console.log("lngltd: "+lngLat);
+              // console.log("parkingStartTime: " + parkingStartTime);
+              // console.log("parkingEndTime: "+parkingEndTime);
+              // console.log("parkingSearchRadius: "+this.parking_search_radius);
+              // console.log("paymentTime: "+paymentTime);
+              // console.log("paymentType: "+this.payment_type);
 
               axios.post("/api/search",
                   { lngLat: lngLat,
-                    parkingStartTime: s_date,
-                    parkingEndTime: e_date,
+                    parkingStartTime: parkingStartTime,
+                    parkingEndTime: parkingEndTime,
                     parkingSearchRadius: this.parking_search_radius,
-                    paymentTime: p_time,
-                    paymentType: this.parking_type
+                    paymentTime: paymentTime,
+                    paymentType: this.payment_type
                     // ,
-                    // hourlyPaymentType: hps,
-                    // realTimePaymentType: rtps
+                    // hourlyPaymentType: hourlyPaymentStatus,
+                    // realTimePaymentType: realTimePaymentStatus
                     },
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var searchingResults = response.data;
                       this.searchingResults = [searchingResults[0]];
+                      // console.log("search1: " + searchingResults);
+                      // console.log("search2: " + searchingResults[0].zone.costHourly);
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
                           mapTypeId: google.maps.MapTypeId.ROADMAP
                       });
-                      console.log(this.searchingResults);
+                      var coordsForMarker = [];
+                      // console.log("area: " + this.searchingResults[0].area);
+                      // console.log("lenght: " + this.searchingResults[0].area.length);  
+
+                      for(var j = 0; j < searchingResults.length; j++){
+                        for(var i = 0; i < searchingResults[j].area.length; i++){
+                          var coord = [i+j, searchingResults[j].area[i].lat, searchingResults[j].area[i].lng, 
+                                        searchingResults[j].zone.costHourly,
+                                        searchingResults[j].zone.costRealTime,
+                                        searchingResults[j].zone.description,
+                                        searchingResults[j].zone.freeTimeLimit,
+                                        searchingResults[j].parkingStartTime,
+                                        searchingResults[j].parkingEndTime,
+                                        searchingResults[j].paymentTime,
+                                        searchingResults[j].paymentType];
+                        }
+                        coordsForMarker[j] = coord;
+                      }  
+                      // console.log(coordsForMarker);
+
                       searchingResults.map(function(area){
                         if(area.shape == "line"){
                           var flightPath = new google.maps.Polyline({
@@ -177,7 +199,8 @@ export default {
                         }else{
                           let polynomCoords = area.area;
                           polynomCoords.push(polynomCoords[0]);
-                          // console.log(polynomCoords);
+                          // console.log("1: --> " + polynomCoords);
+                          // console.log("2: --> " + polynomCoords[0]);
                           var flightPath = new google.maps.Polygon({
                             paths: polynomCoords,
                             strokeColor: '#FF0000',
@@ -187,8 +210,36 @@ export default {
                             fillOpacity: 0.35
                           });
                         }
+                        
                         flightPath.setMap(map);
-                      })
+                      });
+
+                      var marker;
+                      for (var i = 0; i < coordsForMarker.length; i++) {  
+                        marker = new google.maps.Marker({
+                          position: new google.maps.LatLng(coordsForMarker[i][1], coordsForMarker[i][2]),
+                          map: map
+                        });
+                                        
+                        var infowindow = new google.maps.InfoWindow({});
+                        
+                        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                          
+                          var contenString = "Hourly payment is " + coordsForMarker[i][3] +   ". Euro <br>" +
+                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" + 
+                                              "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>" +
+                                              "Free time limit is " + coordsForMarker[i][6] +    ". <br>" +
+                                              // "Parking starts at " + coordsForMarker[i][7] +    "<br>" +
+                                              // "Parking ends at " + coordsForMarker[i][8] +    "<br>" +
+                                              "Payment time is " + coordsForMarker[i][9] +    ". <br>" +
+                                              "Payment type is " + coordsForMarker[i][10] + "."
+
+                          return function() {
+                            infowindow.setContent(contenString);
+                            infowindow.open(map, marker);
+                          }
+                        })(marker, i));
+                      }
 
                   }).catch(error => {
                       console.log(error);
@@ -216,13 +267,13 @@ export default {
           new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});
         });
 
-        if (this.parking_type == "Real Time"){
-          document.getElementById("parking_start_time").readOnly = true;
+        if (this.payment_type == "Real Time"){
+          // document.getElementById("parking_start_time").readOnly = true;
           document.getElementById("parking_end_time").readOnly = true;
           document.getElementById("hourly_payment_type").style.visibility = "hidden";
           document.getElementById("real_time_payment_type").style.visibility = "visible";
         } else {
-          document.getElementById("parking_start_time").readOnly = false;
+          // document.getElementById("parking_start_time").readOnly = false;
           document.getElementById("parking_end_time").readOnly = false;
           document.getElementById("hourly_payment_type").style.visibility = "visible";
           document.getElementById("real_time_payment_type").style.visibility = "hidden";

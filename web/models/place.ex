@@ -8,6 +8,7 @@ defmodule Tartupark.Place do
     field :distance, :float, virtual: true
     field :shape, :string, default: "line"
     belongs_to :zone, Tartupark.Zone
+    has_many :bookings, Tartupark.Booking
     timestamps()
   end
 
