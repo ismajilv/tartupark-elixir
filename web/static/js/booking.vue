@@ -46,7 +46,7 @@
       <select v-model="parking_search_radius">
         <option disabled value="">Please select redius</option>
         <option>100 meters</option>
-        <option>500 meters</option>
+        <option>500 meters</option> 
         <option>1000 meters</option>
       </select>
     </div>
@@ -83,7 +83,8 @@ export default {
               useCurrent: false,
               showClear: true,
               showClose: true,
-            }
+            },
+            searchingResults: null
         }
     },
     methods: {
@@ -110,6 +111,9 @@ export default {
           document.getElementById("hourly_payment_type").style.visibility = "visible";
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
+        new_search: function(){
+          this.searchingResults = null;
+        },
         search: function() {
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({address:this.parking_address}, (results, status)=>{
@@ -133,15 +137,15 @@ export default {
                 var p_time = this.h_payment_selected;
               }
 
-              // console.log("parking address: " + this.parking_address +" - startdate: "+ s_date + 
-              //             " - enddate: " + e_date + " - parking_type: " + this.parking_type + 
-              //             " - selected: " + this.parking_search_radius + 
+              // console.log("parking address: " + this.parking_address +" - startdate: "+ s_date +
+              //             " - enddate: " + e_date + " - parking_type: " + this.parking_type +
+              //             " - selected: " + this.parking_search_radius +
               //             " - hps: " + hps + " - rtps: " + rtps);
               console.log("payment time: "+p_time);
               console.log("payment type: "+this.parking_type);
 
               axios.post("/api/search",
-                  { lngLat: lngLat, 
+                  { lngLat: lngLat,
                     parkingStartTime: s_date,
                     parkingEndTime: e_date,
                     parkingSearchRadius: this.parking_search_radius,
@@ -153,14 +157,15 @@ export default {
                     },
                   {headers: auth.getAuthHeader()})
                   .then(response => {
-                      var locations = response.data;
+                      var searchingResults = response.data;
+                      this.searchingResults = searchingResults;
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
                           mapTypeId: google.maps.MapTypeId.ROADMAP
                       });
-                      console.log(locations);
-                      locations.map(function(area){
+                      // console.log(searchingResults);
+                      searchingResults.map(function(area){
                         if(area.shape == "line"){
                           var flightPath = new google.maps.Polyline({
                             path: area.area,
