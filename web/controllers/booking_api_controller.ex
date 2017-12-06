@@ -24,7 +24,10 @@ defmodule Tartupark.BookingAPIController do
      } = params
 
      start_time = parseToNaiveDateTime(parkingStartTime)
-     end_time = parseToNaiveDateTime(parkingEndTime)
+     case paymentType do
+         "Hourly" -> end_time = parseToNaiveDateTime(parkingEndTime)
+         _        -> end_time = nil
+     end
      booking_params = %{startDateTime: start_time, endDateTime: end_time, paymentTime: paymentTime, paymentType: paymentType}
      booking_place_bind = Ecto.build_assoc(Repo.get(Place, place_id), :bookings, booking_params)
      booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
@@ -78,10 +81,6 @@ defmodule Tartupark.BookingAPIController do
                             paymentType: params["paymentType"]
                           }
                           end))
-
-                          IO.inspect "****************************************"
-                          IO.inspect locations
-                          IO.inspect "****************************************"
     conn
     |> put_status(200)
     |> json(locations)
