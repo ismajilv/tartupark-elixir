@@ -37,7 +37,7 @@ const afterAuth = (_to, from, next) => {
 }
 
 Vue.use(VueRouter);
-//Vue.use(VeeValidate);
+// Vue.use(VeeValidate);
 Vue.use(datePicker);
 
 Vue.component("booking", booking);

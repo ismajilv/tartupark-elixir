@@ -1,61 +1,63 @@
 <template>
 <div>
-  <div class="form-group" >
-    <label class="control-label col-sm-3" for="parking_address">Parking address:</label>
-    <div class="col-sm-9">
-      <input type="text" class="form-control" id="parking_address" v-model="parking_address" required> 
+  <form>
+    <div class="form-group">
+      <label class="control-label col-sm-3" for="parking_address">Parking address:</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" required id="parking_address" v-model="parking_address" required> 
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label class="control-label col-sm-3" for="parking_start_time" style="margin: 10px auto;">Start Date:</label>
-    <div class="col-sm-9">
-      <date-picker v-model="parking_start_time" :config="config" id="parking_start_time" style="margin: 10px auto;"></date-picker>
+    <div class="form-group">
+      <label class="control-label col-sm-3" for="parking_start_time" style="margin: 10px auto;">Start Date:</label>
+      <div class="col-sm-9">
+        <date-picker v-model="parking_start_time" :config="config" required id="parking_start_time" style="margin: 10px auto;"></date-picker>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label class="control-label col-sm-3" for="parking_end_time" style="margin-bottom: 10px;">End Date:</label>
-    <div class="col-sm-9">
-      <date-picker v-model="parking_end_time" :config="config" id="parking_end_time" style="margin-bottom: 10px;"></date-picker>
+    <div class="form-group">
+      <label class="control-label col-sm-3" for="parking_end_time" style="margin-bottom: 10px;">End Date:</label>
+      <div class="col-sm-9">
+        <date-picker v-model="parking_end_time" :config="config" required id="parking_end_time" style="margin-bottom: 10px;"></date-picker>
+      </div>
     </div>
-  </div>
 
-  <div class="form-group">
-    <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
+    <div class="form-group">
+      <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
+      
+      <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="parking_type">
+      <label for="hourly">Hourly</label>
+      <select v-model="h_payment_selected" id="hourly_payment_type">
+        <option disabled value="">When will you pay?</option>
+        <option>Before Parking</option>
+        <option>After Parking</option>
+      </select>
+      
+      <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="parking_type">
+      <label for="realtime">Real Time</label>
+      <select v-model="rt_payment_selected" id="real_time_payment_type">
+        <option disabled value="">When will you pay?</option>
+        <option>End of Month</option>
+      </select>
+    </div>
     
-    <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="parking_type">
-    <label for="hourly">Hourly</label>
-    <select v-model="h_payment_selected" id="hourly_payment_type">
-      <option disabled value="">When will you pay?</option>
-      <option>Before Parking</option>
-      <option>After Parking</option>
-    </select>
-    
-    <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="parking_type">
-    <label for="realtime">Real Time</label>
-    <select v-model="rt_payment_selected" id="real_time_payment_type">
-      <option disabled value="">When will you pay?</option>
-      <option>End of Month</option>
-    </select>
-  </div>
-  
-  <div class="form-group">
-    <label class="control-label col-sm-3" style="margin-right: 15px;">Search Radius:</label>
-    <select v-model="parking_search_radius">
-      <option disabled value="">Please select redius</option>
-      <option>100 meters</option>
-      <option>500 meters</option>
-      <option>1000 meters</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-offset-3 col-sm-9">
-      <button class="btn btn-default" v-on:click="search">Search</button>
-      <button class="btn btn-default" v-on:click="submit">Submit</button>
+    <div class="form-group">
+      <label class="control-label col-sm-3" style="margin-right: 15px;">Search Radius:</label>
+      <select v-model="parking_search_radius">
+        <option disabled value="">Please select redius</option>
+        <option>100 meters</option>
+        <option>500 meters</option>
+        <option>1000 meters</option>
+      </select>
     </div>
-  </div>
+
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button class="btn btn-default" v-on:click="search">Search</button>
+        <!-- <button class="btn btn-default" v-on:click="submit">Submit</button> -->
+      </div>
+    </div>
+  </form>
   <div id="map" style="width:100%;height:300px; margin-top:75px"></div>
 </div>
 </template>
