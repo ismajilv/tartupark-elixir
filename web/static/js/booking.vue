@@ -53,8 +53,7 @@
 
     <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
-        <button type="submit" class="btn btn-default" v-on:click="search" v-if="!searchingResults">Search</button>
-        <button class="btn btn-default" v-on:click="new_search" v-if="!!searchingResults">New Search</button>
+        <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
         <button type="submit" class="btn btn-default" v-on:click="submit" v-if="!!searchingResults && (searchingResults.length == 1)">Submit</button>
       </div>
     </div>
@@ -112,10 +111,8 @@ export default {
           document.getElementById("hourly_payment_type").style.visibility = "visible";
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
-        new_search: function(){
-          this.searchingResults = null;
-        },
         search: function() {
+          this.searchingResults = null;
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({address:this.parking_address}, (results, status)=>{
             if (status == 'OK') {
@@ -138,12 +135,12 @@ export default {
                 var p_time = this.h_payment_selected;
               }
 
-              // console.log("parking address: " + this.parking_address +" - startdate: "+ s_date +
-              //             " - enddate: " + e_date + " - parking_type: " + this.parking_type +
-              //             " - selected: " + this.parking_search_radius +
-              //             " - hps: " + hps + " - rtps: " + rtps);
-              console.log("payment time: "+p_time);
-              console.log("payment type: "+this.parking_type);
+              console.log("parking address: " + this.parking_address +" - startdate: "+ s_date +
+                          " - enddate: " + e_date + " - parking_type: " + this.parking_type +
+                          " - selected: " + this.parking_search_radius +
+                          " - hps: " + hps + " - rtps: " + rtps);
+              // console.log("payment time: "+p_time);
+              // console.log("payment type: "+this.parking_type);
 
               axios.post("/api/search",
                   { lngLat: lngLat,
@@ -203,7 +200,7 @@ export default {
     mounted: function() {
 
         navigator.geolocation.getCurrentPosition(position => {
-          console.log(position);
+          // console.log(position);
           let loc = {lat: position.coords.latitude, lng: position.coords.longitude};
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({location: loc}, (results, status) => {
