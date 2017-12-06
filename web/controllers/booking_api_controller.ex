@@ -32,13 +32,13 @@ defmodule Tartupark.BookingAPIController do
 
     conn
     |> put_status(201)
-    |> json(%{msg: "We are processing your request", booking_id: booking.id})
+    |> json(%{msg: "Booking has been done.", booking_id: booking.id})
   end
 
   def update(conn, _params) do
     conn
     |> put_status(200)
-    |> json(%{msg: "Notification sent to the customer"})
+    |> json(%{msg: "Notification sent to the custome"})
   end
 
   def search(conn, params) do

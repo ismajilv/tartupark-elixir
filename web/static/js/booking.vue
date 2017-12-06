@@ -55,7 +55,7 @@
     <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
-        <button type="submit" class="btn btn-default" v-on:click="submit" v-if="(searchingResults != null) && (searchingResults.length == 1)">Submit</button>
+        <button type="submit" class="btn btn-default" v-on:click="submit" v-if="(searchingResult != null) && (searchingResult.length == 1)">Submit</button>
       </div>
     </div>
   </div> <!--  end of form-group -->
@@ -85,17 +85,18 @@ export default {
               showClear: true,
               showClose: true,
             },
-            searchingResults: null
+            searchingResult: null
         }
     },
     methods: {
         submit: function() {
-          if(this.searchingResults != null){
+          if(this.searchingResult != null){
             axios.post("/api/bookings",
-                {parking_address: this.searchingResults},
+                {parking_address: this.searchingResult},
                 {headers: auth.getAuthHeader()})
                 .then(response => {
-                    console.log(response);
+                    this.searchingResult = null;
+                    console.log(response.data);
                 })
                 .catch(error => {
                     console.log(error);
@@ -115,7 +116,7 @@ export default {
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
         search: function() {
-          this.searchingResults = null;
+          this.searchingResult = null;
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({address:this.parking_address}, (results, status)=>{
             if (status == 'OK') {
@@ -151,8 +152,8 @@ export default {
                     },
                   {headers: auth.getAuthHeader()})
                   .then(response => {
-                      var searchingResults = response.data;
-                      this.searchingResults = [searchingResults[0]];
+                      var searchingResult = response.data;
+                      this.searchingResult = [searchingResult[0]];
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
@@ -168,30 +169,30 @@ export default {
                       var FreeForBus = "Free parking spot for buses";
                       var FreeForMotorAndMoped = "Free parking spot for motocycles and mopeds";
 
-                      for(var j = 0; j < searchingResults.length; j++){
-                        for(var i = 0; i < searchingResults[j].area.length; i++){
-                          var coord = [i+j, searchingResults[j].area[i].lat, searchingResults[j].area[i].lng, 
-                                        searchingResults[j].zone.costHourly,
-                                        searchingResults[j].zone.costRealTime,
-                                        searchingResults[j].zone.description,
-                                        searchingResults[j].zone.freeTimeLimit,
-                                        searchingResults[j].parkingStartTime,
-                                        searchingResults[j].parkingEndTime,
-                                        searchingResults[j].paymentTime,
-                                        searchingResults[j].paymentType,
-                                        searchingResults[j].shape];
+                      for(var j = 0; j < searchingResult.length; j++){
+                        for(var i = 0; i < searchingResult[j].area.length; i++){
+                          var coord = [i+j, searchingResult[j].area[i].lat, searchingResult[j].area[i].lng,
+                                        searchingResult[j].zone.costHourly,
+                                        searchingResult[j].zone.costRealTime,
+                                        searchingResult[j].zone.description,
+                                        searchingResult[j].zone.freeTimeLimit,
+                                        searchingResult[j].parkingStartTime,
+                                        searchingResult[j].parkingEndTime,
+                                        searchingResult[j].paymentTime,
+                                        searchingResult[j].paymentType,
+                                        searchingResult[j].shape];
                         }
                         coordsForMarker[j] = coord;
-                      }  
+                      }
 
-                      for(var j = 0; j < searchingResults.length; j++){
+                      for(var j = 0; j < searchingResult.length; j++){
 
                         var color = "#FF0000";
-                        var shape = searchingResults[j].shape;
-                        
+                        var shape = searchingResult[j].shape;
+
                         var flightPlanCoordinates = [];
-                        for(var x = 0; x < searchingResults[j].area.length; x++){
-                            var coortinates = {lat: searchingResults[j].area[x].lat, lng: searchingResults[j].area[x].lng}
+                        for(var x = 0; x < searchingResult[j].area.length; x++){
+                            var coortinates = {lat: searchingResult[j].area[x].lat, lng: searchingResult[j].area[x].lng}
                             flightPlanCoordinates[x] = coortinates;
                         }
 
@@ -232,25 +233,25 @@ export default {
                       }
 
                       var marker;
-                      for (var i = 0; i < coordsForMarker.length; i++) {  
+                      for (var i = 0; i < coordsForMarker.length; i++) {
                         marker = new google.maps.Marker({
                           position: new google.maps.LatLng(coordsForMarker[i][1], coordsForMarker[i][2]),
                           map: map
                         });
-                                        
+
                         var infowindow = new google.maps.InfoWindow({});
-                        
+
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                          
+
                           var contenString = "Hourly payment is " + coordsForMarker[i][3] +   ". Euro <br>" +
-                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" + 
+                                              "Real Time payment is " + coordsForMarker[i][4] +  ". Euro <br>" +
                                               "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>" +
                                               "Free time limit is " + coordsForMarker[i][6] +    ". <br>" +
                                               // "Parking starts at " + coordsForMarker[i][7] +    "<br>" +
                                               // "Parking ends at " + coordsForMarker[i][8] +    "<br>" +
                                               "Payment time is " + coordsForMarker[i][9] +    ". <br>" +
-                                              "Payment type is " + coordsForMarker[i][10] + ". <br>" + 
-                                              "<button type='submit' class='btn btn-default'>Choose</button>" 
+                                              "Payment type is " + coordsForMarker[i][10] + ". <br>" +
+                                              "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
                             infowindow.setContent(contenString);
