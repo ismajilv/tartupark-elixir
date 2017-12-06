@@ -55,7 +55,7 @@
     <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
-        <button type="submit" class="btn btn-default" v-on:click="submit" v-if="(searchingResult != null) && (searchingResult.length == 1)">Submit</button>
+        <button type="submit" class="btn btn-default" id="btn_submit" style="display: none;" v-on:click="submit">Submit</button>
       </div>
     </div>
   </div> <!--  end of form-group -->
@@ -156,6 +156,13 @@ export default {
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var searchingResult = response.data;
+
+                      if(searchingResult.length > 0){
+                        document.getElementById("btn_submit").style.display = "inline-block";
+                      } else {
+                        document.getElementById("btn_submit").style.display = "none";
+                      }
+
                       this.searchingResult = [searchingResult[0]];
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
