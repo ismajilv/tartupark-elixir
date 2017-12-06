@@ -5,6 +5,7 @@ defmodule Tartupark.Repo.Migrations.CreateBookingsTable do
     create table(:bookings) do
       add :startDateTime, :naive_datetime
       add :endDateTime, :naive_datetime
+      add :paymentTime, :string
       add :place_id, references(:places)
       add :user_id, references(:users)
 

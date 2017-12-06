@@ -7,7 +7,32 @@ defmodule Tartupark.BookingAPIController do
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
   json: Poison)
 
-  def create(conn, _params) do
+  def create(conn, %{"parking_address" => [params]}) do
+    user = Guardian.Plug.current_resource(conn)
+    %{
+       "area" => area,
+       "capacity" => capacity,
+       "distance" => distance,
+       "id" => place_id,
+       "parkingEndTime" => parkingEndTime,
+       "parkingSearchRadius" => parkingSearchRadius,
+       "paymentTime" => paymentTime,
+       "paymentType" => paymentType,
+       "shape" => shape,
+       "zone" => %{"zone_id" => zone_id}
+     } = params
+
+     # BOOKING
+     # field :startDateTime, :naive_datetime
+     # field :endDateTime, :naive_datetime
+     # field :paymentTime, :string
+     # belongs_to :place, Tartupark.Place
+     # belongs_to :user, Tartupark.User
+     # has_one :payment, Tartupark.Payment
+
+     # %{startDateTime:, endDateTime:, paymentTime:}
+
+
       conn
       |> put_status(201)
       |> json(%{msg: "We are processing your request"})
@@ -27,7 +52,7 @@ defmodule Tartupark.BookingAPIController do
     |> Place.order_by_nearest(point)
     |> Place.select_with_distance(point)
     |> Repo.all
-    |> Repo.preload :zone
+    |> Repo.preload(:zone)
 
     # IO.inspect parkings
 

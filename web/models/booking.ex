@@ -4,6 +4,7 @@ defmodule Tartupark.Booking do
   schema "bookings" do
     field :startDateTime, :naive_datetime
     field :endDateTime, :naive_datetime
+    field :paymentTime, :string
     belongs_to :place, Tartupark.Place
     belongs_to :user, Tartupark.User
     has_one :payment, Tartupark.Payment
