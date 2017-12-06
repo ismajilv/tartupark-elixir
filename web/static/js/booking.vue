@@ -144,7 +144,7 @@ export default {
               axios.post("/api/search",
                   { lngLat: lngLat,
                     parkingStartTime: parkingStartTime.toISOString(),
-                    parkingEndTime: parkingEndTime,
+                    parkingEndTime: parkingEndTime.toISOString(),
                     parkingSearchRadius: this.parking_search_radius,
                     paymentTime: paymentTime,
                     paymentType: this.payment_type
