@@ -1,5 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import moment from "moment";
 
 // const jQuery = window.jQuery || require("jquery");
 // const moment = window.moment || require("moment");
