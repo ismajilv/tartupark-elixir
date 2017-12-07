@@ -49,17 +49,14 @@ defmodule Tartupark.BookingAPIController do
     %{"lngLat" => %{"lat" => lat, "lng" => lng}} =  params
     point = %Geo.Point{coordinates: {lng, lat}, srid: 4326}
     radius = Regex.run(~r/\d+/, params["parkingSearchRadius"]) |> List.first |> Integer.parse |> elem(0)
-    query = Place.within(Place, point, radius)
+    parkings = Place.within(Place, point, radius)
     |> Place.order_by_nearest(point)
     |> Place.select_with_distance(point)
-
-    parkings = query
     |> Repo.all
     |> Repo.preload(:zone)
+    |> Repo.preload(:bookings)
 
-    bookings_per_place = filterByCapacity(query, params["parkingStartTime"], params["parkingEndTime"])
-
-    IO.inspect bookings_per_place
+    IO.inspect parkings
 
     locations = Enum.map(parkings,
                         (fn park_place ->
@@ -97,15 +94,5 @@ defmodule Tartupark.BookingAPIController do
     |> Enum.map(fn calendarElem -> Integer.parse(calendarElem) |> elem(0)  end)
     [year, month, day, hour, minute, second, microsecond] = scannedDateTime
     NaiveDateTime.new(year, month, day, hour, minute, second, microsecond) |> elem(1)
-  end
-
-  def filterByCapacity(query, startTime, endTime) do
-    parsedStart = parseToNaiveDateTime(startTime)
-    query = from place in query,
-            join: book in Booking, on: place.id == book.place_id,
-            group_by: place.id,
-            where: book.startDateTime >= ^parsedStart,
-            select: {place.id, count(book.id)}
-    Repo.all(query)
   end
 end

@@ -147,7 +147,6 @@ export default {
                   var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
                   var endTime = (parkingEndTime != null) ? parkingEndTime : null;
               }
-
               axios.post("/api/search",
                   { lngLat: lngLat,
                     parkingStartTime: startTime,
