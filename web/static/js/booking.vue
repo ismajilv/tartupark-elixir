@@ -67,6 +67,7 @@
 import axios from "axios";
 import socket from "./socket";
 import auth from "./auth";
+import moment from "moment";
 
 export default {
     data: function() {
@@ -146,6 +147,10 @@ export default {
               catch(err) {
                   var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
                   var endTime = (parkingEndTime != null) ? parkingEndTime : null;
+
+                  startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
+                  endTime = moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
+
               }
 
               axios.post("/api/search",
