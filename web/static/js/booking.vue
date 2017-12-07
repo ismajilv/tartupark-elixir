@@ -201,9 +201,12 @@ export default {
                                         searchingResult[j].parkingEndTime,
                                         searchingResult[j].paymentTime,
                                         searchingResult[j].paymentType,
-                                        searchingResult[j].shape];
+                                        searchingResult[j].shape,
+                                        searchingResult[j].capacity];
                         }
                         coordsForMarker[j] = coord;
+
+                        console.log("coordsForMarker: "+coordsForMarker);
                       }
 
                       for(var j = 0; j < searchingResult.length; j++){
@@ -272,6 +275,8 @@ export default {
                                               "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>" +
                                               "Free time limit is " + coordsForMarker[i][6] +    " minutes. <br>"
                           }
+
+                          contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br>"
 
                           var choosenLot = [
                             {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
