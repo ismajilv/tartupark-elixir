@@ -8,20 +8,19 @@ defmodule Tartupark.BookingAPIController do
   json: Poison)
 
   def create(conn, %{"parking_address" => [params]}) do
+
+    IO.inspect "*********************"
+    IO.inspect params
+    IO.inspect "*********************"
+
     user = Guardian.Plug.current_resource(conn)
     IO.inspect params
     %{
-       "area" => area,
-       "capacity" => capacity,
-       "distance" => distance,
        "id" => place_id,
        "parkingStartTime" => parkingStartTime,
        "parkingEndTime" => parkingEndTime,
-       "parkingSearchRadius" => parkingSearchRadius,
        "paymentTime" => paymentTime,
-       "paymentType" => paymentType,
-       "shape" => shape,
-       "zone" => %{"zone_id" => zone_id}
+       "paymentType" => paymentType
      } = params
 
      start_time = parseToNaiveDateTime(parkingStartTime)

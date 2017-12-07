@@ -149,7 +149,7 @@ export default {
                   var endTime = (parkingEndTime != null) ? parkingEndTime : null;
 
                   startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
-                  endTime = moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
+                  endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
               }
               axios.post("/api/search",
@@ -173,7 +173,7 @@ export default {
                         document.getElementById("btn_submit").style.display = "none";
                       }
 
-                      this.searchingResult = [searchingResult[0]];
+                      // this.searchingResult = [searchingResult[0]];
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
@@ -191,7 +191,7 @@ export default {
 
                       for(var j = 0; j < searchingResult.length; j++){
                         for(var i = 0; i < searchingResult[j].area.length; i++){
-                          var coord = [i+j, searchingResult[j].area[i].lat, searchingResult[j].area[i].lng,
+                          var coord = [searchingResult[j].id, searchingResult[j].area[i].lat, searchingResult[j].area[i].lng,
                                         searchingResult[j].zone.costHourly,
                                         searchingResult[j].zone.costRealTime,
                                         searchingResult[j].zone.description,
@@ -253,6 +253,7 @@ export default {
                       }
 
                       var marker;
+                      var that = this;
                       for (var i = 0; i < coordsForMarker.length; i++) {
                         marker = new google.maps.Marker({
                           position: new google.maps.LatLng(coordsForMarker[i][1], coordsForMarker[i][2]),
@@ -271,13 +272,21 @@ export default {
                                               "Free time limit is " + coordsForMarker[i][6] +    " minutes. <br>"
                           }
 
-                          contenString += "<button type='submit' class='btn btn-default'>Choose</button>"
+                          var choosenLot = [
+                            {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
+                            paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10]}
+                          ]; 
+
+                          that.searchingResult = choosenLot; 
+
+                          // contenString += "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
                             infowindow.setContent(contenString);
                             infowindow.open(map, marker);
                           }
                         })(marker, i));
+
                       }
 
                   }).catch(error => {
