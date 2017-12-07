@@ -97,6 +97,7 @@ export default {
                 {headers: auth.getAuthHeader()})
                 .then(response => {
                     this.searchingResult = null;
+                    document.getElementById("btn_submit").style.display = "none";
                     console.log(response.data);
                 })
                 .catch(error => {

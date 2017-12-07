@@ -38,7 +38,7 @@ defmodule Tartupark.BookingAPIControllerTest do
                     "id" => 1, 
                     "parkingEndTime" => nil, 
                     "parkingSearchRadius" => "500 meters", 
-                   "parkingStartTime" => "2017-12-07T12:10:17.693Z", 
+                    "parkingStartTime" => "2017-12-07T12:10:17.693Z", 
                     "paymentTime" => "End of Month", 
                     "paymentType" => "Real Time", 
                     "shape" => "polygon", 
