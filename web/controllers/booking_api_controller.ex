@@ -15,7 +15,7 @@ defmodule Tartupark.BookingAPIController do
        "capacity" => capacity,
        "distance" => distance,
        "id" => place_id,
-       "parkingStartTime" => parkingStartTime,
+      "parkingStartTime" => parkingStartTime,
        "parkingEndTime" => parkingEndTime,
        "parkingSearchRadius" => parkingSearchRadius,
        "paymentTime" => paymentTime,

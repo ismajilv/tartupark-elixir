@@ -13,7 +13,7 @@ config :logger, level: :warn
 config :tartupark, Tartupark.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "postgres",
+  password: "Georgia12",
   database: "tartupark_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox,
