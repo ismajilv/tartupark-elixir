@@ -205,8 +205,6 @@ export default {
                                         searchingResult[j].capacity];
                         }
                         coordsForMarker[j] = coord;
-
-                        console.log("coordsForMarker: "+coordsForMarker);
                       }
 
                       for(var j = 0; j < searchingResult.length; j++){
