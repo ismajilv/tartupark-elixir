@@ -28,24 +28,16 @@ defmodule Tartupark.BookingAPIControllerTest do
 
     @tag :login
     test "POST /api/bookings ", %{conn: conn} do
-        IO.inspect conn
-        params = %{
-            "parking_address" => [
-                %{
-                    "area" => [%{"lat" => 58.384039, "lng" => 26.718892}, %{"lat" => 58.384194, "lng" => 26.719535}, %{"lat" => 58.383635, "lng" => 26.720025}, %{"lat" => 58.3835, "lng" => 26.719102}], 
-                    "capacity" => 100, 
-                    "distance" => 293.71357411, 
-                    "id" => 1, 
-                    "parkingEndTime" => nil, 
-                    "parkingSearchRadius" => "500 meters", 
-                    "parkingStartTime" => "2017-12-07T12:10:17.693Z", 
+        
+        params = %{                    
+                    "id" => 40, 
+                    "parkingEndTime" => nil,                     
+                    "parkingStartTime" => "2017-12-07T13:57:43.090Z", 
                     "paymentTime" => "End of Month", 
-                    "paymentType" => "Real Time", 
-                    "shape" => "polygon", 
-                    "zone" => %{"costHourly" => 1, "costRealTime" => 0.08, "description" => "Zone B", "freeTimeLimit" => 90, "tag" => "ZB", "zone_id" => 2}
+                    "paymentType" => "Real Time"                            
                 }
-            ]
-        }
+               
+        
         conn = post(conn, "/api/bookings", params)
         assert conn.status == 201
     end
