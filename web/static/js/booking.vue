@@ -80,7 +80,7 @@ export default {
             h_payment_selected: "Before Parking",
             rt_payment_selected: "End of Month",
             config: {
-              format: 'DD/MM/YYYY H:m:s',
+              // format: 'DD/MM/YYYY H:m:s',
               useCurrent: false,
               showClear: true,
               showClose: true,
@@ -139,8 +139,14 @@ export default {
                 var paymentTime = this.h_payment_selected;
               }
 
-              var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
-              var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
+              try {
+                  var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
+                  var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
+              }
+              catch(err) {
+                  var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
+                  var endTime = (parkingEndTime != null) ? parkingEndTime : null;
+              }
 
               axios.post("/api/search",
                   { lngLat: lngLat,
