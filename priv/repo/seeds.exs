@@ -62,6 +62,19 @@ alias Tartupark.{Repo, Zone, Place, User}
 %{capacity: 10, zone_tag: "BUS", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.728980, 58.381087}, {26.729211, 58.380944}, {26.728884, 58.380857}, {26.728707, 58.381040}], srid: 4326}},
 %{capacity: 5, zone_tag: "BUS", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.734577, 58.377014}, {26.735140, 58.376702}], srid: 4326}},
 %{capacity: 5, zone_tag: "BUS", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.734952, 58.377245}, {26.735843, 58.376750}], srid: 4326}},
-%{capacity: 20, zone_tag: "M120", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.733349, 58.378530}, {26.732979, 58.378297}], srid: 4326}}]
+%{capacity: 20, zone_tag: "M120", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.733349, 58.378530}, {26.732979, 58.378297}], srid: 4326}}],
+%{capacity: 5, zone_tag: "BUS", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.725907, 58.376703}, {26.726041, 58.376633}, {26.725880, 58.376526}, {26.725671, 58.376636}], srid: 4326}}], #RIA ULIKULI
+%{capacity: 17, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.725968, 58.376729}, {26.724976, 58.377334}], srid: 4326}}], #ULIKOOLI 1
+%{capacity: 23, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.724854, 58.377416}, {26.723239, 58.378420}], srid: 4326}}], #ULIKOOLI 2
+%{capacity: 15, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.723174, 58.378488}, {26.722557, 58.379042}], srid: 4326}}], #ULIKOOLI 3
+%{capacity: 30, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.722509, 58.379090}, {26.722557, 58.379042}, {26.721227, 58.380083}], srid: 4326}}], #ULIKOOLI 4
+%{capacity: 10, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.720921, 58.380255}, {26.720572, 58.380792}], srid: 4326}}], #ULIKOOLI 5
+%{capacity: 20, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.720513, 58.380862}, {26.720368, 58.381568}], srid: 4326}}], #ULIKOOLI 6
+%{capacity: 20, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.720019, 58.381993}, {26.719413, 58.382620}], srid: 4326}}], #JAANI 1
+%{capacity: 20, zone_tag: "ZA", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.719333, 58.382679}, {26.718587, 58.383216}], srid: 4326}}], #JAANI 2
+%{capacity: 20, zone_tag: "MOTO", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.724941, 58.380584}, {26.724804, 58.380574}, {26.724771, 58.380647}, {26.724886, 58.380648}], srid: 4326}}], #RAEKOJA PLATS
+%{capacity: 30, zone_tag: "ZB", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.725192, 58.380887}, {26.725098, 58.381206}, {26.724843, 58.381342}, {26.725023, 58.380871}], srid: 4326}}], #RAEKOJA PLATS
+%{capacity: 7, zone_tag: "BUS", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.725219, 58.380886}, {26.725297, 58.380893}, {26.725305, 58.380939}, {26.725216, 58.380980}], srid: 4326}}], #RAEKOJA PLATS
+%{capacity: 2, zone_tag: "BUS", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.722953, 58.385142}, {26.722797, 58.385257}], srid: 4326}}] #EMAJIOE
 |> Enum.map(fn place_data -> Ecto.build_assoc(Repo.get_by!(Zone, tag: place_data.zone_tag), :places, place_data) end)
 |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
