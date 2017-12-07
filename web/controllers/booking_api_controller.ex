@@ -11,17 +11,11 @@ defmodule Tartupark.BookingAPIController do
     user = Guardian.Plug.current_resource(conn)
     IO.inspect params
     %{
-       "area" => area,
-       "capacity" => capacity,
-       "distance" => distance,
        "id" => place_id,
-      "parkingStartTime" => parkingStartTime,
+       "parkingStartTime" => parkingStartTime,
        "parkingEndTime" => parkingEndTime,
-       "parkingSearchRadius" => parkingSearchRadius,
        "paymentTime" => paymentTime,
-       "paymentType" => paymentType,
-       "shape" => shape,
-       "zone" => %{"zone_id" => zone_id}
+       "paymentType" => paymentType
      } = params
 
      start_time = parseToNaiveDateTime(parkingStartTime)

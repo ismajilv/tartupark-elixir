@@ -50,7 +50,7 @@ config :phoenix, :stacktrace_depth, 20
 config :tartupark, Tartupark.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
-  password: "Georgia12",
+  password: "postgres",
   database: "tartupark_dev",
   hostname: "localhost",
   pool_size: 10,
