@@ -253,7 +253,7 @@ export default {
 
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
-                          var contenString = "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"                                    
+                          var contenString = "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
 
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
                             contenString += "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>" +
@@ -264,7 +264,7 @@ export default {
                           contenString += "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
-                            infowindow.setContent(contenString); 
+                            infowindow.setContent(contenString);
                             infowindow.open(map, marker);
                           }
                         })(marker, i));
