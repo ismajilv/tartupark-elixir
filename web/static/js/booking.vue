@@ -2,9 +2,9 @@
 <div>
   <div class="form-group">
     <div class="row">
-      <label class="control-label col-sm-3" for="parking_address">Parking address:</label>
+      <label class="control-label col-sm-3" for="parking_address" style="margin: 10px auto;">Parking address:</label>
       <div class="col-sm-9">
-        <input type="text" class="form-control" id="parking_address" v-model="parking_address" required>
+        <input type="text" class="form-control" id="parking_address" style="margin: 10px auto;" v-model="parking_address" required>
       </div>
     </div>
 
@@ -16,16 +16,16 @@
     </div>
 
     <div class="row">
-      <label class="control-label col-sm-3" for="parking_end_time" style="margin-bottom: 10px;">End Date:</label>
+      <label class="control-label col-sm-3" for="parking_end_time" style="margin: 10px auto;">End Date:</label>
       <div class="col-sm-9">
-        <date-picker v-model="parking_end_time" :config="config" id="parking_end_time" style="margin-bottom: 10px;"></date-picker>
+        <date-picker v-model="parking_end_time" :config="config" id="parking_end_time" style="margin: 10px auto;"></date-picker>
       </div>
     </div>
 
     <div class="row">
-      <label class="control-label col-sm-3" style="margin-right: 15px;">Payment Type:</label>
+      <label class="control-label col-sm-3" style="margin: 10px auto; margin-right: 10px;">Payment Type:</label>
 
-      <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" v-model="payment_type">
+      <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" style="margin: 20px auto;"v-model="payment_type">
       <label for="hourly">Hourly</label>
       <select v-model="h_payment_selected" id="hourly_payment_type">
         <option disabled value="">When will you pay?</option>
@@ -43,8 +43,8 @@
     </div>
 
     <div class="row">
-      <label class="control-label col-sm-3" style="margin-right: 15px;">Search Radius:</label>
-      <select v-model="parking_search_radius">
+      <label class="control-label col-sm-3" style="margin: 10px auto; margin-right: 15px;">Search Radius:</label>
+      <select v-model="parking_search_radius" style="margin: 10px auto; margin-right: 15px;">
         <option disabled value="">Please select redius</option>
         <option>100 meters</option>
         <option>500 meters</option>
@@ -52,14 +52,29 @@
       </select>
     </div>
 
-    <div class="row">
+    <div class="row"> 
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
-        <button type="submit" class="btn btn-default" id="btn_submit" style="display: none;" v-on:click="submit">Submit</button>
+        <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Show Modal</button>
+        <!-- <button type="submit" class="btn btn-default" id="btn_submit" style="display: none;" v-on:click="submit">Submit</button> -->
       </div>
     </div>
   </div> <!--  end of form-group -->
-  <div id="map" style="width:100%;height:500px; margin-top:75px"></div>
+<div id="map" style="width:100%;height:500px; margin-top:25px"></div>
+  
+  <my-modal v-show="showModal" @close="showModal=false">
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+    </div>
+    <div class="form-group">
+      <label for="pwd">Password:</label>
+      <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
+    </div>
+    <button type="submit" class="btn btn-default" v-on:click="submit">Submit</button>
+  </my-modal>
+
+
 </div>
 </template>
 
@@ -72,6 +87,7 @@ import moment from "moment";
 export default {
     data: function() {
         return {
+            showModal: false,
             parking_address: "",
             message: "",
             payment_type: "Real Time",
@@ -86,17 +102,18 @@ export default {
               showClear: true,
               showClose: true,
             },
-            searchingResult: null
+            lotSearchingResult: null
         }
     },
     methods: {
         submit: function() {
-          if(this.searchingResult != null){
+          if(this.lotSearchingResult != null){
+            console.log("id ---------------------> "+this.lotSearchingResult[0].id);
             axios.post("/api/bookings",
-                {parking_address: this.searchingResult},
+                {parking_address: this.lotSearchingResult},
                 {headers: auth.getAuthHeader()})
                 .then(response => {
-                    this.searchingResult = null;
+                    this.lotSearchingResult = null;
                     document.getElementById("btn_submit").style.display = "none";
                     console.log(response.data);
                 })
@@ -118,7 +135,7 @@ export default {
           document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
         search: function() {
-          this.searchingResult = null;
+          this.lotSearchingResult = null;
           this.geocoder = new google.maps.Geocoder;
           this.geocoder.geocode({address:this.parking_address}, (results, status)=>{
             if (status == 'OK') {
@@ -256,6 +273,7 @@ export default {
 
                       var marker;
                       var that = this;
+                      var markerCoords = [];
                       for (var i = 0; i < coordsForMarker.length; i++) {
                         marker = new google.maps.Marker({
                           position: new google.maps.LatLng(coordsForMarker[i][1], coordsForMarker[i][2]),
@@ -266,7 +284,7 @@ export default {
 
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
-                          var contenString = "Descrtiption: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
+                          var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
 
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
                             contenString += "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>" +
@@ -276,16 +294,20 @@ export default {
 
                           contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br>"
 
+                          
+
                           var choosenLot = [
                             {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
-                            paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10]}
-                          ]; 
+                            paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10], 
+                            lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]}
+                          ];
 
-                          that.searchingResult = choosenLot; 
+                          markerCoords[i] = choosenLot; 
 
                           // contenString += "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
+                            that.lotSearchingResult = markerCoords[i];
                             infowindow.setContent(contenString);
                             infowindow.open(map, marker);
                           }

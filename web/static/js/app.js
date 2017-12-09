@@ -41,6 +41,21 @@ Vue.use(datePicker);
 
 Vue.component("booking", booking);
 
+
+Vue.component('my-modal', {
+    template: `
+            <div class="modal is-active">
+                <div class="modal-background"></div>
+                <div class="modal-content" style="padding: 25px;">
+                    <slot></slot>
+                </div>
+                <button class="modal-close is-large" aria-label="close" @click="$emit('close')"></button>
+            </div>
+    `
+});
+
+
+
 var router = new VueRouter({
     routes:[
         {path: '/login', component: login, beforeEnter: afterAuth},
@@ -68,11 +83,3 @@ $(".toggle").click(function() {
         "slow"
       );
   });
-
-  // $( ".selector" ).slider({
-  //   max: 5000,
-  //   min: 0,
-  //   range: true,
-  //   step: 100,
-  //   value: 300
-  // });

@@ -14,7 +14,6 @@ defmodule Tartupark.BookingAPIController do
     IO.inspect "*********************"
 
     user = Guardian.Plug.current_resource(conn)
-    IO.inspect params
     %{
        "id" => place_id,
        "parkingStartTime" => parkingStartTime,
