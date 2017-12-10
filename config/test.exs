@@ -22,3 +22,6 @@ config :tartupark, Tartupark.Repo,
 
 # config :takso, decision_timeout: 3000   # 3 seconds
 config :tartupark, :http_client, Tartupark.HTTPoisonMock
+config :hound, driver: "chrome_driver"
+config :takso, sql_sandbox: true
+config :takso, :http_client, HTTPoison

@@ -1,5 +1,23 @@
 defmodule WhiteBreadContext do
   use WhiteBread.Context
+  use Hound.Helpers
+  alias Tartupark.{Repo}
+
+  feature_starting_state fn  ->
+    Application.ensure_all_started(:hound)
+    %{}
+  end
+
+  scenario_starting_state fn state ->
+    Hound.start_session
+    Ecto.Adapters.SQL.Sandbox.checkout(Tartupark.Repo)
+    Ecto.Adapters.SQL.Sandbox.mode(Tartupark.Repo, {:shared, self()})
+    %{}
+  end
+  scenario_finalize fn _status, _state ->
+    Ecto.Adapters.SQL.Sandbox.checkin(Tartupark.Repo)
+    Hound.end_session
+  end
 
   given_ ~r/^the following parking spaces$/, fn state ->
     {:ok, state}
