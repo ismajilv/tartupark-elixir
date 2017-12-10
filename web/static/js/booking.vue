@@ -27,17 +27,19 @@
 
       <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" style="margin: 20px auto;"v-model="payment_type">
       <label for="hourly">Hourly</label>
-      <select v-model="h_payment_selected" id="hourly_payment_type">
+
+      <!-- <select v-model="h_payment_selected" id="hourly_payment_type">
         <option disabled value="">When will you pay?</option>
         <option>Before Parking</option>
         <option>After Parking</option>
-      </select>
+      </select> -->
 
       <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="payment_type">
       <label for="realtime">Real Time</label>
-      <select v-model="rt_payment_selected" id="real_time_payment_type">
+      
+      <select v-model="payment_selected" id="payment_type">
         <option disabled value="">When will you pay?</option>
-        <option>After Parking</option>
+        <option>Before Parking</option>
         <option>End of Month</option>
       </select>
     </div>
@@ -55,23 +57,36 @@
     <div class="row"> 
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
-        <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Show Modal</button>
-        <!-- <button type="submit" class="btn btn-default" id="btn_submit" style="display: none;" v-on:click="submit">Submit</button> -->
+        <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
+        <button type="submit" class="btn btn-default" id="btn_submit2" style="display: none;" v-on:click="submit">Submit</button>
       </div>
     </div>
   </div> <!--  end of form-group -->
 <div id="map" style="width:100%;height:500px; margin-top:25px"></div>
   
   <my-modal v-show="showModal" @close="showModal=false">
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+    <form class="col-md-10 col-md-offset-1" style="padding:0">
+        <div class="form-group col-md-12">
+            <input type="text" class="form-control" id="cardNumber" v-model="cardNumber" placeholder="Card Number" contenteditable="false">
+        </div>
+        <p style="text-align:center;">Expiration</p>
+        <div class="form-group col-md-6">                            
+            <input type="text" class="form-control" id="cardMonth" v-model="cardMonth" placeholder="Month" contenteditable="false">
+        </div>
+        <div class="form-group col-md-6">                            
+            <input type="text" class="form-control" id="cardYear" v-model="cardYear" placeholder="Year" contenteditable="false">
+        </div>
+        <div class="form-group col-md-12">
+            <input type="text" class="form-control" id="cardPAC" v-model="cardPAC" placeholder="Premier Access Code">
+        </div>
+        <div class="clearfix"></div>
+    </form>
+
+    <div class="row text-center">
+        <hr>
+        <button type="button" v-on:click="submit" class="btn btn-primary col-md-8 col-md-offset-2">Pay</button>
+        <br class="">
     </div>
-    <div class="form-group">
-      <label for="pwd">Password:</label>
-      <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
-    </div>
-    <button type="submit" class="btn btn-default" v-on:click="submit">Submit</button>
   </my-modal>
 
 
@@ -87,6 +102,10 @@ import moment from "moment";
 export default {
     data: function() {
         return {
+            cardNumber: "19293748203910",
+            cardMonth: "12",
+            cardYear: "20",
+            cardPAC: "123",
             showModal: false,
             parking_address: "",
             message: "",
@@ -94,8 +113,9 @@ export default {
             parking_start_time: new Date(),
             parking_end_time: new Date(),
             parking_search_radius: '100 meters',
-            h_payment_selected: "Before Parking",
-            rt_payment_selected: "End of Month",
+            payment_selected: "Before Parking",
+            // h_payment_selected: "Before Parking",
+            // rt_payment_selected: "End of Month",
             config: {
               // format: 'DD/MM/YYYY H:m:s',
               useCurrent: false,
@@ -108,13 +128,14 @@ export default {
     methods: {
         submit: function() {
           if(this.lotSearchingResult != null){
-            console.log("id ---------------------> "+this.lotSearchingResult[0].id);
+            // console.log("id ---------------------> "+this.lotSearchingResult[0].id);
             axios.post("/api/bookings",
                 {parking_address: this.lotSearchingResult},
                 {headers: auth.getAuthHeader()})
                 .then(response => {
                     this.lotSearchingResult = null;
-                    document.getElementById("btn_submit").style.display = "none";
+                    document.getElementById("btn_submit").style.display = "none";                    
+                    document.getElementById("btn_submit2").style.display = "none";
                     console.log(response.data);
                 })
                 .catch(error => {
@@ -125,14 +146,14 @@ export default {
         dateTimeStatusRead: function(){
           // document.getElementById("parking_start_time").readOnly = true;
           document.getElementById("parking_end_time").readOnly = true;
-          document.getElementById("hourly_payment_type").style.visibility = "hidden";
-          document.getElementById("real_time_payment_type").style.visibility = "visible";
+          // document.getElementById("hourly_payment_type").style.visibility = "hidden";
+          // document.getElementById("real_time_payment_type").style.visibility = "visible";
         },
         dateTimeStatusWrite: function(){
           // document.getElementById("parking_start_time").readOnly = false;
           document.getElementById("parking_end_time").readOnly = false;
-          document.getElementById("hourly_payment_type").style.visibility = "visible";
-          document.getElementById("real_time_payment_type").style.visibility = "hidden";
+          // document.getElementById("hourly_payment_type").style.visibility = "visible";
+          // document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
         search: function() {
           this.lotSearchingResult = null;
@@ -144,18 +165,17 @@ export default {
                 lat: results[0].geometry.location.lat()
               }
 
+              var parkingStartTime = this.parking_start_time;
               if (this.payment_type == "Real Time"){
-                var parkingStartTime = this.parking_start_time;
                 var parkingEndTime = null;
-                var hourlyPaymentStatus = null;
-                var realTimePaymentStatus = this.rt_payment_selected;
-                var paymentTime = this.rt_payment_selected;
+                // var hourlyPaymentStatus = null;
+                // var realTimePaymentStatus = this.rt_payment_selected;
+                // var paymentTime = this.rt_payment_selected;
               } else {
-                var parkingStartTime = this.parking_start_time;
                 var parkingEndTime = this.parking_end_time;
-                var hourlyPaymentStatus = this.h_payment_selected;
-                var realTimePaymentStatus = null;
-                var paymentTime = this.h_payment_selected;
+                // var hourlyPaymentStatus = this.h_payment_selected;
+                // var realTimePaymentStatus = null;
+                // var paymentTime = this.h_payment_selected;
               }
 
               try {
@@ -175,7 +195,7 @@ export default {
                     parkingStartTime: startTime,
                     parkingEndTime: endTime,
                     parkingSearchRadius: this.parking_search_radius,
-                    paymentTime: paymentTime,
+                    paymentTime: this.payment_selected,
                     paymentType: this.payment_type
                     // ,
                     // hourlyPaymentType: hourlyPaymentStatus,
@@ -185,8 +205,11 @@ export default {
                   .then(response => {
                       var searchingResult = response.data;
 
-                      if(searchingResult.length > 0){
+                      if(searchingResult.length > 0 && this.payment_selected == "Before Parking"){
                         document.getElementById("btn_submit").style.display = "inline-block";
+                      } else if(searchingResult.length > 0) {
+                        document.getElementById("btn_submit").style.display = "none";
+                        document.getElementById("btn_submit2").style.display = "inline-block";
                       } else {
                         document.getElementById("btn_submit").style.display = "none";
                       }
@@ -343,13 +366,13 @@ export default {
         if (this.payment_type == "Real Time"){
           // document.getElementById("parking_start_time").readOnly = true;
           document.getElementById("parking_end_time").readOnly = true;
-          document.getElementById("hourly_payment_type").style.visibility = "hidden";
-          document.getElementById("real_time_payment_type").style.visibility = "visible";
+          // document.getElementById("hourly_payment_type").style.visibility = "hidden";
+          // document.getElementById("real_time_payment_type").style.visibility = "visible";
         } else {
           // document.getElementById("parking_start_time").readOnly = false;
           document.getElementById("parking_end_time").readOnly = false;
-          document.getElementById("hourly_payment_type").style.visibility = "visible";
-          document.getElementById("real_time_payment_type").style.visibility = "hidden";
+          // document.getElementById("hourly_payment_type").style.visibility = "visible";
+          // document.getElementById("real_time_payment_type").style.visibility = "hidden";
         }
 
         // var channel = socket.channel("customer:lobby", {});
