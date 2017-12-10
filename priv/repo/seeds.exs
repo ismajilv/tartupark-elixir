@@ -75,6 +75,29 @@ alias Tartupark.{Repo, Zone, Place, User}
 %{capacity: 20, zone_tag: "MOTO", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.724941, 58.380584}, {26.724804, 58.380574}, {26.724771, 58.380647}, {26.724886, 58.380648}], srid: 4326}}, #RAEKOJA PLATS
 %{capacity: 30, zone_tag: "ZB", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.725192, 58.380887}, {26.725098, 58.381206}, {26.724843, 58.381342}, {26.725023, 58.380871}], srid: 4326}}, #RAEKOJA PLATS
 %{capacity: 7, zone_tag: "BUS", shape: "polygon", area:  %Geo.MultiPoint{coordinates: [{26.725219, 58.380886}, {26.725297, 58.380893}, {26.725305, 58.380939}, {26.725216, 58.380980}], srid: 4326}}, #RAEKOJA PLATS
-%{capacity: 2, zone_tag: "BUS", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.722953, 58.385142}, {26.722797, 58.385257}], srid: 4326}}] #EMAJIOE
+%{capacity: 2, zone_tag: "BUS", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.722953, 58.385142}, {26.722797, 58.385257}], srid: 4326}}, #EMAJIOE
+%{capacity: 15, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.724814, 58.377331}, {26.722481, 58.376357}], srid: 4326}}, #VANEMIUSE1
+%{capacity: 10, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.722325, 58.376278}, {26.720968, 58.375693}], srid: 4326}}, #VANEMIUSE2
+%{capacity: 12, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.720834, 58.375614}, {26.718844, 58.374759}], srid: 4326}}, #VANEMIUSE3
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.718691, 58.374678}, {26.716116, 58.373643}, {26.713353, 58.372844}], srid: 4326}}, #VANEMIUSE4
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.713155, 58.372805}, {26.716116, 58.373643}, {26.713353, 58.372844}], srid: 4326}}, #VANEMIUSE5
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.713152, 58.372809}, {26.710221, 58.372226}], srid: 4326}}, #VANEMIUSE6
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.713263, 58.372772}, {26.714524, 58.371067}], srid: 4326}}, #KASTANI
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.718801, 58.374671}, {26.720201, 58.373231}], srid: 4326}}, #PEPLERI
+%{capacity: 13, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.720943, 58.375611}, {26.722880, 58.374311}], srid: 4326}}, #AKADEMIA
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.722456, 58.376286}, {26.723835, 58.374953}], srid: 4326}}, #WILHELM STRUVE
+%{capacity: 10, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.720815, 58.375700}, {26.719297, 58.376758}], srid: 4326}}, #AKADEMIA 2
+%{capacity: 10, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.718734, 58.374767}, {26.717441, 58.376083}], srid: 4326}}, #PEPLERI 2
+%{capacity: 10, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.718144, 58.375222}, {26.715859, 58.374486}], srid: 4326}}, #OPETAJA
+%{capacity: 7, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.715784, 58.374497}, {26.715054, 58.375262}], srid: 4326}}, #OPETAJA
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.713211, 58.372870}, {26.712243, 58.374232}], srid: 4326}}, #KASTANI 2
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.718526, 58.376606}, {26.718070, 58.376989}], srid: 4326}},
+%{capacity: 5, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.721311, 58.377281}, {26.721129, 58.377455}], srid: 4326}}, #TIGI 1
+%{capacity: 15, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.721032,58.377427}, {26.719283, 58.376808}], srid: 4326}}, #TIGI 2
+%{capacity: 15, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.719176, 58.376785}, {26.717492, 58.376167}], srid: 4326}}, #TIGI 3
+%{capacity: 17, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.717331, 58.376099}, {26.715067, 58.375323}], srid: 4326}}, #TIGI 4
+%{capacity: 16, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.714944, 58.375263}, {26.712240, 58.374318}], srid: 4326}}, #TIGI 5
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.712090, 58.374250}, {26.708828, 58.373080}], srid: 4326}} #TIGI6
+]
 |> Enum.map(fn place_data -> Ecto.build_assoc(Repo.get_by!(Zone, tag: place_data.zone_tag), :places, place_data) end)
 |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
