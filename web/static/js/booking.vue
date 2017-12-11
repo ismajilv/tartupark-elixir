@@ -28,12 +28,6 @@
       <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" style="margin: 20px auto;"v-model="payment_type">
       <label for="hourly">Hourly</label>
 
-      <!-- <select v-model="h_payment_selected" id="hourly_payment_type">
-        <option disabled value="">When will you pay?</option>
-        <option>Before Parking</option>
-        <option>After Parking</option>
-      </select> -->
-
       <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="payment_type">
       <label for="realtime">Real Time</label>
       
