@@ -9,10 +9,6 @@ defmodule Tartupark.BookingAPIController do
 
   def create(conn, %{"parking_address" => [params]}) do
 
-    IO.inspect "*********************"
-    IO.inspect params
-    IO.inspect "*********************"
-
     user = Guardian.Plug.current_resource(conn)
     %{
        "id" => place_id,
@@ -53,6 +49,9 @@ defmodule Tartupark.BookingAPIController do
     |> Repo.all
     |> Repo.preload([:zone, :bookings])
 
+    start_time = parseToNaiveDateTime(params["parkingStartTime"])
+    end_time = parseToNaiveDateTime(params["parkingEndTime"])
+
     locations = Enum.map(parkings,
                         (fn park_place ->
                           %{shape: park_place.shape,
@@ -74,7 +73,7 @@ defmodule Tartupark.BookingAPIController do
                             capacity: List.foldl(park_place.bookings,
                                                  park_place.capacity,
                                                  fn (book, capacity) ->
-                                                   case checkBetweenOrAfter(params["parkingStartTime"], params["parkingEndTime"], book.startDateTime, book.endDateTime) do
+                                                   case checkBetweenOrAfter(start_time, end_time, book.startDateTime, book.endDateTime) do
                                                      true -> capacity-1
                                                      false -> capacity
                                                    end
@@ -104,16 +103,20 @@ defmodule Tartupark.BookingAPIController do
 
   def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do
     case {start_1, end_1, start_2, end_2} do
-      {st1, nil, st2, nil} ->  true
-      {st1, nil, st2, ed2} when ed2 != nil -> (NaiveDateTime.compare(parseToNaiveDateTime(st1), st2) == :gt   or
-                                               NaiveDateTime.compare(parseToNaiveDateTime(st1), st2) == :eq)  and
-                                               NaiveDateTime.compare(ed2, parseToNaiveDateTime(st1)) == :lt
-      {st1, ed1, st2, nil} when ed1 != nil ->  NaiveDateTime.compare(parseToNaiveDateTime(ed1), st2) == :gt   or
-                                               NaiveDateTime.compare(parseToNaiveDateTime(ed1), st2) == :eq
-      {st1, ed1, st2, ed2} ->                 (NaiveDateTime.compare(parseToNaiveDateTime(st1), st2) == :gt   or
-                                               NaiveDateTime.compare(parseToNaiveDateTime(st1), st2) == :eq) and
-                                              (NaiveDateTime.compare(ed2, parseToNaiveDateTime(ed1)) == :gt   or
-                                               NaiveDateTime.compare(ed2, parseToNaiveDateTime(ed1)) == :eq)
+      {st1, nil, st2, nil} ->                                 true
+      {st1, nil, st2, ed2} when ed2 != nil ->                (NaiveDateTime.compare(st1, st2) == :gt   or
+                                                              NaiveDateTime.compare(st1, st2) == :eq)  and
+                                                              NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), st1) == :lt
+
+      {st1, ed1, st2, nil} when ed1 != nil ->                 NaiveDateTime.compare(ed1, st2) == :gt   or
+                                                              NaiveDateTime.compare(ed1, st2) == :eq
+
+      {st1, ed1, st2, ed2} when ed1 != nil and ed2 != nil -> (NaiveDateTime.compare(st1, st2) == :gt   or
+                                                              NaiveDateTime.compare(st1, st2) == :eq)  and
+                                                             (NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), ed1) == :gt   or
+                                                              NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), ed1) == :eq)
+                                                              
+       _ ->                                                   false
     end
   end
 # "parkingEndTime" => "Invalid dateZ"

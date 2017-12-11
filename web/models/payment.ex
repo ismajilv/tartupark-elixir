@@ -2,9 +2,8 @@ defmodule Tartupark.Payment do
   use Tartupark.Web, :model
 
   schema "payments" do
-    field :type, :string
     field :cost, :float
-    field :status, :string, default: "dept"
+    field :card_params, :map
     belongs_to :booking, Tartupark.Booking
     timestamps()
   end
@@ -14,8 +13,8 @@ defmodule Tartupark.Payment do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:type, :cost, :status])
-    |> validate_required([:type, :cost, :status])
+    |> cast(params, [:cost, :card_params])
+    |> validate_required([:cost, :card_params])
   end
 
 end
