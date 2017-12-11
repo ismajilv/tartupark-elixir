@@ -93,13 +93,14 @@ defmodule Tartupark.BookingAPIController do
     |> json(locations)
   end
 
-  def parseToNaiveDateTime(dateTime) do
+  def parseToNaiveDateTime(dateTime) when dateTime != nil do
     scannedDateTime = Regex.scan(~r/\d+/, dateTime, trim: true)
     |> List.flatten
     |> Enum.map(fn calendarElem -> Integer.parse(calendarElem) |> elem(0)  end)
     [year, month, day, hour, minute, second, microsecond] = scannedDateTime
     NaiveDateTime.new(year, month, day, hour, minute, second, microsecond) |> elem(1)
   end
+  def parseToNaiveDateTime(dateTime), do: nil
 
   def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do
     case {start_1, end_1, start_2, end_2} do
@@ -115,7 +116,7 @@ defmodule Tartupark.BookingAPIController do
                                                               NaiveDateTime.compare(st1, st2) == :eq)  and
                                                              (NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), ed1) == :gt   or
                                                               NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), ed1) == :eq)
-                                                              
+
        _ ->                                                   false
     end
   end
