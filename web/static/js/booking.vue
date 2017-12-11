@@ -114,10 +114,7 @@ export default {
             parking_end_time: new Date(),
             parking_search_radius: '100 meters',
             payment_selected: "Before Parking",
-            // h_payment_selected: "Before Parking",
-            // rt_payment_selected: "End of Month",
             config: {
-              // format: 'DD/MM/YYYY H:m:s',
               useCurrent: false,
               showClear: true,
               showClose: true,
@@ -128,7 +125,6 @@ export default {
     methods: {
         submit: function() {
           if(this.lotSearchingResult != null){
-            // console.log("id ---------------------> "+this.lotSearchingResult[0].id);
             axios.post("/api/bookings",
                 {parking_address: this.lotSearchingResult},
                 {headers: auth.getAuthHeader()})
@@ -145,16 +141,10 @@ export default {
             }
         },
         dateTimeStatusRead: function(){
-          // document.getElementById("parking_start_time").readOnly = true;
           document.getElementById("parking_end_time").readOnly = true;
-          // document.getElementById("hourly_payment_type").style.visibility = "hidden";
-          // document.getElementById("real_time_payment_type").style.visibility = "visible";
         },
         dateTimeStatusWrite: function(){
-          // document.getElementById("parking_start_time").readOnly = false;
           document.getElementById("parking_end_time").readOnly = false;
-          // document.getElementById("hourly_payment_type").style.visibility = "visible";
-          // document.getElementById("real_time_payment_type").style.visibility = "hidden";
         },
         search: function() {
           this.lotSearchingResult = null;
@@ -169,14 +159,8 @@ export default {
               var parkingStartTime = this.parking_start_time;
               if (this.payment_type == "Real Time"){
                 var parkingEndTime = null;
-                // var hourlyPaymentStatus = null;
-                // var realTimePaymentStatus = this.rt_payment_selected;
-                // var paymentTime = this.rt_payment_selected;
               } else {
                 var parkingEndTime = this.parking_end_time;
-                // var hourlyPaymentStatus = this.h_payment_selected;
-                // var realTimePaymentStatus = null;
-                // var paymentTime = this.h_payment_selected;
               }
 
               try {
@@ -198,9 +182,6 @@ export default {
                     parkingSearchRadius: this.parking_search_radius,
                     paymentTime: this.payment_selected,
                     paymentType: this.payment_type
-                    // ,
-                    // hourlyPaymentType: hourlyPaymentStatus,
-                    // realTimePaymentType: realTimePaymentStatus
                     },
                   {headers: auth.getAuthHeader()})
                   .then(response => {
@@ -215,7 +196,6 @@ export default {
                         document.getElementById("btn_submit").style.display = "none";
                       }
 
-                      // this.searchingResult = [searchingResult[0]];
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
                           center: lngLat,
@@ -328,7 +308,6 @@ export default {
 
                           markerCoords[i] = choosenLot; 
 
-                          // contenString += "<button type='submit' class='btn btn-default'>Choose</button>"
 
                           return function() {
                             that.lotSearchingResult = markerCoords[i];
@@ -365,26 +344,10 @@ export default {
         });
 
         if (this.payment_type == "Real Time"){
-          // document.getElementById("parking_start_time").readOnly = true;
           document.getElementById("parking_end_time").readOnly = true;
-          // document.getElementById("hourly_payment_type").style.visibility = "hidden";
-          // document.getElementById("real_time_payment_type").style.visibility = "visible";
         } else {
-          // document.getElementById("parking_start_time").readOnly = false;
           document.getElementById("parking_end_time").readOnly = false;
-          // document.getElementById("hourly_payment_type").style.visibility = "visible";
-          // document.getElementById("real_time_payment_type").style.visibility = "hidden";
         }
-
-        // var channel = socket.channel("customer:lobby", {});
-        // channel.join()
-        //     .receive("ok", resp => { console.log("Joined successfully", resp) })
-        //     .receive("error", resp => { console.log("Unable to join", resp) });
-
-        // channel.on("requests", payload => {
-        //     this.message += "\n" + payload.msg;
-        //     console.log(this.message);
-        // });
     }
 }
 </script>
