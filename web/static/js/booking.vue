@@ -79,7 +79,7 @@
         <div class="form-group col-md-12">
             <input type="text" class="form-control" id="cardPAC" v-model="cardPAC" placeholder="Premier Access Code">
         </div>
-        <div class="clearfix"></div>
+        <div class="clearfix"></div> 
     </form>
 
     <div class="row text-center">
@@ -111,7 +111,7 @@ export default {
             message: "",
             payment_type: "Real Time",
             parking_start_time: new Date(),
-            parking_end_time: new Date(),
+            parking_end_time: null,
             parking_search_radius: '100 meters',
             payment_selected: "Before Parking",
             config: {
@@ -175,6 +175,13 @@ export default {
                   endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
               }
+
+              console.log("start time: " + startTime);
+              console.log("end time: " + endTime);
+              console.log("search radius: " + this.parking_search_radius);
+              console.log("payment time: " + this.payment_selected);
+              console.log("payment type: " + this.payment_type);
+
               axios.post("/api/search",
                   { lngLat: lngLat,
                     parkingStartTime: startTime,
@@ -290,10 +297,15 @@ export default {
 
                           var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
 
+                          if(that.payment_type == "Hourly"){
+                            var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
+                          } else{
+                            var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
+                          }
+                          
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
-                            contenString += "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>" +
-                                              "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>" +
-                                              "Free time limit is " + coordsForMarker[i][6] +    " minutes. <br>"
+                            contenString += paymentTypeString + 
+                                            "Free time limit is " + coordsForMarker[i][6] + " minutes. <br>"
                           }
 
                           contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br>"
@@ -328,6 +340,13 @@ export default {
         }
     },
     mounted: function() {
+
+        Date.prototype.addHours= function(h){
+            this.setHours(this.getHours()+h);
+            return this;
+        };
+
+        this.parking_end_time = new Date().addHours(1);
 
         navigator.geolocation.getCurrentPosition(position => {
           let loc = {lat: position.coords.latitude, lng: position.coords.longitude};
