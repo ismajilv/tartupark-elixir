@@ -2,10 +2,7 @@ defmodule Tartupark.PaymentAPIController do
   use Tartupark.Web, :controller
   alias Tartupark.{Payment, Booking}
 
-  def create(conn, params) do
-    %{"cardParams" => card_params,
-      "bookingId" => booking_id,
-      "cost" => cost} = params
+  def create(conn, %{"cardParams" => card_params, "bookingId" => booking_id, "cost" => cost}) do
 
       payment = Ecto.build_assoc(Repo.get(Booking, booking_id), :payment, %{card_params: card_params, cost: cost})
                 |> Repo.insert!
