@@ -137,6 +137,7 @@ export default {
                     document.getElementById("btn_submit").style.display = "none";                    
                     document.getElementById("btn_submit2").style.display = "none";
                     console.log(response.data);
+                    alert(response.data.msg);
                 })
                 .catch(error => {
                     console.log(error);
