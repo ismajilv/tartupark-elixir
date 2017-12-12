@@ -28,12 +28,6 @@
       <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" style="margin: 20px auto;"v-model="payment_type">
       <label for="hourly">Hourly</label>
 
-      <!-- <select v-model="h_payment_selected" id="hourly_payment_type">
-        <option disabled value="">When will you pay?</option>
-        <option>Before Parking</option>
-        <option>After Parking</option>
-      </select> -->
-
       <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="payment_type">
       <label for="realtime">Real Time</label>
 
@@ -56,7 +50,7 @@
 
     <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
-        <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
+        <button type="submit" class="btn btn-default" id="btn_search" v-on:click="search">Search</button>
         <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
         <button type="submit" class="btn btn-default" id="btn_submit2" style="display: none;" v-on:click="submit">Submit</button>
       </div>
@@ -111,7 +105,7 @@ export default {
             message: "",
             payment_type: "Real Time",
             parking_start_time: new Date(),
-            parking_end_time: new Date(),
+            parking_end_time: null,
             parking_search_radius: '100 meters',
             payment_selected: "Before Parking",
             config: {
@@ -132,6 +126,8 @@ export default {
                     this.lotSearchingResult = null;
                     document.getElementById("btn_submit").style.display = "none";
                     document.getElementById("btn_submit2").style.display = "none";
+                    document.getElementById("btn_search").click();
+                    document.getElementById("btn_modal").click();
                     console.log(response.data);
                     alert(response.data.msg);
                 })
@@ -290,14 +286,24 @@ export default {
 
                           var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
 
-                          if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
-                            contenString += "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>" +
-                                              "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>" +
-                                              "Free time limit is " + coordsForMarker[i][6] +    " minutes. <br>"
+                          if(that.payment_type == "Hourly"){
+                            var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
+                          } else{
+                            var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
                           }
 
-                          contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br>"
+                          if(that.payment_selected == "Before Parking"){
+                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit\").click()'>";
+                          } else {
+                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit2\").click()'>";
+                          }
 
+                          if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
+                            contenString += paymentTypeString +
+                                            "Free time limit is " + coordsForMarker[i][6] + " minutes. <br>"
+                          }
+
+                          contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
 
 
                           var choosenLot = [
@@ -325,9 +331,19 @@ export default {
                   alert('Geocode was not successful for the following reason: ' + status);
                 }
               }); // end of geocode
+        },
+        myFunction: function(){
+          console.log("worked!");
         }
     },
     mounted: function() {
+
+        Date.prototype.addHours= function(h){
+            this.setHours(this.getHours()+h);
+            return this;
+        };
+
+        this.parking_end_time = new Date().addHours(1);
 
         navigator.geolocation.getCurrentPosition(position => {
           let loc = {lat: position.coords.latitude, lng: position.coords.longitude};
