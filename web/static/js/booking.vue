@@ -184,10 +184,10 @@ export default {
                       var searchingResult = response.data;
                       console.log(searchingResult)
                       if(searchingResult.length > 0 && this.payment_selected == "Before Parking"){
-                        document.getElementById("btn_submit").style.display = "inline-block";
+                        document.getElementById("btn_submit").style.display = "none";
                       } else if(searchingResult.length > 0) {
                         document.getElementById("btn_submit").style.display = "none";
-                        document.getElementById("btn_submit2").style.display = "inline-block";
+                        document.getElementById("btn_submit2").style.display = "none";
                       } else {
                         document.getElementById("btn_submit").style.display = "none";
                       }
