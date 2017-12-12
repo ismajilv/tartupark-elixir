@@ -9,6 +9,10 @@ defmodule Tartupark.BookingAPIController do
 
   def create(conn,  params) do
 
+
+    IO.inspect "******************************"
+    IO.inspect params
+    IO.inspect "******************************"
     user = Guardian.Plug.current_resource(conn)
     %{
        "id" => place_id,
