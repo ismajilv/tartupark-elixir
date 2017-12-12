@@ -36,7 +36,7 @@
 
       <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="payment_type">
       <label for="realtime">Real Time</label>
-      
+
       <select v-model="payment_selected" id="payment_type">
         <option disabled value="">When will you pay?</option>
         <option>Before Parking</option>
@@ -54,7 +54,7 @@
       </select>
     </div>
 
-    <div class="row"> 
+    <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
         <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
@@ -63,17 +63,17 @@
     </div>
   </div> <!--  end of form-group -->
 <div id="map" style="width:100%;height:500px; margin-top:25px"></div>
-  
+
   <my-modal v-show="showModal" @close="showModal=false">
     <form class="col-md-10 col-md-offset-1" style="padding:0">
         <div class="form-group col-md-12">
             <input type="text" class="form-control" id="cardNumber" v-model="cardNumber" placeholder="Card Number" contenteditable="false">
         </div>
         <p style="text-align:center;">Expiration</p>
-        <div class="form-group col-md-6">                            
+        <div class="form-group col-md-6">
             <input type="text" class="form-control" id="cardMonth" v-model="cardMonth" placeholder="Month" contenteditable="false">
         </div>
-        <div class="form-group col-md-6">                            
+        <div class="form-group col-md-6">
             <input type="text" class="form-control" id="cardYear" v-model="cardYear" placeholder="Year" contenteditable="false">
         </div>
         <div class="form-group col-md-12">
@@ -130,7 +130,7 @@ export default {
                 {headers: auth.getAuthHeader()})
                 .then(response => {
                     this.lotSearchingResult = null;
-                    document.getElementById("btn_submit").style.display = "none";                    
+                    document.getElementById("btn_submit").style.display = "none";
                     document.getElementById("btn_submit2").style.display = "none";
                     console.log(response.data);
                     alert(response.data.msg);
@@ -163,22 +163,22 @@ export default {
                 var parkingEndTime = this.parking_end_time;
               }
 
-              try {
-                  var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
-                  var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
-              }
-              catch(err) {
-                  var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
-                  var endTime = (parkingEndTime != null) ? parkingEndTime : null;
-
-                  startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
-                  endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
-
-              }
+              // try {
+              //     var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
+              //     var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
+              // }
+              // catch(err) {
+              //     var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
+              //     var endTime = (parkingEndTime != null) ? parkingEndTime : null;
+              //
+              //     startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
+              //     endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
+              //
+              // }
               axios.post("/api/search",
                   { lngLat: lngLat,
-                    parkingStartTime: startTime,
-                    parkingEndTime: endTime,
+                    parkingStartTime: parkingStartTime,
+                    parkingEndTime: parkingEndTime,
                     parkingSearchRadius: this.parking_search_radius,
                     paymentTime: this.payment_selected,
                     paymentType: this.payment_type
@@ -186,7 +186,7 @@ export default {
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var searchingResult = response.data;
-
+                      console.log(searchingResult)
                       if(searchingResult.length > 0 && this.payment_selected == "Before Parking"){
                         document.getElementById("btn_submit").style.display = "inline-block";
                       } else if(searchingResult.length > 0) {
@@ -298,15 +298,15 @@ export default {
 
                           contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br>"
 
-                          
+
 
                           var choosenLot = [
                             {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
-                            paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10], 
+                            paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
                             lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]}
                           ];
 
-                          markerCoords[i] = choosenLot; 
+                          markerCoords[i] = choosenLot;
 
 
                           return function() {

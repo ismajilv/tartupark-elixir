@@ -78,8 +78,8 @@ defmodule Tartupark.BookingAPIController do
                                                      false -> capacity
                                                    end
                                                  end),
-                            parkingStartTime: params["parkingStartTime"],
-                            parkingEndTime: params["parkingEndTime"],
+                            parkingStartTime: start_time,
+                            parkingEndTime: end_time,
                             parkingSearchRadius: params["parkingSearchRadius"],
                             paymentTime: params["paymentTime"],
                             paymentType: params["paymentType"]
@@ -97,8 +97,11 @@ defmodule Tartupark.BookingAPIController do
     scannedDateTime = Regex.scan(~r/\d+/, dateTime, trim: true)
     |> List.flatten
     |> Enum.map(fn calendarElem -> Integer.parse(calendarElem) |> elem(0)  end)
-    [year, month, day, hour, minute, second, microsecond] = scannedDateTime
-    NaiveDateTime.new(year, month, day, hour, minute, second, microsecond) |> elem(1)
+    case length(scannedDateTime) do
+       7 -> [year, month, day, hour, minute, second, _millisecond] = scannedDateTime
+       8 -> [year, month, day, hour, minute, second, _timezone1, _timesone2] = scannedDateTime
+    end
+    NaiveDateTime.new(year, month, day, hour, minute, second) |> elem(1)
   end
   def parseToNaiveDateTime(dateTime), do: nil
 
