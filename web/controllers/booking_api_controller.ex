@@ -18,10 +18,6 @@ defmodule Tartupark.BookingAPIController do
        "paymentType" => paymentType
      } = params
 
-     IO.puts "************************"
-     IO.inspect parkingStartTime
-     IO.puts "************************"
-
      start_time = parseToNaiveDateTime(parkingStartTime)
      case paymentType do
          "Hourly" -> end_time = parseToNaiveDateTime(parkingEndTime)
