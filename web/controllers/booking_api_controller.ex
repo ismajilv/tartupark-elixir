@@ -1,7 +1,7 @@
 defmodule Tartupark.BookingAPIController do
   use Tartupark.Web, :controller
   import Ecto.Query, only: [from: 2]
-  alias Tartupark.{Place, Booking}
+  alias Tartupark.{Place, Booking, User}
 
   Postgrex.Types.define(Tartupark.PostgresTypes,
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
@@ -9,9 +9,10 @@ defmodule Tartupark.BookingAPIController do
 
   def index(conn) do
     user = Guardian.Plug.current_resource(conn)
-    # query = from booking in Bookings
-    #         join:
-    booking = Repo.all(Booking)
+    query = from booking in Bookings,
+            join: user in User, on: booking.user_id == user.id,
+            select: booking
+    booking = Repo.all(query)
     conn
     |> put_status(201)
     |> json(%{msg: "Bookings are available.", bookings: booking})
