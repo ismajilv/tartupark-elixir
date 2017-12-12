@@ -33,15 +33,15 @@ defmodule Tartupark.BookingAPIController do
      booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
                |> Repo.insert!
 
-    case Map.get(params, "paymentParams") do
-       payment -> cost = payment |> Map.get("cost") |> Float.parse |> elem(0)
+    case Map.get(Map.get(params, "paymentParams"), "cost") do
+       nil     -> payment_id = nil
+       payment -> cost = payment |> Float.parse |> elem(0)
                   payment_id = Tartupark.PaymentAPIController.create(conn, %{"bookingId" => booking.id, "cost" => cost})
-       nil -> payment_id = nil
     end
 
     conn
     |> put_status(201)
-    |> json(%{msg: "Booking has been done.", booking_id: booking.id, payment_id: payment_id.id})
+    |> json(%{msg: "Booking has been done.", booking_id: booking.id})
   end
 
   def update(conn, %{"booking_id" => booking_id, "parkingEndTime" => end_time}) do
