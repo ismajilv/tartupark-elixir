@@ -70,6 +70,6 @@ defmodule Tartupark.Router do
       post "/bookings", BookingAPIController, :create
       post "/payments", PaymentAPIController, :create
       delete "/sessions/:id", SessionAPIController, :delete
-    #   patch "/bookings/:id", BookingAPIController, :update
+      patch "/bookings/:id", BookingAPIController, :update
     end
   end

@@ -3,7 +3,7 @@ defmodule Tartupark.Payment do
 
   schema "payments" do
     field :cost, :float
-    field :card_params, :map
+    field :payment_code, :string
     belongs_to :booking, Tartupark.Booking
     timestamps()
   end
@@ -13,8 +13,8 @@ defmodule Tartupark.Payment do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:cost, :card_params])
-    |> validate_required([:cost, :card_params])
+    |> cast(params, [:cost, :payment_code])
+    |> validate_required([:cost, :payment_code])
   end
 
 end
