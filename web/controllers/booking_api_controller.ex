@@ -7,7 +7,7 @@ defmodule Tartupark.BookingAPIController do
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
   json: Poison)
 
-  def create(conn, %{"parking_address" => params}) do
+  def create(conn,  params) do
 
     user = Guardian.Plug.current_resource(conn)
     %{
@@ -16,7 +16,7 @@ defmodule Tartupark.BookingAPIController do
        "parkingEndTime" => parkingEndTime,
        "paymentTime" => paymentTime,
        "paymentType" => paymentType
-     } = params
+     } = params["parking_address"]
 
 
      start_time = parseToNaiveDateTime(parkingStartTime)
@@ -29,15 +29,28 @@ defmodule Tartupark.BookingAPIController do
      booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
                |> Repo.insert!
 
+    case Map.get(params, "paymentParams") do
+       payment -> cost = payment |> Map.get("cost") |> Float.parse |> elem(0)
+                  payment_id = Tartupark.PaymentAPIController.create(conn, %{"bookingId" => booking.id, "cost" => cost})
+       nil -> payment_id = nil
+    end
+
     conn
     |> put_status(201)
-    |> json(%{msg: "Booking has been done.", booking_id: booking.id})
+    |> json(%{msg: "Booking has been done.", booking_id: booking.id, payment_id: payment_id.id})
   end
 
-  def update(conn, _params) do
-    conn
-    |> put_status(200)
-    |> json(%{msg: "Notification sent to the custome"})
+  def update(conn, %{"booking_id" => booking_id, "parkingEndTime" => end_time}) do
+    booking = Repo.get!(Booking, booking_id)
+    changeset = Booking.changeset(booking, endTime: parseToNaiveDateTime(end_time))
+    case Booking.update changeset do
+      {:ok, _struct}       -> conn
+                             |> put_status(200)
+                             |> json(%{msg: "Booking parameters successfully updated"})
+      {:error, _changeset} -> conn
+                             |> put_status(400)
+                             |> json(%{msg: "Booking parameters were not updated"})
+    end
   end
 
   def search(conn, params) do
