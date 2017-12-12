@@ -113,14 +113,16 @@ export default {
               showClear: true,
               showClose: true,
             },
-            lotSearchingResult: null
+            lotSearchingResult: null,
+            paymentParams: null
         }
     },
     methods: {
         submit: function() {
           if(this.lotSearchingResult != null){
             axios.post("/api/bookings",
-                {parking_address: this.lotSearchingResult},
+                {parking_address: this.lotSearchingResult,
+                paymentParams: this.paymentParams},
                 {headers: auth.getAuthHeader()})
                 .then(response => {
                     this.lotSearchingResult = null;
@@ -182,7 +184,6 @@ export default {
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var searchingResult = response.data;
-                      console.log(searchingResult)
                       if(searchingResult.length > 0 && this.payment_selected == "Before Parking"){
                         document.getElementById("btn_submit").style.display = "none";
                       } else if(searchingResult.length > 0) {
@@ -274,6 +275,7 @@ export default {
                       var marker;
                       var that = this;
                       var markerCoords = [];
+                      var parkingCosts = [];
                       for (var i = 0; i < coordsForMarker.length; i++) {
                         marker = new google.maps.Marker({
                           position: new google.maps.LatLng(coordsForMarker[i][1], coordsForMarker[i][2]),
@@ -285,11 +287,12 @@ export default {
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
                           var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
+                          var cost = null;
 
                           if(that.payment_type == "Hourly"){
                             var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
                             var hourlyFee = (coordsForMarker[i][5] == zoneA) ? (2/3600) : (1/3600);
-                            var cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
+                            cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
                             cost = cost.toFixed(2);
                             paymentTypeString += "Total cost is " + cost + " Euro. <br>";
                           } else{
@@ -305,22 +308,32 @@ export default {
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
                             contenString += paymentTypeString +
                                             "Free time limit is " + coordsForMarker[i][6] + " minutes. <br>"
+                          } else {
+                            cost = null;
                           }
 
                           contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
 
 
-                          var choosenLot = [
-                            {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
+                          // var choosenLot = [
+                          //   {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
+                          //   paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
+                          //   lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]}
+                          // ];
+
+                          markerCoords[i] = {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
                             paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
-                            lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]}
-                          ];
+                            lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]};
 
-                          markerCoords[i] = choosenLot;
+                          // var paymentParameters = [
+                          //   {cost: cost}
+                          // ];
 
+                          parkingCosts[i] = {cost: cost};
 
                           return function() {
                             that.lotSearchingResult = markerCoords[i];
+                            that.paymentParams = parkingCosts[i];
                             infowindow.setContent(contenString);
                             infowindow.open(map, marker);
                           }
