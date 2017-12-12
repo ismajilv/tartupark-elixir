@@ -61,7 +61,7 @@ var router = new VueRouter({
     routes:[
         {path: '/login', component: login, beforeEnter: afterAuth},
         {path: '/', component: main, beforeEnter: requireAuth},
-        {path: '/booking/summary', component: summary, beforeEnter: requireAuth},
+        {path: '/booking/summary', component: summary, name: 'summary', beforeEnter: requireAuth},
         {path: '*', redirect: '/'}
     ]
 });

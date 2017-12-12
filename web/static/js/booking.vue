@@ -51,6 +51,7 @@
     <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" id="btn_search" v-on:click="search">Search</button>
+        <router-link class="btn btn-default" :to="{ name: 'summary'}">Go</router-link>
         <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
         <button type="submit" class="btn btn-default" id="btn_submit2" style="display: none;" v-on:click="submit">Submit</button>
       </div>
