@@ -7,7 +7,7 @@ defmodule Tartupark.BookingAPIController do
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
   json: Poison)
 
-  def create(conn, %{"parking_address" => [params]}) do
+  def create(conn, %{"parking_address" => params}) do
 
     user = Guardian.Plug.current_resource(conn)
     %{
@@ -18,9 +18,6 @@ defmodule Tartupark.BookingAPIController do
        "paymentType" => paymentType
      } = params
 
-     IO.puts "************************"
-     IO.inspect parkingStartTime
-     IO.puts "************************"
 
      start_time = parseToNaiveDateTime(parkingStartTime)
      case paymentType do
@@ -97,6 +94,8 @@ defmodule Tartupark.BookingAPIController do
     |> json(locations)
   end
 
+
+
   def parseToNaiveDateTime(dateTime) when dateTime != nil do
     scannedDateTime = Regex.scan(~r/\d+/, dateTime, trim: true)
     |> List.flatten
@@ -109,6 +108,9 @@ defmodule Tartupark.BookingAPIController do
     NaiveDateTime.new(year, month, day, hour, minute, second) |> elem(1)
   end
   def parseToNaiveDateTime(dateTime), do: nil
+
+
+
 
   def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do
     case {start_1, end_1, start_2, end_2} do
