@@ -13,10 +13,32 @@ defmodule Tartupark.BookingAPIController do
     query = from booking in Booking,
             join: user in User, on: booking.user_id == user.id,
             select: booking
-    booking = Repo.all(query) |> Repo.preload(:payment)
+    bookings = Repo.all(query) |> Repo.preload([:payment, :place])
+
+    bookings = bookings
+    |> Enum.map(fn book ->
+                  %{startDateTime: book.startDateTime,
+                    endDateTime: book.endDateTime,
+                    booking_id: book.id,
+                    inserted_at: book.inserted_at,
+                    paymentTime: book.paymentTime,
+                    paymentType: book.paymentType,
+                    place: Enum.map(book.place.area.coordinates,
+                                     fn point -> {lng, lat} = point
+                                        %{lng: lng, lat: lat}
+                                     end),
+                    payment: case book.payment do
+                              nil -> nil
+                              payment ->  %{payment_code: payment.payment_code,
+                                            inserted_at: payment.inserted_at,
+                                            cost: payment.cost,
+                                            payment_id: payment.id}
+                             end}
+                end)
+
     conn
     |> put_status(201)
-    |> json(%{msg: "Bookings are available.", bookings: booking})
+    |> json(%{msg: "Bookings are available.", bookings: bookings})
   end
 
   def create(conn,  params) do
