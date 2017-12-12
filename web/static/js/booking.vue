@@ -140,9 +140,13 @@ export default {
         },
         dateTimeStatusRead: function(){
           document.getElementById("parking_end_time").readOnly = true;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
+          this.payment_selected = "End of Month";
         },
         dateTimeStatusWrite: function(){
           document.getElementById("parking_end_time").readOnly = false;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
+          this.payment_selected = "Before Parking";
         },
         search: function() {
           this.lotSearchingResult = null;
@@ -299,7 +303,7 @@ export default {
                             var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
                           }
 
-                          if(that.payment_selected == "Before Parking"){
+                          if(that.payment_selected == "Before Parking" && that.payment_type == "Hourly"){
                             var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit\").click()'>";
                           } else {
                             var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit2\").click()'>";
@@ -314,20 +318,9 @@ export default {
 
                           contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
 
-
-                          // var choosenLot = [
-                          //   {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
-                          //   paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
-                          //   lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]}
-                          // ];
-
                           markerCoords[i] = {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
                             paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
                             lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]};
-
-                          // var paymentParameters = [
-                          //   {cost: cost}
-                          // ];
 
                           parkingCosts[i] = {cost: cost};
 
@@ -378,8 +371,12 @@ export default {
 
         if (this.payment_type == "Real Time"){
           document.getElementById("parking_end_time").readOnly = true;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
+          this.payment_selected = "End of Month";
         } else {
           document.getElementById("parking_end_time").readOnly = false;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
+          this.payment_selected = "Before Parking";
         }
     }
 }
