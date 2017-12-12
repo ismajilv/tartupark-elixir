@@ -169,7 +169,6 @@ export default {
 
                   startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
                   endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
-
               }
 
               axios.post("/api/search",
@@ -280,6 +279,10 @@ export default {
                                                     
                           if(that.payment_type == "Hourly"){
                             var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
+                            var hourlyFee = (coordsForMarker[i][5] == zoneA) ? (2/3600) : (1/3600);
+                            var cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
+                            cost = cost.toFixed(2);
+                            paymentTypeString += "Total cost is " + cost + " Euro. <br>";
                           } else{
                             var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
                           }
