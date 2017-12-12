@@ -18,6 +18,10 @@ defmodule Tartupark.BookingAPIController do
        "paymentType" => paymentType
      } = params
 
+     IO.puts "************************"
+     IO.inspect parkingStartTime
+     IO.puts "************************"
+
      start_time = parseToNaiveDateTime(parkingStartTime)
      case paymentType do
          "Hourly" -> end_time = parseToNaiveDateTime(parkingEndTime)
@@ -98,6 +102,7 @@ defmodule Tartupark.BookingAPIController do
     |> List.flatten
     |> Enum.map(fn calendarElem -> Integer.parse(calendarElem) |> elem(0)  end)
     case length(scannedDateTime) do
+       6 -> [year, month, day, hour, minute, second] = scannedDateTime
        7 -> [year, month, day, hour, minute, second, _millisecond] = scannedDateTime
        8 -> [year, month, day, hour, minute, second, _timezone1, _timesone2] = scannedDateTime
     end
