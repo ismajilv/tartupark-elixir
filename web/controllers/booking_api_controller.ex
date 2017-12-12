@@ -102,7 +102,7 @@ defmodule Tartupark.BookingAPIController do
   end
   def parseToNaiveDateTime(dateTime), do: nil
 
-  def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do
+  def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do 
     case {start_1, end_1, start_2, end_2} do
       {st1, nil, st2, nil} ->                                 true
       {st1, nil, st2, ed2} when ed2 != nil ->                 NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), st1) == :gt
