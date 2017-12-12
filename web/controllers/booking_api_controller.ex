@@ -7,9 +7,10 @@ defmodule Tartupark.BookingAPIController do
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
   json: Poison)
 
-  def index(conn) do
+  def index(conn, _params) do
+
     user = Guardian.Plug.current_resource(conn)
-    query = from booking in Bookings,
+    query = from booking in Booking,
             join: user in User, on: booking.user_id == user.id,
             select: booking
     booking = Repo.all(query) |> Repo.preload(:payment)
