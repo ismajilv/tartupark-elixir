@@ -30,7 +30,7 @@
 
       <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="payment_type">
       <label for="realtime">Real Time</label>
-      
+
       <select v-model="payment_selected" id="payment_type">
         <option disabled value="">When will you pay?</option>
         <option>Before Parking</option>
@@ -48,7 +48,7 @@
       </select>
     </div>
 
-    <div class="row"> 
+    <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" id="btn_search" v-on:click="search">Search</button>
         <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
@@ -57,23 +57,23 @@
     </div>
   </div> <!--  end of form-group -->
 <div id="map" style="width:100%;height:500px; margin-top:25px"></div>
-  
+
   <my-modal v-show="showModal" @close="showModal=false">
     <form class="col-md-10 col-md-offset-1" style="padding:0">
         <div class="form-group col-md-12">
             <input type="text" class="form-control" id="cardNumber" v-model="cardNumber" placeholder="Card Number" contenteditable="false">
         </div>
         <p style="text-align:center;">Expiration</p>
-        <div class="form-group col-md-6">                            
+        <div class="form-group col-md-6">
             <input type="text" class="form-control" id="cardMonth" v-model="cardMonth" placeholder="Month" contenteditable="false">
         </div>
-        <div class="form-group col-md-6">                            
+        <div class="form-group col-md-6">
             <input type="text" class="form-control" id="cardYear" v-model="cardYear" placeholder="Year" contenteditable="false">
         </div>
         <div class="form-group col-md-12">
             <input type="text" class="form-control" id="cardPAC" v-model="cardPAC" placeholder="Premier Access Code">
         </div>
-        <div class="clearfix"></div> 
+        <div class="clearfix"></div>
     </form>
 
     <div class="row text-center">
@@ -124,7 +124,7 @@ export default {
                 {headers: auth.getAuthHeader()})
                 .then(response => {
                     this.lotSearchingResult = null;
-                    document.getElementById("btn_submit").style.display = "none";                    
+                    document.getElementById("btn_submit").style.display = "none";
                     document.getElementById("btn_submit2").style.display = "none";
                     document.getElementById("btn_search").click();
                     document.getElementById("btn_modal").click();
@@ -169,12 +169,12 @@ export default {
 
                   startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
                   endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
-              }
 
+              }
               axios.post("/api/search",
                   { lngLat: lngLat,
-                    parkingStartTime: startTime,
-                    parkingEndTime: endTime,
+                    parkingStartTime: parkingStartTime,
+                    parkingEndTime: parkingEndTime,
                     parkingSearchRadius: this.parking_search_radius,
                     paymentTime: this.payment_selected,
                     paymentType: this.payment_type
@@ -182,6 +182,15 @@ export default {
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var searchingResult = response.data;
+                      console.log(searchingResult)
+                      if(searchingResult.length > 0 && this.payment_selected == "Before Parking"){
+                        document.getElementById("btn_submit").style.display = "inline-block";
+                      } else if(searchingResult.length > 0) {
+                        document.getElementById("btn_submit").style.display = "none";
+                        document.getElementById("btn_submit2").style.display = "inline-block";
+                      } else {
+                        document.getElementById("btn_submit").style.display = "none";
+                      }
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -276,7 +285,7 @@ export default {
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
                           var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
-                                                    
+
                           if(that.payment_type == "Hourly"){
                             var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
                             var hourlyFee = (coordsForMarker[i][5] == zoneA) ? (2/3600) : (1/3600);
@@ -294,7 +303,7 @@ export default {
                           }
 
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
-                            contenString += paymentTypeString + 
+                            contenString += paymentTypeString +
                                             "Free time limit is " + coordsForMarker[i][6] + " minutes. <br>"
                           }
 
@@ -303,11 +312,11 @@ export default {
 
                           var choosenLot = [
                             {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
-                            paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10], 
+                            paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
                             lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]}
                           ];
 
-                          markerCoords[i] = choosenLot; 
+                          markerCoords[i] = choosenLot;
 
 
                           return function() {
@@ -328,7 +337,7 @@ export default {
               }); // end of geocode
         },
         myFunction: function(){
-          console.log("worked!"); 
+          console.log("worked!");
         }
     },
     mounted: function() {
