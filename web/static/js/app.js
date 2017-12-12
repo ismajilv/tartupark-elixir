@@ -14,6 +14,7 @@ import auth from "./auth";
 import booking from "./booking";
 import login from "./login";
 import main from "./main";
+import summary from "./summary";
 import $ from "jquery";
 import "jquery";
 
@@ -60,6 +61,7 @@ var router = new VueRouter({
     routes:[
         {path: '/login', component: login, beforeEnter: afterAuth},
         {path: '/', component: main, beforeEnter: requireAuth},
+        {path: '/booking/summary', component: summary, beforeEnter: requireAuth},
         {path: '*', redirect: '/'}
     ]
 });
