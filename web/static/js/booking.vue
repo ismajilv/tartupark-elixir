@@ -50,7 +50,7 @@
 
     <div class="row"> 
       <div class="col-sm-offset-3 col-sm-9">
-        <button type="submit" class="btn btn-default" v-on:click="search">Search</button>
+        <button type="submit" class="btn btn-default" id="btn_search" v-on:click="search">Search</button>
         <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
         <button type="submit" class="btn btn-default" id="btn_submit2" style="display: none;" v-on:click="submit">Submit</button>
       </div>
@@ -126,6 +126,8 @@ export default {
                     this.lotSearchingResult = null;
                     document.getElementById("btn_submit").style.display = "none";                    
                     document.getElementById("btn_submit2").style.display = "none";
+                    document.getElementById("btn_search").click();
+                    document.getElementById("btn_modal").click();
                     console.log(response.data);
                     alert(response.data.msg);
                 })
@@ -170,12 +172,6 @@ export default {
 
               }
 
-              console.log("start time: " + startTime);
-              console.log("end time: " + endTime);
-              console.log("search radius: " + this.parking_search_radius);
-              console.log("payment time: " + this.payment_selected);
-              console.log("payment type: " + this.payment_type);
-
               axios.post("/api/search",
                   { lngLat: lngLat,
                     parkingStartTime: startTime,
@@ -187,15 +183,6 @@ export default {
                   {headers: auth.getAuthHeader()})
                   .then(response => {
                       var searchingResult = response.data;
-
-                      if(searchingResult.length > 0 && this.payment_selected == "Before Parking"){
-                        document.getElementById("btn_submit").style.display = "inline-block";
-                      } else if(searchingResult.length > 0) {
-                        document.getElementById("btn_submit").style.display = "none";
-                        document.getElementById("btn_submit2").style.display = "inline-block";
-                      } else {
-                        document.getElementById("btn_submit").style.display = "none";
-                      }
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -290,21 +277,26 @@ export default {
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
                           var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
-
+                                                    
                           if(that.payment_type == "Hourly"){
                             var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
                           } else{
                             var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
                           }
-                          
+
+                          if(that.payment_selected == "Before Parking"){
+                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit\").click()'>";
+                          } else {
+                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit2\").click()'>";
+                          }
+
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
                             contenString += paymentTypeString + 
                                             "Free time limit is " + coordsForMarker[i][6] + " minutes. <br>"
                           }
 
-                          contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br>"
+                          contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
 
-                          
 
                           var choosenLot = [
                             {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
@@ -331,6 +323,9 @@ export default {
                   alert('Geocode was not successful for the following reason: ' + status);
                 }
               }); // end of geocode
+        },
+        myFunction: function(){
+          console.log("worked!"); 
         }
     },
     mounted: function() {

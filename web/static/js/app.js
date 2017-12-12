@@ -49,7 +49,7 @@ Vue.component('my-modal', {
                 <div class="modal-content" style="padding: 25px;">
                     <slot></slot>
                 </div>
-                <button class="modal-close is-large" aria-label="close" @click="$emit('close')"></button>
+                <button class="modal-close is-large" id="btn_modal" aria-label="close" @click="$emit('close')"></button>
             </div>
     `
 });
