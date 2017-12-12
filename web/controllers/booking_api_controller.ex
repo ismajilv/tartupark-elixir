@@ -12,7 +12,7 @@ defmodule Tartupark.BookingAPIController do
     query = from booking in Bookings,
             join: user in User, on: booking.user_id == user.id,
             select: booking
-    booking = Repo.all(query)
+    booking = Repo.all(query) |> Repo.preload(:payment)
     conn
     |> put_status(201)
     |> json(%{msg: "Bookings are available.", bookings: booking})
