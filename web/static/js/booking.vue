@@ -159,18 +159,18 @@ export default {
                 var parkingEndTime = this.parking_end_time;
               }
 
-              // try {
-              //     var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
-              //     var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
-              // }
-              // catch(err) {
-              //     var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
-              //     var endTime = (parkingEndTime != null) ? parkingEndTime : null;
-              //
-              //     startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
-              //     endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
-              //
-              // }
+              try {
+                  var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
+                  var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
+              }
+              catch(err) {
+                  var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
+                  var endTime = (parkingEndTime != null) ? parkingEndTime : null;
+
+                  startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
+                  endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
+
+              }
               axios.post("/api/search",
                   { lngLat: lngLat,
                     parkingStartTime: parkingStartTime,
@@ -288,6 +288,10 @@ export default {
 
                           if(that.payment_type == "Hourly"){
                             var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
+                            var hourlyFee = (coordsForMarker[i][5] == zoneA) ? (2/3600) : (1/3600);
+                            var cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
+                            cost = cost.toFixed(2);
+                            paymentTypeString += "Total cost is " + cost + " Euro. <br>";
                           } else{
                             var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
                           }
