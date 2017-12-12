@@ -1,14 +1,12 @@
 <template>
-<div>
+    <h2>Listing users</h2> 
 
-</div>
 </template>
 
 <script>
 import axios from "axios";
 import socket from "./socket";
 import auth from "./auth";
-import moment from "moment";
 
 export default {
     data: function() {
@@ -20,6 +18,19 @@ export default {
        
     },
     mounted: function() {
+
+        function getSummary(){
+           axios.get("/api/bookings/summary", {headers: auth.getAuthHeader()})
+            .then(response => { 
+                console.log(response.data);
+                // alert(response.data.msg);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
+
+        getSummary();
 
     }
 }
