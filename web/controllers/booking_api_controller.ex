@@ -13,7 +13,7 @@ defmodule Tartupark.BookingAPIController do
     query = from booking in Booking,
             join: user in User, on: booking.user_id == user.id,
             select: booking
-    bookings = Repo.all(query) |> Repo.preload([:payment, :place])
+    bookings = Repo.all(query) |> Repo.preload([:payment, place: [:zone]])
 
     bookings = bookings
     |> Enum.map(fn book ->
@@ -29,6 +29,7 @@ defmodule Tartupark.BookingAPIController do
                                      fn point -> {lng, lat} = point
                                         %{lng: lng, lat: lat}
                                      end),
+                    cost:  Tartupark.PaymentAPIController.payment_calculate(book, book.place.zone),
                     payment: case book.payment do
                               nil -> nil
                               payment ->  %{payment_code: payment.payment_code,
@@ -66,19 +67,25 @@ defmodule Tartupark.BookingAPIController do
      booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
                |> Repo.insert!
 
+    payment =
     case Map.get(Map.get(params, "paymentParams"), "cost") do
-       nil     -> payment_id = nil
-       payment -> cost = payment |> Float.parse |> elem(0)
-                  payment_id = Tartupark.PaymentAPIController.create(conn, %{"bookingId" => booking.id, "cost" => cost})
+       nil   ->  nil
+       cost -> Tartupark.PaymentAPIController.create(conn, %{"bookingId" => booking.id, "cost" => cost})
     end
 
-    conn
-    |> put_status(201)
-    |> json(%{msg: "Booking has been done.", booking_id: booking.id})
+    case payment do
+       nil          -> conn |> put_status(201) |> json(%{msg: "Booking has been done.", booking_id: booking.id})
+
+       payment_conn ->
+         case payment_conn.status do
+            201 -> conn |> put_status(201) |> json(%{msg: "Booking with payment has been done.", booking_id: booking.id})
+            _   ->  Repo.delete booking
+                    conn |> put_status(402) |> json(%{msg: "Payment error has occured."})
+         end
+    end
   end
 
   def update(conn, %{"booking_id" => booking_id, "parkingEndTime" => end_time}) do
-
     booking = Repo.get!(Booking, booking_id)
     changeset = Ecto.Changeset.change(booking, endDateTime: parseToNaiveDateTime(end_time))
     case Repo.update changeset do
@@ -94,14 +101,13 @@ defmodule Tartupark.BookingAPIController do
   def delete(conn, %{"booking_id" => booking_id}) do
     booking = Repo.get!(Booking, booking_id)
     changeset = Ecto.Changeset.change(booking, status: "deactive")
-    case Repo.update changese do
+    case Repo.update changeset do
       {:ok, _struct}       -> conn
                                |> put_status(200)
                                |> json(%{msg: "Booking 'id: #{booking.id}' was deleted successfully."})
       {:error, _changeset} -> conn
                                |> put_status(400)
                                |> json(%{msg: "Booking 'id: #{booking.id}' could not be deleted."})
-
     end
   end
 
@@ -114,10 +120,8 @@ defmodule Tartupark.BookingAPIController do
     |> Place.select_with_distance(point)
     |> Repo.all
     |> Repo.preload([:zone, :bookings])
-
     start_time = parseToNaiveDateTime(params["parkingStartTime"])
     end_time = parseToNaiveDateTime(params["parkingEndTime"])
-
     locations = Enum.map(parkings,
                         (fn park_place ->
                           %{shape: park_place.shape,
@@ -152,7 +156,9 @@ defmodule Tartupark.BookingAPIController do
                             parkingEndTime: end_time,
                             parkingSearchRadius: params["parkingSearchRadius"],
                             paymentTime: params["paymentTime"],
-                            paymentType: params["paymentType"]
+                            paymentType: params["paymentType"],
+                            costHourly: Tartupark.PaymentAPIController.payment_calculate(%{startDateTime: start_time, endDateTime: end_time, paymentType: params["paymentType"]},
+                                                                                         %{costHourly: park_place.zone.costHourly, costRealTime: park_place.zone.costRealTime})
                           }
                           end))
 
@@ -163,8 +169,6 @@ defmodule Tartupark.BookingAPIController do
     |> json(locations)
   end
 
-
-
   def parseToNaiveDateTime(dateTime) when dateTime != nil do
     scannedDateTime = Regex.scan(~r/\d+/, dateTime, trim: true)
     |> List.flatten
@@ -172,7 +176,7 @@ defmodule Tartupark.BookingAPIController do
     case length(scannedDateTime) do
        6 -> [year, month, day, hour, minute, second] = scannedDateTime
        7 -> [year, month, day, hour, minute, second, _millisecond] = scannedDateTime
-       8 -> [year, month, day, hour, minute, second, _timezone1, _timesone2] = scannedDateTime
+       8 -> [year, month, day, hour, minute, second, _timezone1, _timezone2] = scannedDateTime
     end
     NaiveDateTime.new(year, month, day, hour, minute, second) |> elem(1)
   end
@@ -185,13 +189,12 @@ defmodule Tartupark.BookingAPIController do
      end
   end
 
-
   def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do
     case {start_1, end_1, start_2, end_2} do
       {st1, nil, st2, nil} ->                                 true
-      {st1, nil, st2, ed2} when ed2 != nil ->                 NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), st1) == :gt
+      {st1, nil, _st2, ed2} when ed2 != nil ->                 NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), st1) == :gt
 
-      {st1, ed1, st2, nil} when ed1 != nil ->                 NaiveDateTime.compare(ed1, st2) == :gt or
+      {_st1, ed1, st2, nil} when ed1 != nil ->                NaiveDateTime.compare(ed1, st2) == :gt or
                                                               NaiveDateTime.compare(ed1, st2) == :eq
 
       {st1, ed1, st2, ed2} when ed1 != nil and ed2 != nil -> not ((NaiveDateTime.compare(st1, st2) == :lt   and
