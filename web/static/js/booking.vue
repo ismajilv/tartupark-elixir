@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="form-group">
+  <div class="form-group" style="width: 90%;">
     <div class="row">
       <label class="control-label col-sm-3" for="parking_address" style="margin: 10px auto;">Parking address:</label>
       <div class="col-sm-9">
@@ -57,7 +57,7 @@
       </div>
     </div>
   </div> <!--  end of form-group -->
-<div id="map" style="width:100%;height:500px; margin-top:25px"></div>
+<div id="map" style="width:90%;height:500px; margin: 0 auto; margin-top:25px"></div>
 
   <my-modal v-show="showModal" @close="showModal=false">
     <form class="col-md-10 col-md-offset-1" style="padding:0">
