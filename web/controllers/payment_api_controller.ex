@@ -40,11 +40,16 @@ defmodule Tartupark.PaymentAPIController do
     end
   end
 
-  # def payment_check(booking, cost) do
-  #    booking = booking |> Repo.preload(place: [:zone])
-  #    start_date = booking.startDateTime
-  #    end_date = booking.endDateTime
-  #    payment_type = booking.paymentType
-  #    cost
-  # end
+  def payment_check(booking, cost) do
+     booking = booking |> Repo.preload(place: [:zone])
+     start_date = booking.startDateTime
+     end_date = booking.endDateTime
+     payment_type = booking.paymentType
+     cost_hourly_per_second = booking.place.zone.costHourly / 3600
+     cost_real_time_per_second = booking.place.zone.costRealTime / 5*60
+     case payment_type do
+       "Hourly" -> cost == (diff(end_date, start_date)*cost_hourly_per_second) |> Float.round(2)
+       "Real Time" -> cost == (diff(end_date, start_date)*cost_real_time_per_second) |> Float.round(2)
+     end
+  end
 end

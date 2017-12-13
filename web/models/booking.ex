@@ -17,8 +17,8 @@ defmodule Tartupark.Booking do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:startTime, :endTime, :paymentTime, :paymentType])
-    |> validate_required([:startTime, :endTime, :paymentTime, :paymentType])
+    |> cast(params, [:startDateTime, :endDateTime, :paymentTime, :paymentType])
+    |> validate_required([:startDateTime, :endDateTime, :paymentTime, :paymentType])
   end
 
 end
