@@ -3,6 +3,10 @@ defmodule Tartupark.PaymentAPIController do
   alias Tartupark.{Payment, Booking}
 
   def create(conn, %{"bookingId" => booking_id, "cost" => cost}) do
+    case is_float cost do
+      true -> cost = cost
+      false -> cost = cost |> Float.parse |> elem(0)
+    end
 
     booking = Repo.get(Booking, booking_id)
     payment_code = random_string(21)
@@ -36,9 +40,11 @@ defmodule Tartupark.PaymentAPIController do
     end
   end
 
-  # def payment_check(booking, cost) do
-  #    start_date = booking.startDateTime
-  #    end_date = booking.endDateTime
-  #    paymentType
-  # end
+  def payment_check(booking, cost) do
+     booking = booking |> Repo.preload(place: [:zone])
+     start_date = booking.startDateTime
+     end_date = booking.endDateTime
+     payment_type = booking.paymentType
+     booking
+  end
 end
