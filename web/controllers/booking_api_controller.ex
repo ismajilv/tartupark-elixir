@@ -23,6 +23,8 @@ defmodule Tartupark.BookingAPIController do
                     inserted_at: book.inserted_at,
                     paymentTime: book.paymentTime,
                     paymentType: book.paymentType,
+                    cancelationPermission: compareCurrentAndEndTime(NaiveDateTime.utc_now(), book.endDateTime),
+                    status: book.status,
                     place: Enum.map(book.place.area.coordinates,
                                      fn point -> {lng, lat} = point
                                         %{lng: lng, lat: lat}
@@ -35,10 +37,11 @@ defmodule Tartupark.BookingAPIController do
                                             payment_id: payment.id}
                              end}
                 end)
+      |> Enum.filter(fn book -> book.status == "active" end)
 
-    conn
-    |> put_status(201)
-    |> json(%{msg: "Bookings are available.", bookings: bookings})
+      conn
+      |> put_status(201)
+      |> json(%{msg: "Bookings are available.", bookings: bookings})
   end
 
   def create(conn,  params) do
@@ -58,7 +61,7 @@ defmodule Tartupark.BookingAPIController do
          "Hourly" -> end_time = parseToNaiveDateTime(parkingEndTime)
           _       -> end_time = nil
      end
-     booking_params = %{startDateTime: start_time, endDateTime: end_time, paymentTime: paymentTime, paymentType: paymentType}
+     booking_params = %{startDateTime: start_time, endDateTime: end_time, paymentTime: paymentTime, paymentType: paymentType, status: "active"}
      booking_place_bind = Ecto.build_assoc(Repo.get(Place, place_id), :bookings, booking_params)
      booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
                |> Repo.insert!
@@ -90,13 +93,14 @@ defmodule Tartupark.BookingAPIController do
 
   def delete(conn, %{"booking_id" => booking_id}) do
     booking = Repo.get!(Booking, booking_id)
-    case Repo.delete booking do
+    changeset = Ecto.Changeset.change(booking, status: "deactive")
+    case Repo.update changese do
       {:ok, _struct}       -> conn
                                |> put_status(200)
                                |> json(%{msg: "Booking 'id: #{booking.id}' was deleted successfully."})
       {:error, _changeset} -> conn
                                |> put_status(400)
-                               |> json(%{msg: "Booking 'id: #{booking.id}' could not be delted."})
+                               |> json(%{msg: "Booking 'id: #{booking.id}' could not be deleted."})
 
     end
   end
@@ -135,9 +139,13 @@ defmodule Tartupark.BookingAPIController do
                             capacity: List.foldl(park_place.bookings,
                                                  park_place.capacity,
                                                  fn (book, capacity) ->
-                                                   case checkBetweenOrAfter(start_time, end_time, book.startDateTime, book.endDateTime) do
-                                                     true -> capacity-1
-                                                     false -> capacity
+                                                   if book.status == "active" do
+                                                     case checkBetweenOrAfter(start_time, end_time, book.startDateTime, book.endDateTime) do
+                                                       true -> capacity-1
+                                                       false -> capacity
+                                                     end
+                                                   else
+                                                     capacity
                                                    end
                                                  end),
                             parkingStartTime: start_time,
@@ -170,7 +178,12 @@ defmodule Tartupark.BookingAPIController do
   end
   def parseToNaiveDateTime(dateTime), do: nil
 
-
+  def compareCurrentAndEndTime(current, end_time) do
+     case end_time do
+       nil -> false
+       _   -> NaiveDateTime.compare(current, end_time) == :lt
+     end
+  end
 
 
   def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do

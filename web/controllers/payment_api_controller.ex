@@ -11,14 +11,20 @@ defmodule Tartupark.PaymentAPIController do
     booking = Repo.get(Booking, booking_id)
     payment_code = random_string(21)
     payment = Ecto.build_assoc(booking, :payment, %{cost: cost, payment_code: payment_code})
-
-    case Repo.insert payment do
-      {:ok, _struct}       -> conn
-                              |> put_status(201)
-                              |> json(%{msg: "Payment has been done.", payment_id: payment.id})
-      {:error, _changeset} -> conn
-                               |> put_status(400)
-                               |> json(%{msg: "Payment error has occure."})
+    real_cost = payment_calculate(booking)
+    if real_cost == cost do
+      case Repo.insert payment do
+        {:ok, _struct}       -> conn
+                                |> put_status(201)
+                                |> json(%{msg: "Payment has been done.", payment_id: payment.id})
+        {:error, _changeset} -> conn
+                                 |> put_status(400)
+                                 |> json(%{msg: "Payment error has occure."})
+      end
+    else
+      conn
+      |> put_status(400)
+      |> json(%{msg: "Wrong cost value given #{cost}, but should be #{real_cost}."})
     end
   end
 
@@ -40,7 +46,7 @@ defmodule Tartupark.PaymentAPIController do
     end
   end
 
-  def payment_check(booking, cost) do
+  def payment_calculate(booking) do
      booking = booking |> Repo.preload(place: [:zone])
      start_date = booking.startDateTime
      end_date = booking.endDateTime
@@ -48,8 +54,8 @@ defmodule Tartupark.PaymentAPIController do
      cost_hourly_per_second = booking.place.zone.costHourly / 3600
      cost_real_time_per_second = booking.place.zone.costRealTime / 5*60
      case payment_type do
-       "Hourly" -> cost == (NaiveDateTime.diff(end_date, start_date)*cost_hourly_per_second) |> Float.round(2)
-       "Real Time" -> cost == (NaiveDateTime.diff(end_date, start_date)*cost_real_time_per_second) |> Float.round(2)
+       "Hourly" -> (NaiveDateTime.diff(end_date, start_date)*cost_hourly_per_second) |> Float.round(2)
+       "Real Time" -> (NaiveDateTime.diff(end_date, start_date)*cost_real_time_per_second) |> Float.round(2)
      end
   end
 end
