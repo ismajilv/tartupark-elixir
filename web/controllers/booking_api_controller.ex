@@ -31,7 +31,7 @@ defmodule Tartupark.BookingAPIController do
                               nil -> nil
                               payment ->  %{payment_code: payment.payment_code,
                                             inserted_at: payment.inserted_at,
-                                            cost: payment.cost |> Float.parse |> elem(0),
+                                            cost: payment.cost,
                                             payment_id: payment.id}
                              end}
                 end)
