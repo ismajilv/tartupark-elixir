@@ -9,6 +9,7 @@
                     <th>Payment Type</th>
                     <th>Payment Number</th>
                     <th>Booking Cost</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -19,6 +20,10 @@
                     <td>{{ booking.paymentType }}</td>
                     <td>{{ (booking.payment != null) ? booking.payment.payment_code : null }}</td>
                     <td>{{ (booking.payment != null) ? booking.payment.cost : null }}</td>
+                    <td class="text-right">
+                        <button class: "btn btn-info">End Parking</button>
+                        <button class: "btn btn-danger btn-xs">Cancel Booking</button>
+                    </td>
                 </tr>
             </tbody>
         </table>
