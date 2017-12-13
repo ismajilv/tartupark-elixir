@@ -82,6 +82,8 @@ export default {
             {headers: auth.getAuthHeader()})
             .then(response => {
                 console.log(response.data);
+                document.getElementById("btn_modal").click();
+                this.getSummary();
             })
             .catch(error => {
                 console.log(error);
