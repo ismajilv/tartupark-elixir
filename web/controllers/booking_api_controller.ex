@@ -75,6 +75,7 @@ defmodule Tartupark.BookingAPIController do
   end
 
   def update(conn, %{"booking_id" => booking_id, "parkingEndTime" => end_time}) do
+
     booking = Repo.get!(Booking, booking_id)
     changeset = Booking.changeset(booking, endTime: parseToNaiveDateTime(end_time))
     case Booking.update changeset do

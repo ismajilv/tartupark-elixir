@@ -21,8 +21,8 @@
                     <td>{{ (booking.payment != null) ? booking.payment.payment_code : null }}</td>
                     <td>{{ (booking.payment != null) ? (booking.payment.cost).toFixed(2) : null }}</td>
                     <td class="text-right">
-                        <button type="submit" v-if="booking.paymentType == 'Real Time'" class="btn btn-info btn-xs" id="btn_end" v-on:click="search">End Parking</button>
-                        <button type="submit" v-if="booking.paymentType != 'Real Time'" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="search">Cancel Booking</button>
+                        <button type="submit" v-if="booking.paymentType == 'Real Time'" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button>
+                        <button type="submit" v-if="booking.paymentType != 'Real Time'" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking">Cancel Booking</button>
                     </td>
                 </tr>
             </tbody>
@@ -39,10 +39,26 @@ import auth from "./auth";
 export default {
     data: function() {
         return {
-            bookings: []
+            bookings: [],
+            selectedBookingForUpdate: null
         }
     },
     methods: {
+        endParking: function(bookingId, parkingEndTime){
+            console.log("booking id: " + bookingId);
+            axios.patch("/api/bookings/"+bookingId, 
+            {parkingEndTime: new Date()}, 
+            {headers: auth.getAuthHeader()})
+            .then(response => { 
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
+        cancelBooking: function(){
+
+        },
         getSummary: function(){
             axios.get("/api/bookings/summary", {headers: auth.getAuthHeader()})
             .then(response => { 
