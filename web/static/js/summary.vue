@@ -22,7 +22,7 @@
                     <td>{{ (booking.payment != null) ? (booking.payment.cost).toFixed(2) : null }}</td>
                     <td class="text-right">
                         <button type="submit" v-if="booking.paymentType == 'Real Time'" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button>
-                        <button type="submit" v-if="booking.paymentType != 'Real Time'" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking">Cancel Booking</button>
+                        <button type="submit" v-if="booking.paymentType == 'Hourly'" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking(booking.booking_id)">Cancel Booking</button>
                     </td>
                 </tr>
             </tbody>
@@ -56,8 +56,17 @@ export default {
                 console.log(error);
             });
         },
-        cancelBooking: function(){
-
+        cancelBooking: function(bookingId){
+            console.log("booking id: " + bookingId);
+            axios.delete("/api/bookings/"+bookingId,
+            {bookin_id: bookingId}, 
+            {headers: auth.getAuthHeader()})
+            .then(response => { 
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
         getSummary: function(){
             axios.get("/api/bookings/summary", {headers: auth.getAuthHeader()})
