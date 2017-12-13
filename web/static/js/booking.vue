@@ -379,6 +379,16 @@ export default {
           document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
           this.payment_selected = "Before Parking";
         }
-    }
+
+        if (auth.socket) {
+          var channel = auth.getChannel("customer:");
+          channel.join()
+              .receive("ok", resp => { console.log("Joined successfully", resp) })
+              .receive("error", resp => { console.log("Unable to join", resp) });
+          channel.on("requests", payload => {
+              alert(payload);
+          });
+      }
+  }
 }
 </script>

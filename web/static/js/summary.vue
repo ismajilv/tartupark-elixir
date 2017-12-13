@@ -14,22 +14,20 @@
             </thead>
             <tbody>
                 <tr v-for="booking in bookings" :key="booking.booking_id">
-                    <td>{{ (booking.startDateTime).substring(0, 10) + " " + (booking.startDateTime).substring(11, 16) }}</td>           
-                    <td>{{ (booking.endDateTime != null) ? (booking.endDateTime).substring(0, 10) + " " + (booking.endDateTime).substring(11, 16) : null }}</td>           
+                    <td>{{ (booking.startDateTime).substring(11, 16) + " " + (booking.startDateTime).substring(8, 10) + "/" + (booking.startDateTime).substring(5, 7) + "/" + (booking.startDateTime).substring(0, 4) }}</td>           
+                    <td>{{ (booking.endDateTime != null) ? (booking.endDateTime).substring(11, 16) + " " + (booking.endDateTime).substring(8, 10) + "/" + (booking.endDateTime).substring(5, 7) + "/" + (booking.endDateTime).substring(0, 4) : null }}</td>           
                     <td>{{ booking.paymentTime }}</td>     
                     <td>{{ booking.paymentType }}</td>
                     <td>{{ (booking.payment != null) ? booking.payment.payment_code : null }}</td>
-                    <td>{{ (booking.payment != null) ? booking.payment.cost : null }}</td>
+                    <td>{{ (booking.payment != null) ? (booking.payment.cost).toFixed(2) : null }}</td>
                     <td class="text-right">
-                        <button class: "btn btn-info">End Parking</button>
-                        <button class: "btn btn-danger btn-xs">Cancel Booking</button>
+                        <button type="submit" v-if="booking.paymentType == 'Real Time'" class="btn btn-info btn-xs" id="btn_end" v-on:click="search">End Parking</button>
+                        <button type="submit" v-if="booking.paymentType != 'Real Time'" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="search">Cancel Booking</button>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
-
-    
+    </div>    
 </template>
 
 <script>
