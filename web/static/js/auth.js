@@ -2,7 +2,7 @@ import axios from "axios";
 import {Socket} from "phoenix";
 
 export default {
-  user: { username: "" },
+  user: { username: window.localStorage.getItem('user') },
   socket: null,
   login: function (context, creds, redirect) {
     axios.post("/api/sessions", creds)
@@ -10,6 +10,8 @@ export default {
         this.user.username = creds.username;
         // this.user.role = response.data.role;
         window.localStorage.setItem('token-'+this.user.username, response.data.token);
+        window.localStorage.setItem('user', this.user.username);
+        // localStorage.setItem("user", this.user.username);
 
         // this.socket = new Socket("/socket", {params: {token: response.data.token}});
         // this.socket.connect();

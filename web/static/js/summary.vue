@@ -84,7 +84,7 @@ export default {
                 console.log(response.data);
                 document.getElementById("btn_modal").click();
                 this.getSummary();
-            })
+            }) 
             .catch(error => {
                 console.log(error);
             });

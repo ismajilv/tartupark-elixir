@@ -94,7 +94,7 @@ defmodule Tartupark.BookingAPIController do
   def delete(conn, %{"booking_id" => booking_id}) do
     booking = Repo.get!(Booking, booking_id)
     changeset = Ecto.Changeset.change(booking, status: "deactive")
-    case Repo.update changese do
+    case Repo.update changeset do
       {:ok, _struct}       -> conn
                                |> put_status(200)
                                |> json(%{msg: "Booking 'id: #{booking.id}' was deleted successfully."})
