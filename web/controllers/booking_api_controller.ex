@@ -77,8 +77,8 @@ defmodule Tartupark.BookingAPIController do
   def update(conn, %{"booking_id" => booking_id, "parkingEndTime" => end_time}) do
 
     booking = Repo.get!(Booking, booking_id)
-    changeset = Booking.changeset(booking, endTime: parseToNaiveDateTime(end_time))
-    case Booking.update changeset do
+    changeset = Ecto.Changeset.change(booking, endDateTime: parseToNaiveDateTime(end_time))
+    case Repo.update changeset do
       {:ok, _struct}       -> conn
                              |> put_status(200)
                              |> json(%{msg: "Booking parameters successfully updated"})
@@ -88,8 +88,7 @@ defmodule Tartupark.BookingAPIController do
     end
   end
 
-  def delete(conn, params) do
-    %{"booking_id" => booking_id} = params
+  def delete(conn, %{"booking_id" => booking_id}) do
     booking = Repo.get!(Booking, booking_id)
     case Repo.delete booking do
       {:ok, _struct}       -> conn
