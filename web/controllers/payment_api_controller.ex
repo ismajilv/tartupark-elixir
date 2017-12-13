@@ -40,11 +40,11 @@ defmodule Tartupark.PaymentAPIController do
     end
   end
 
-  def payment_check(booking, cost) do
-     booking = booking |> Repo.preload(place: [:zone])
-     start_date = booking.startDateTime
-     end_date = booking.endDateTime
-     payment_type = booking.paymentType
-     booking
-  end
+  # def payment_check(booking, cost) do
+  #    booking = booking |> Repo.preload(place: [:zone])
+  #    start_date = booking.startDateTime
+  #    end_date = booking.endDateTime
+  #    payment_type = booking.paymentType
+  #    cost
+  # end
 end
