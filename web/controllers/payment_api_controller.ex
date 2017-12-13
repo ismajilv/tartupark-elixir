@@ -21,7 +21,9 @@ defmodule Tartupark.PaymentAPIController do
   def random_string(length) do
     alpha = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0"]
     payment_code = ""
-    payment_code = for _x <- 1..21, do: payment_code <> Enum.random(alpha)
+    payment_code = for _x <- 1..13, do: payment_code <> Enum.random(alpha)
+    payment_code = Enum.join(payment_code)
+    payment_code = "EST" <> payment_code
     case Repo.get_by(Payment, payment_code: payment_code) do
       nil -> payment_code
       _ -> random_string(length)
