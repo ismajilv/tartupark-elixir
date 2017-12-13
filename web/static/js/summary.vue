@@ -14,9 +14,9 @@
             </thead>
             <tbody>
                 <tr v-for="booking in bookings" :key="booking.booking_id">
-                    <td>{{ (booking.startDateTime).substring(11, 16) + " " + (booking.startDateTime).substring(8, 10) + "/" + (booking.startDateTime).substring(5, 7) + "/" + (booking.startDateTime).substring(0, 4) }}</td>           
-                    <td>{{ (booking.endDateTime != null) ? (booking.endDateTime).substring(11, 16) + " " + (booking.endDateTime).substring(8, 10) + "/" + (booking.endDateTime).substring(5, 7) + "/" + (booking.endDateTime).substring(0, 4) : null }}</td>           
-                    <td>{{ booking.paymentTime }}</td>     
+                    <td>{{ (booking.startDateTime).substring(11, 16) + " " + (booking.startDateTime).substring(8, 10) + "/" + (booking.startDateTime).substring(5, 7) + "/" + (booking.startDateTime).substring(0, 4) }}</td>
+                    <td>{{ (booking.endDateTime != null) ? (booking.endDateTime).substring(11, 16) + " " + (booking.endDateTime).substring(8, 10) + "/" + (booking.endDateTime).substring(5, 7) + "/" + (booking.endDateTime).substring(0, 4) : null }}</td>
+                    <td>{{ booking.paymentTime }}</td>
                     <td>{{ booking.paymentType }}</td>
                     <td>{{ (booking.payment != null) ? booking.payment.payment_code : null }}</td>
                     <td>{{ (booking.payment != null) ? (booking.payment.cost).toFixed(2) : null }}</td>
@@ -27,7 +27,7 @@
                 </tr>
             </tbody>
         </table>
-    </div>    
+    </div>
 </template>
 
 <script>
@@ -46,10 +46,10 @@ export default {
     methods: {
         endParking: function(bookingId, parkingEndTime){
             console.log("booking id: " + bookingId);
-            axios.patch("/api/bookings/"+bookingId, 
+            axios.patch("/api/bookings/"+bookingId,
             {parkingEndTime: new Date()}, 
             {headers: auth.getAuthHeader()})
-            .then(response => { 
+            .then(response => {
                 console.log(response.data);
             })
             .catch(error => {
@@ -70,7 +70,7 @@ export default {
         },
         getSummary: function(){
             axios.get("/api/bookings/summary", {headers: auth.getAuthHeader()})
-            .then(response => { 
+            .then(response => {
                 console.log(response.data.bookings);
                 this.bookings = response.data.bookings;
             })
