@@ -4,12 +4,18 @@ defmodule Tartupark.PaymentAPIController do
 
   def create(conn, %{"bookingId" => booking_id, "cost" => cost}) do
 
+    booking = Repo.get(Booking, booking_id)
     payment_code = random_string(21)
-    payment = Ecto.build_assoc(Repo.get(Booking, booking_id), :payment, %{cost: cost, payment_code: payment_code})
-              |> Repo.insert!
-    conn
-    |> put_status(201)
-    |> json(%{msg: "Payment has been done.", payment_id: payment.id})
+    payment = Ecto.build_assoc(booking, :payment, %{cost: cost, payment_code: payment_code})
+
+    case Repo.insert payment do
+      {:ok, _struct}       -> conn
+                              |> put_status(201)
+                              |> json(%{msg: "Payment has been done.", payment_id: payment.id})
+      {:error, _changeset} -> conn
+                               |> put_status(400)
+                               |> json(%{msg: "Payment error has occure."})
+    end
   end
 
   def update(conn, _params) do
@@ -21,11 +27,18 @@ defmodule Tartupark.PaymentAPIController do
   def random_string(length) do
     alpha = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9","0"]
     payment_code = ""
-    payment_code = for _x <- 1..21, do: payment_code <> Enum.random(alpha)
+    payment_code = for _x <- 1..13, do: payment_code <> Enum.random(alpha)
+    payment_code = Enum.join(payment_code)
+    payment_code = "EST" <> payment_code
     case Repo.get_by(Payment, payment_code: payment_code) do
       nil -> payment_code
       _ -> random_string(length)
     end
   end
 
+  # def payment_check(booking, cost) do
+  #    start_date = booking.startDateTime
+  #    end_date = booking.endDateTime
+  #    paymentType
+  # end
 end

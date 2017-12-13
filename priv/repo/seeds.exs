@@ -97,7 +97,17 @@ alias Tartupark.{Repo, Zone, Place, User}
 %{capacity: 15, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.719176, 58.376785}, {26.717492, 58.376167}], srid: 4326}}, #TIGI 3
 %{capacity: 17, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.717331, 58.376099}, {26.715067, 58.375323}], srid: 4326}}, #TIGI 4
 %{capacity: 16, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.714944, 58.375263}, {26.712240, 58.374318}], srid: 4326}}, #TIGI 5
-%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.712090, 58.374250}, {26.708828, 58.373080}], srid: 4326}} #TIGI6
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.712090, 58.374250}, {26.708828, 58.373080}], srid: 4326}}, #TIGI6
+
+%{capacity: 12, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.717364, 58.376172}, {26.716774, 58.376667}, {26.715422, 58.376650}], srid: 4326}}, #PEPLERI 1
+%{capacity: 8, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.715309, 58.376653}, {26.714204, 58.376574}], srid: 4326}}, #PEPLERI 2
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.714065, 58.376546}, {26.712445, 58.376428}, {26.711104, 58.376217}], srid: 4326}}, #PEPLERI 3
+%{capacity: 30, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.710777, 58.376155}, {26.707236, 58.374090}], srid: 4326}}, #JUILIUS KUPERJANOVI
+%{capacity: 30, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.710734, 58.376228}, {26.709618, 58.376166}, {26.705660, 58.375018}], srid: 4326}}, #JAAN TONISSONI
+%{capacity: 20, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.711038, 58.376132}, {26.712154, 58.374321}], srid: 4326}}, #KASTANI
+%{capacity: 17, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.712480, 58.376360}, {26.712534, 58.376127}, {26.713317, 58.375148}], srid: 4326}}, #TIGI
+%{capacity: 16, zone_tag: "ZB", shape: "line", area:  %Geo.MultiPoint{coordinates: [{26.714175, 58.376515}, {26.714379, 58.375964}, {26.715087, 58.375385}], srid: 4326}} #JULIUS KUPERJANOVI
+
 ]
 |> Enum.map(fn place_data -> Ecto.build_assoc(Repo.get_by!(Zone, tag: place_data.zone_tag), :places, place_data) end)
 |> Enum.each(fn changeset -> Repo.insert!(changeset) end)

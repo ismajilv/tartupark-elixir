@@ -31,7 +31,7 @@ defmodule Tartupark.BookingAPIController do
                               nil -> nil
                               payment ->  %{payment_code: payment.payment_code,
                                             inserted_at: payment.inserted_at,
-                                            cost: payment.cost,
+                                            cost: payment.cost |> Float.parse |> elem(0),
                                             payment_id: payment.id}
                              end}
                 end)
@@ -84,6 +84,20 @@ defmodule Tartupark.BookingAPIController do
       {:error, _changeset} -> conn
                              |> put_status(400)
                              |> json(%{msg: "Booking parameters were not updated"})
+    end
+  end
+
+  def delete(conn, params) do
+    %{"booking_id" => booking_id} = params
+    booking = Repo.get!(Booking, booking_id)
+    case Repo.delete booking do
+      {:ok, _struct}       -> conn
+                               |> put_status(200)
+                               |> json(%{msg: "Booking 'id: #{booking.id}' was deleted successfully."})
+      {:error, _changeset} -> conn
+                               |> put_status(400)
+                               |> json(%{msg: "Booking 'id: #{booking.id}' could not be delted."})
+
     end
   end
 
