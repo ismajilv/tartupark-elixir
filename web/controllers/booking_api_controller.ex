@@ -29,7 +29,7 @@ defmodule Tartupark.BookingAPIController do
                                      fn point -> {lng, lat} = point
                                         %{lng: lng, lat: lat}
                                      end),
-                    cost:  Tartupark.PaymentAPIController.payment_calculate(book, book.place.zone),
+                    # cost:  Tartupark.PaymentAPIController.payment_calculate(book, book.place.zone),
                     payment: case book.payment do
                               nil -> nil
                               payment ->  %{payment_code: payment.payment_code,
@@ -50,16 +50,16 @@ defmodule Tartupark.BookingAPIController do
     user = Guardian.Plug.current_resource(conn)
     %{
        "id" => place_id,
-       "parkingStartTime" => parkingStartTime,
-       "parkingEndTime" => parkingEndTime,
+       "startDateTime" => startDateTime,
+       "endDateTime" => endDateTime,
        "paymentTime" => paymentTime,
        "paymentType" => paymentType
      } = params["parking_address"]
 
 
-     start_time = parseToNaiveDateTime(parkingStartTime)
+     start_time = parseToNaiveDateTime(startDateTime)
      case paymentType do
-         "Hourly" -> end_time = parseToNaiveDateTime(parkingEndTime)
+         "Hourly" -> end_time = parseToNaiveDateTime(endDateTime)
           _       -> end_time = nil
      end
      booking_params = %{startDateTime: start_time, endDateTime: end_time, paymentTime: paymentTime, paymentType: paymentType, status: "active"}
@@ -85,7 +85,7 @@ defmodule Tartupark.BookingAPIController do
     end
   end
 
-  def update(conn, %{"booking_id" => booking_id, "parkingEndTime" => end_time}) do
+  def update(conn, %{"booking_id" => booking_id, "endDateTime" => end_time}) do
     booking = Repo.get!(Booking, booking_id)
     changeset = Ecto.Changeset.change(booking, endDateTime: parseToNaiveDateTime(end_time))
     case Repo.update changeset do
@@ -120,8 +120,8 @@ defmodule Tartupark.BookingAPIController do
     |> Place.select_with_distance(point)
     |> Repo.all
     |> Repo.preload([:zone, :bookings])
-    start_time = parseToNaiveDateTime(params["parkingStartTime"])
-    end_time = parseToNaiveDateTime(params["parkingEndTime"])
+    start_time = parseToNaiveDateTime(params["startDateTime"])
+    end_time = parseToNaiveDateTime(params["endDateTime"])
     locations = Enum.map(parkings,
                         (fn park_place ->
                           %{shape: park_place.shape,
@@ -152,17 +152,18 @@ defmodule Tartupark.BookingAPIController do
                                                      capacity
                                                    end
                                                  end),
-                            parkingStartTime: start_time,
-                            parkingEndTime: end_time,
+                            startDateTime: start_time,
+                            endDateTime: end_time,
                             parkingSearchRadius: params["parkingSearchRadius"],
                             paymentTime: params["paymentTime"],
-                            paymentType: params["paymentType"],
-                            costHourly: Tartupark.PaymentAPIController.payment_calculate(%{startDateTime: start_time, endDateTime: end_time, paymentType: params["paymentType"]},
-                                                                                         %{costHourly: park_place.zone.costHourly, costRealTime: park_place.zone.costRealTime})
+                            paymentType: params["paymentType"]
+                            # cost: Tartupark.PaymentAPIController.payment_calculate(%{startDateTime: start_time, endDateTime: end_time, paymentType: params["paymentType"]},
+                            #                                                        %{costHourly: park_place.zone.costHourly, costRealTime: park_place.zone.costRealTime})
                           }
                           end))
 
     locations = Enum.filter(locations, fn loc -> loc.capacity > 0 end)
+    # IO.inspect locations
     # IO.inspect locations
     conn
     |> put_status(200)

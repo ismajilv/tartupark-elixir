@@ -159,20 +159,20 @@ export default {
                 lat: results[0].geometry.location.lat()
               }
 
-              var parkingStartTime = this.parking_start_time;
+              var startDateTime = this.parking_start_time;
               if (this.payment_type == "Real Time"){
-                var parkingEndTime = null;
+                var endDateTime = null;
               } else {
-                var parkingEndTime = this.parking_end_time;
+                var endDateTime = this.parking_end_time;
               }
 
               try {
-                  var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
-                  var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
+                  var startTime = (startDateTime != null ) ? startDateTime.toISOString() : null;
+                  var endTime = (endDateTime != null) ? endDateTime.toISOString() : null;
               }
               catch(err) {
-                  var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
-                  var endTime = (parkingEndTime != null) ? parkingEndTime : null;
+                  var startTime = (startDateTime != null ) ? startDateTime : null;
+                  var endTime = (endDateTime != null) ? endDateTime : null;
 
                   startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
                   endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
@@ -180,8 +180,8 @@ export default {
               }
               axios.post("/api/search",
                   { lngLat: lngLat,
-                    parkingStartTime: parkingStartTime,
-                    parkingEndTime: parkingEndTime,
+                    startDateTime: startTime,
+                    endDateTime: endTime,
                     parkingSearchRadius: this.parking_search_radius,
                     paymentTime: this.payment_selected,
                     paymentType: this.payment_type
@@ -197,6 +197,8 @@ export default {
                       } else {
                         document.getElementById("btn_submit").style.display = "none";
                       }
+
+                      console.log(searchingResult);
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -220,8 +222,8 @@ export default {
                                         searchingResult[j].zone.costRealTime,
                                         searchingResult[j].zone.description,
                                         searchingResult[j].zone.freeTimeLimit,
-                                        searchingResult[j].parkingStartTime,
-                                        searchingResult[j].parkingEndTime,
+                                        searchingResult[j].startDateTime,
+                                        searchingResult[j].endDateTime,
                                         searchingResult[j].paymentTime,
                                         searchingResult[j].paymentType,
                                         searchingResult[j].shape,
@@ -319,7 +321,7 @@ export default {
 
                           contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
 
-                          markerCoords[i] = {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
+                          markerCoords[i] = {id: coordsForMarker[i][0],endDateTime: coordsForMarker[i][8],startDateTime: coordsForMarker[i][7],
                             paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
                             lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]};
 

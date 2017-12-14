@@ -9,7 +9,7 @@ defmodule Tartupark.PaymentAPIController do
         false -> cost |> Float.parse |> elem(0)
      end
 
-    booking = Repo.get(Booking, booking_id)
+    booking = Repo.get(Booking, booking_id) |> Repo.preload(place: [:zone])
     payment_code = random_string(21)
     payment = Ecto.build_assoc(booking, :payment, %{cost: cost, payment_code: payment_code})
     real_cost = payment_calculate(booking, booking.place.zone)
