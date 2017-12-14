@@ -1,5 +1,6 @@
 <template>
     <div class="table-responsive">
+        <h1 style="text-align:center;">Booking Summary</h1>
         <table class="table">
             <thead>
                 <tr>
@@ -21,8 +22,8 @@
                     <td>{{ (booking.payment != null) ? booking.payment.payment_code : null }}</td>
                     <td>{{ (booking.payment != null) ? (booking.payment.cost).toFixed(2) : null }}</td>
                     <td class="text-right">
-                        <!-- <button type="submit" v-if="booking.paymentType == 'Real Time'" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button> -->
-                        <button v-if="booking.paymentType == 'Real Time'" style="width: 100px;" class="btn btn-info btn-xs" @click="showModal=true" v-on:click="sendInfoToPopUp(booking.booking_id)" id="btn_submit">End Parking</button>
+                        <button type="submit" v-if="booking.paymentType == 'Real Time' && booking.endDateTime == null" style="width: 100px;" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button>
+                        <button v-if="booking.paymentType == 'Real Time' && booking.endDateTime != null && booking.payment == null" style="width: 100px;" class="btn btn-success btn-xs" @click="showModal=true" v-on:click="sendInfoToPopUp(booking.booking_id)" id="btn_pay2">Pay</button>
                         <button type="submit" v-if="booking.paymentType == 'Hourly'" style="width: 100px;" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking(booking.booking_id)">Cancel Booking</button>
                     </td>
                 </tr>
@@ -78,11 +79,12 @@ export default {
     methods: {
         endParking: function(){
             axios.patch("/api/bookings/"+ this.bookingId,
-            {parkingEndTime: new Date()}, 
+            {endDateTime: new Date()}, 
             {headers: auth.getAuthHeader()})
             .then(response => {
                 console.log(response.data);
                 document.getElementById("btn_modal").click();
+                alert(response.data.msg);
                 this.getSummary();
             }) 
             .catch(error => {
@@ -94,7 +96,9 @@ export default {
             axios.delete("/api/bookings/"+bookingId, 
             {headers: auth.getAuthHeader()})
             .then(response => { 
-                console.log(response.data);
+                console.log(response.data.msg);
+                alert(response.data);
+                this.getSummary();
             })
             .catch(error => {
                 console.log(error);
