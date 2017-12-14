@@ -100,7 +100,7 @@ defmodule Tartupark.BookingAPIController do
 
   def delete(conn, %{"booking_id" => booking_id}) do
     booking = Repo.get!(Booking, booking_id)
-    if NaiveDateTime.compare(booking.startDateTime, NaiveDateTime.utc_now()) == :lt do
+    if NaiveDateTime.compare(booking.startDateTime, NaiveDateTime.utc_now()) == :gt do
       changeset = Ecto.Changeset.change(booking, status: "canceled")
       case Repo.update changeset do
         {:ok, _struct}       -> conn
