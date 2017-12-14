@@ -1,20 +1,20 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import moment from "moment";
-
-// const jQuery = window.jQuery || require("jquery");
-// const moment = window.moment || require("moment");
-
 import datePicker from 'vue-bootstrap-datetimepicker';
+
 import 'eonasdan-bootstrap-datetimepicker';
 import "axios";
 import "./socket";
 import "phoenix";
+
 import auth from "./auth";
 import booking from "./booking";
 import login from "./login";
 import main from "./main";
+import summary from "./summary";
 import $ from "jquery";
+
 import "jquery";
 
 const requireAuth = (to, _from, next) => {
@@ -40,8 +40,6 @@ Vue.use(VueRouter);
 Vue.use(datePicker);
 
 Vue.component("booking", booking);
-
-
 Vue.component('my-modal', {
     template: `
             <div class="modal is-active">
@@ -60,6 +58,7 @@ var router = new VueRouter({
     routes:[
         {path: '/login', component: login, beforeEnter: afterAuth},
         {path: '/', component: main, beforeEnter: requireAuth},
+        {path: '/bookings/summary', component: summary, name: 'summary', beforeEnter: requireAuth},
         {path: '*', redirect: '/'}
     ]
 });

@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="form-group">
+  <div class="form-group" style="width: 90%;">
     <div class="row">
       <label class="control-label col-sm-3" for="parking_address" style="margin: 10px auto;">Parking address:</label>
       <div class="col-sm-9">
@@ -51,12 +51,13 @@
     <div class="row">
       <div class="col-sm-offset-3 col-sm-9">
         <button type="submit" class="btn btn-default" id="btn_search" v-on:click="search">Search</button>
+        <router-link class="btn btn-default" :to="{ name: 'summary'}">Go</router-link>
         <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
         <button type="submit" class="btn btn-default" id="btn_submit2" style="display: none;" v-on:click="submit">Submit</button>
       </div>
     </div>
   </div> <!--  end of form-group -->
-<div id="map" style="width:100%;height:500px; margin-top:25px"></div>
+<div id="map" style="width:90%;height:500px; margin: 0 auto; margin-top:25px"></div>
 
   <my-modal v-show="showModal" @close="showModal=false">
     <form class="col-md-10 col-md-offset-1" style="padding:0">
@@ -140,9 +141,13 @@ export default {
         },
         dateTimeStatusRead: function(){
           document.getElementById("parking_end_time").readOnly = true;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
+          this.payment_selected = "End of Month";
         },
         dateTimeStatusWrite: function(){
           document.getElementById("parking_end_time").readOnly = false;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
+          this.payment_selected = "Before Parking";
         },
         search: function() {
           this.lotSearchingResult = null;
@@ -154,20 +159,20 @@ export default {
                 lat: results[0].geometry.location.lat()
               }
 
-              var parkingStartTime = this.parking_start_time;
+              var startDateTime = this.parking_start_time;
               if (this.payment_type == "Real Time"){
-                var parkingEndTime = null;
+                var endDateTime = null;
               } else {
-                var parkingEndTime = this.parking_end_time;
+                var endDateTime = this.parking_end_time;
               }
 
               try {
-                  var startTime = (parkingStartTime != null ) ? parkingStartTime.toISOString() : null;
-                  var endTime = (parkingEndTime != null) ? parkingEndTime.toISOString() : null;
+                  var startTime = (startDateTime != null ) ? startDateTime.toISOString() : null;
+                  var endTime = (endDateTime != null) ? endDateTime.toISOString() : null;
               }
               catch(err) {
-                  var startTime = (parkingStartTime != null ) ? parkingStartTime : null;
-                  var endTime = (parkingEndTime != null) ? parkingEndTime : null;
+                  var startTime = (startDateTime != null ) ? startDateTime : null;
+                  var endTime = (endDateTime != null) ? endDateTime : null;
 
                   startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
                   endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
@@ -175,8 +180,8 @@ export default {
               }
               axios.post("/api/search",
                   { lngLat: lngLat,
-                    parkingStartTime: parkingStartTime,
-                    parkingEndTime: parkingEndTime,
+                    startDateTime: startTime,
+                    endDateTime: endTime,
                     parkingSearchRadius: this.parking_search_radius,
                     paymentTime: this.payment_selected,
                     paymentType: this.payment_type
@@ -192,6 +197,8 @@ export default {
                       } else {
                         document.getElementById("btn_submit").style.display = "none";
                       }
+
+                      console.log(searchingResult);
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -215,8 +222,8 @@ export default {
                                         searchingResult[j].zone.costRealTime,
                                         searchingResult[j].zone.description,
                                         searchingResult[j].zone.freeTimeLimit,
-                                        searchingResult[j].parkingStartTime,
-                                        searchingResult[j].parkingEndTime,
+                                        searchingResult[j].startDateTime,
+                                        searchingResult[j].endDateTime,
                                         searchingResult[j].paymentTime,
                                         searchingResult[j].paymentType,
                                         searchingResult[j].shape,
@@ -299,7 +306,7 @@ export default {
                             var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
                           }
 
-                          if(that.payment_selected == "Before Parking"){
+                          if(that.payment_selected == "Before Parking" && that.payment_type == "Hourly"){
                             var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit\").click()'>";
                           } else {
                             var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit2\").click()'>";
@@ -314,20 +321,9 @@ export default {
 
                           contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
 
-
-                          // var choosenLot = [
-                          //   {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
-                          //   paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
-                          //   lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]}
-                          // ];
-
-                          markerCoords[i] = {id: coordsForMarker[i][0],parkingEndTime: coordsForMarker[i][8],parkingStartTime: coordsForMarker[i][7],
+                          markerCoords[i] = {id: coordsForMarker[i][0],endDateTime: coordsForMarker[i][8],startDateTime: coordsForMarker[i][7],
                             paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
                             lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]};
-
-                          // var paymentParameters = [
-                          //   {cost: cost}
-                          // ];
 
                           parkingCosts[i] = {cost: cost};
 
@@ -378,9 +374,23 @@ export default {
 
         if (this.payment_type == "Real Time"){
           document.getElementById("parking_end_time").readOnly = true;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
+          this.payment_selected = "End of Month";
         } else {
           document.getElementById("parking_end_time").readOnly = false;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
+          this.payment_selected = "Before Parking";
         }
-    }
+
+        if (auth.socket) {
+          var channel = auth.getChannel("customer:");
+          channel.join()
+              .receive("ok", resp => { console.log("Joined successfully", resp) })
+              .receive("error", resp => { console.log("Unable to join", resp) });
+          channel.on("requests", payload => {
+              alert(payload);
+          });
+      }
+  }
 }
 </script>

@@ -6,6 +6,7 @@ defmodule Tartupark.Booking do
     field :endDateTime, :naive_datetime
     field :paymentTime, :string
     field :paymentType, :string
+    field :status, :string, default: "active"
     belongs_to :place, Tartupark.Place
     belongs_to :user, Tartupark.User
     has_one :payment, Tartupark.Payment
@@ -17,8 +18,8 @@ defmodule Tartupark.Booking do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:startTime, :endTime, :paymentTime, :paymentType])
-    |> validate_required([:startTime, :endTime, :paymentTime, :paymentType])
+    |> cast(params, [:startDateTime, :endDateTime, :paymentTime, :paymentType, :status])
+    |> validate_required([:startDateTime, :endDateTime, :paymentTime, :paymentType, :status])
   end
 
 end
