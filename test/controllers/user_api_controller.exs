@@ -7,13 +7,10 @@ defmodule Tartupark.UserAPIControllerTest do
 
 test "POST /api/register ", %{conn: conn} do
     
-            params = %{"username" => "fred",
-                       "email" => "fr@fr.com",                           
-                       "license_number" => "123dsc"                           
-                       }
+            params = %{"email" => "fe@fe.com", "fullName" => "fe", "license_number" => "123zz", "password" => "[FILTERED]", "username" => "fred"}
             
             conn = post(conn, "/api/register", params)
-            assert conn.status == 406
+            assert conn.status == 201
             
         end
 end

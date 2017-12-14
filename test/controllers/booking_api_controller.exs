@@ -1,6 +1,6 @@
 defmodule Tartupark.BookingAPIControllerTest do
     use Tartupark.ConnCase
-    alias Tartupark.{BookingAPIController, User, UserAPIController}
+    alias Tartupark.{BookingAPIController, User}
  
 
     setup %{conn: conn} = config do
@@ -30,16 +30,9 @@ defmodule Tartupark.BookingAPIControllerTest do
     @tag :login
     test "POST /api/bookings ", %{conn: conn} do
         
-        params = %{                    
-                    "id" => 3,                                        
-                    "parkingStartTime" => "2017-12-12T18:11:03", 
-                    "parkingEndTime" => nil,  
-                    "paymentTime" => "Before Parking", 
-                    "paymentType" => "Real Time"                           
-                }
-               
+        params =  %{"endDateTime" => "2017-12-14T15:11:10.000Z", "lngLat" => %{"lat" => 58.37765880000001, "lng" => 26.73598419999996}, "parkingSearchRadius" => "1000 meters", "paymentTime" => "Before Parking", "paymentType" => "Hourly", "startDateTime" => "2017-12-14T14:11:10.000Z"}
         
-        conn = post(conn, "api/bookings", params)
+        conn = post(conn, "/api/bookings", params)
         assert conn.status == 201
     end
     
