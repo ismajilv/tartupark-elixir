@@ -2,11 +2,12 @@ defmodule Tartupark.PaymentAPIController do
   use Tartupark.Web, :controller
   alias Tartupark.{Payment, Booking}
 
-  def create(conn, %{"bookingId" => booking_id, "cost" => cost}) do
+  def create(conn, %{"booking_id" => booking_id, "cost" => cost}) do
     cost =
-     case is_float cost do
-        true ->  cost
-        false -> cost |> Float.parse |> elem(0)
+     cond do
+        is_float cost ->  cost
+        is_integer cost ->  cost/1
+        true -> cost |> Float.parse |> elem(0)
      end
 
     booking = Repo.get(Booking, booking_id) |> Repo.preload(place: [:zone])
@@ -52,7 +53,7 @@ defmodule Tartupark.PaymentAPIController do
      end_date = booking.endDateTime
      payment_type = booking.paymentType
      cost_hourly_per_second = zone.costHourly / 3600
-     cost_real_time_per_second = zone.costRealTime / 5*60
+     cost_real_time_per_second = zone.costRealTime / 300
      case {payment_type, end_date} do
        {_, nil}                 -> nil
        {"Hourly", _end_time}    -> (NaiveDateTime.diff(end_date, start_date)*cost_hourly_per_second) |> Float.round(2)
