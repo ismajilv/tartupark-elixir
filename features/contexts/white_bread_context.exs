@@ -1,7 +1,7 @@
 defmodule WhiteBreadContext do
   use WhiteBread.Context
   use Hound.Helpers
-  alias Tartupark.{Repo}
+  alias Tartupark.{Repo, User}
 
   feature_starting_state fn  ->
     Application.ensure_all_started(:hound)
@@ -19,11 +19,51 @@ defmodule WhiteBreadContext do
     Hound.end_session
   end
 
-  given_ ~r/^the following parking spaces$/, fn state ->
+  given_ ~r/^the following person$/,
+  fn state, %{table_data: table} ->
+    table = List.first table
+    table.email
     {:ok, state}
   end
 
-  when_ ~r/^I enter my destination of "(?<argument_one>[^"]+)"$/,
+  when_ ~r/^I enter the booking information on the STRS Customer app$/, fn state ->
+    session = to_string(Enum.random(0..100000))
+    in_browser_session String.to_atom(session), fn ->
+    end
+    {:ok, state}
+  end
+
+  then_ ~r/^I press the registration button$/, fn state ->
+    {:ok, state}
+  end
+
+  and_ ~r/^I fill the registration page with my details and submit$/, fn state ->
+    {:ok, state}
+  end
+
+  and_ ~r/^The web page is directed to Main page$/, fn state ->
+    {:ok, state}
+  end
+
+  when_ ~r/^I enter the parlking address of "(?<argument_one>[^"]+)"$/,
+  fn state, %{argument_one: _argument_one} ->
+    {:ok, state}
+  end
+
+  then_ ~r/^I specify payment type of ""$/, fn state ->
+    {:ok, state}
+  end
+
+  and_ ~r/^I specify start date of ""$/, fn state ->
+    {:ok, state}
+  end
+
+  and_ ~r/^I specify start date of "(?<argument_one>[^"]+)"$/,
+  fn state, %{argument_one: _argument_one} ->
+    {:ok, state}
+  end
+
+  and_ ~r/^I spesify search radius of "(?<argument_one>[^"]+)"$/,
   fn state, %{argument_one: _argument_one} ->
     {:ok, state}
   end
@@ -33,21 +73,40 @@ defmodule WhiteBreadContext do
     {:ok, state}
   end
 
-  and_ ~r/^I want my parking time start in "(?<argument_one>[^"]+)" and last until "(?<argument_two>[^"]+)"$/,
-  fn state, %{argument_one: _argument_one,argument_two: _argument_two} ->
+  and_ ~r/^I press choose$/, fn state ->
     {:ok, state}
   end
 
-  and_ ~r/^I enter the parking information on the STRS Customer app$/, fn state ->
-    {:ok, state}
-  end
-
-  when_ ~r/^I summit the parking request$/, fn state ->
-    {:ok, state}
-  end
-
-  then_ ~r/^I should be notified "(?<argument_one>[^"]+)"$/,
+  and_ ~r/^I get notification of "(?<argument_one>[^"]+)"$/,
   fn state, %{argument_one: _argument_one} ->
+    {:ok, state}
+  end
+
+  when_ ~r/^Payment method is Hourly and payment time is Before Parking$/, fn state ->
+    {:ok, state}
+  end
+
+  then_ ~r/^I add credit card details$/, fn state ->
+    {:ok, state}
+  end
+
+  and_ ~r/^I submit payment$/, fn state ->
+    {:ok, state}
+  end
+
+  when_ ~r/^Payment method is Hourly and payment time is End of month$/, fn state ->
+    {:ok, state}
+  end
+
+  then_ ~r/^I redirected to main page$/, fn state ->
+    {:ok, state}
+  end
+
+  when_ ~r/^Payment method is Real time and payment time is Before Parking$/, fn state ->
+    {:ok, state}
+  end
+
+  then_ ~r/^I directed to main page$/, fn state ->
     {:ok, state}
   end
 end
