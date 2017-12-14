@@ -117,6 +117,7 @@ export default {
           {headers: auth.getAuthHeader()})
           .then(response => {
               console.log(response.data.msg);
+              document.getElementById("btn_modal").click();
               alert(response.data.msg);
               this.getSummary();
           })
