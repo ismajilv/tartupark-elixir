@@ -6,7 +6,7 @@ defmodule Tartupark.Booking do
     field :endDateTime, :naive_datetime
     field :paymentTime, :string
     field :paymentType, :string
-    field :status, :string, default: "active"
+    field :status, :string, default: "available"
     belongs_to :place, Tartupark.Place
     belongs_to :user, Tartupark.User
     has_one :payment, Tartupark.Payment
