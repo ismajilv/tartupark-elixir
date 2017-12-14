@@ -1,7 +1,7 @@
 <template>
   <div class="module form-module">
     <div class="toggle"><i class="glyphicon glyphicon-arrow-up"></i>
-      <div class="tooltip">Click Me</div>
+      <div class="tooltip" id="reg_btn">Click Me</div>
     </div>
     <div class="form">
       <h2>Login to your account</h2>

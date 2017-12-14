@@ -21,7 +21,7 @@ defmodule Tartupark.BookingAPIController do
                     inserted_at: book.inserted_at,
                     paymentTime: book.paymentTime,
                     paymentType: book.paymentType,
-                    cancelationPermission: NaiveDateTime.compare(book.startDateTime, NaiveDateTime.utc_now()) == :gt,
+                    startAndCurrentTimeComparison: NaiveDateTime.compare(book.startDateTime, NaiveDateTime.utc_now()),
                     status: book.status,
                     place: Enum.map(book.place.area.coordinates,
                                      fn point -> {lng, lat} = point
