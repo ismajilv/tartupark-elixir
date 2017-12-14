@@ -131,7 +131,7 @@ export default {
                     document.getElementById("btn_submit2").style.display = "none";
                     document.getElementById("btn_search").click();
                     document.getElementById("btn_modal").click();
-                    console.log(response.data);
+                    // console.log(response.data);
                     alert(response.data.msg);
                 })
                 .catch(error => {
@@ -198,7 +198,7 @@ export default {
                         document.getElementById("btn_submit").style.display = "none";
                       }
 
-                      console.log(searchingResult);
+                      // console.log(searchingResult);
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -345,9 +345,6 @@ export default {
                 }
               }); // end of geocode
         },
-        myFunction: function(){
-          console.log("worked!");
-        }
     },
     mounted: function() {
 

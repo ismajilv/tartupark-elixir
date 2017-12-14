@@ -8,13 +8,11 @@ defmodule Tartupark.BookingAPIController do
   json: Poison)
 
   def index(conn, _params) do
-
     user = Guardian.Plug.current_resource(conn)
     query = from booking in Booking,
             join: user in User, on: booking.user_id == user.id,
             select: booking
     bookings = Repo.all(query) |> Repo.preload([:payment, place: [:zone]])
-
     bookings = bookings
     |> Enum.map(fn book ->
                   %{startDateTime: book.startDateTime,
@@ -23,7 +21,7 @@ defmodule Tartupark.BookingAPIController do
                     inserted_at: book.inserted_at,
                     paymentTime: book.paymentTime,
                     paymentType: book.paymentType,
-                    cancelationPermission: compareCurrentAndEndTime(NaiveDateTime.utc_now(), book.startDateTime) == :gt,
+                    cancelationPermission: NaiveDateTime.compare(book.startDateTime, NaiveDateTime.utc_now()) == :gt,
                     status: book.status,
                     place: Enum.map(book.place.area.coordinates,
                                      fn point -> {lng, lat} = point
@@ -45,8 +43,9 @@ defmodule Tartupark.BookingAPIController do
       |> json(%{msg: "Bookings are available.", bookings: bookings})
   end
 
-  def create(conn,  params) do
 
+
+  def create(conn,  params) do
     user = Guardian.Plug.current_resource(conn)
     %{
        "id" => place_id,
@@ -55,7 +54,6 @@ defmodule Tartupark.BookingAPIController do
        "paymentTime" => paymentTime,
        "paymentType" => paymentType
      } = params["parking_address"]
-
 
      start_time = parseToNaiveDateTime(startDateTime)
      case paymentType do
@@ -70,7 +68,7 @@ defmodule Tartupark.BookingAPIController do
     payment =
     case Map.get(Map.get(params, "paymentParams"), "cost") do
        nil   ->  nil
-       cost -> Tartupark.PaymentAPIController.create(conn, %{"bookingId" => booking.id, "cost" => cost})
+       cost -> Tartupark.PaymentAPIController.create(conn, %{"booking_id" => booking.id, "cost" => cost})
     end
 
     case payment do
@@ -85,6 +83,8 @@ defmodule Tartupark.BookingAPIController do
     end
   end
 
+
+
   def update(conn, %{"booking_id" => booking_id, "endDateTime" => end_time}) do
     booking = Repo.get!(Booking, booking_id)
     changeset = Ecto.Changeset.change(booking, endDateTime: parseToNaiveDateTime(end_time))
@@ -97,6 +97,8 @@ defmodule Tartupark.BookingAPIController do
                              |> json(%{msg: "Booking parameters were not updated"})
     end
   end
+
+
 
   def delete(conn, %{"booking_id" => booking_id}) do
     booking = Repo.get!(Booking, booking_id)
@@ -116,6 +118,9 @@ defmodule Tartupark.BookingAPIController do
        |> json(%{msg: "Booking 'id: #{booking.id}' could not be deleted. Too late."})
     end
   end
+
+
+
 
   def search(conn, params) do
     %{"lngLat" => %{"lat" => lat, "lng" => lng}} =  params
@@ -176,6 +181,8 @@ defmodule Tartupark.BookingAPIController do
     |> json(locations)
   end
 
+
+
   def parseToNaiveDateTime(dateTime) when dateTime != nil do
     startDateTime = Regex.scan(~r/\d+/, dateTime, trim: true)
     |> List.flatten
@@ -189,12 +196,16 @@ defmodule Tartupark.BookingAPIController do
   end
   def parseToNaiveDateTime(dateTime), do: nil
 
+
+
   def compareCurrentAndEndTime(current, end_time) do
      case end_time do
        nil -> false
        _   -> NaiveDateTime.compare(current, end_time) == :lt
      end
   end
+
+
 
   def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do
     case {start_1, end_1, start_2, end_2} do

@@ -2,7 +2,7 @@ defmodule Tartupark.PaymentAPIController do
   use Tartupark.Web, :controller
   alias Tartupark.{Payment, Booking}
 
-  def create(conn, %{"bookingId" => booking_id, "cost" => cost}) do
+  def create(conn, %{"booking_id" => booking_id, "cost" => cost}) do
     cost =
      case is_float cost do
         true ->  cost
