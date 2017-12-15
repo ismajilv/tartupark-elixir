@@ -167,14 +167,28 @@ export default {
               } else {
                 var endDateTime = this.parking_end_time;
               }
+<<<<<<< HEAD
+
+              // console.log("startDateTime: " + startDateTime);
+              // console.log("endDateTime: " + endDateTime);
+
+=======
               
+>>>>>>> ef394af16055cf934df835a3f5a5606c2db9d4e5
               var startTime = (startDateTime != null ) ? startDateTime : null;
               var endTime = (endDateTime != null) ? endDateTime : null;
 
               startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
               endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
+<<<<<<< HEAD
+
+              // console.log("-----after convertion-----");
+              // console.log("startDateTime: " + startTime);
+              // console.log("endDateTime: " + endTime);
+=======
               var radius = document.getElementById("myRange").value;
+>>>>>>> ef394af16055cf934df835a3f5a5606c2db9d4e5
 
               axios.post("/api/search",
                   { lngLat: lngLat,

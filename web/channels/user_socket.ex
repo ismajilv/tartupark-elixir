@@ -3,11 +3,11 @@ defmodule Tartupark.UserSocket do
 
   ## Channels
   # channel "room:*", Tartupark.RoomChannel
+  channel "customer:*", Tartupark.CustomerChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
   # transport :longpoll, Phoenix.Transports.LongPoll
-  channel "customer:*", Tartupark.CustomerChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
