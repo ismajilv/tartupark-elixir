@@ -22,9 +22,9 @@
                     <td>{{ (booking.payment != null) ? booking.payment.payment_code : null }}</td>
                     <td>{{ (booking.payment != null) ? (booking.payment.cost).toFixed(2) : (booking.cost != null) ? (booking.cost).toFixed(2) : null}}</td>
                     <td class="text-right">
-                        <button type="submit" v-if="booking.paymentType == 'Real Time' && booking.endDateTime == null" style="width: 100px;" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button>
+                        <button type="submit" v-if="'gt' == booking.startAndCurrentTimeComparison && booking.paymentType == 'Real Time' && booking.endDateTime == null" style="width: 100px;" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button>
                         <button v-if="booking.endDateTime != null && booking.payment == null" style="width: 100px;" class="btn btn-success btn-xs" @click="showModal=true" v-on:click="sendInfoToPopUp(booking.booking_id, booking.cost)" id="btn_pay2">Pay</button>
-                        <button type="submit" v-if="booking.paymentType == 'Hourly' && ('true' == booking.cancelationPermission)" style="width: 100px;" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking(booking.booking_id)">Cancel Booking</button>
+                        <button type="submit" v-if="'lt' == booking.startAndCurrentTimeComparison && booking.payment == null" style="width: 100px;" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking(booking.booking_id)">Cancel Booking</button>
                     </td>
                 </tr>
             </tbody>
@@ -79,7 +79,7 @@ export default {
     },
     methods: {
         endParking: function(booking_id){
-          console.log(booking_id)
+          // console.log(booking_id)
             axios.patch("/api/bookings/"+ booking_id,
             {endDateTime: new Date()},
             {headers: auth.getAuthHeader()})
@@ -94,7 +94,7 @@ export default {
             });
         },
         cancelBooking: function(bookingId){
-            console.log("booking id: " + bookingId);
+            // console.log("booking id: " + bookingId);
             axios.delete("/api/bookings/"+bookingId,
             {headers: auth.getAuthHeader()})
             .then(response => {
@@ -111,7 +111,7 @@ export default {
             this.costToPay = cost;
         },
         payParking: function(booking_id, cost){
-          console.log("PAYMENT PARAMS: id:" + this.bookingIdToPay + " cost:" + this.costToPay);
+          // console.log("PAYMENT PARAMS: id:" + this.bookingIdToPay + " cost:" + this.costToPay);
           axios.post("/api/payments/"+this.bookingIdToPay,
           {cost: this.costToPay},
           {headers: auth.getAuthHeader()})

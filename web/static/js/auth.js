@@ -11,10 +11,10 @@ export default {
         // this.user.role = response.data.role;
         window.localStorage.setItem('token-'+this.user.username, response.data.token);
         window.localStorage.setItem('user', this.user.username);
-        // localStorage.setItem("user", this.user.username);
+        localStorage.setItem("user", this.user.username);
 
-        // this.socket = new Socket("/socket", {params: {token: response.data.token}});
-        // this.socket.connect();
+        this.socket = new Socket("/socket", {params: {token: response.data.token}});
+        this.socket.connect();
         if (redirect)
           context.$router.push({path: redirect});
       })
@@ -29,7 +29,7 @@ export default {
         window.localStorage.removeItem('token-'+this.user.username);
         // this.user.authenticated = false;
         this.user.username = "";
-        // this.socket = null;
+        this.socket = null;
         context.$router.push({path: '/login'});
       }).catch(error => {
         console.log(error)
@@ -48,11 +48,11 @@ export default {
           console.log(error);
       });
   },
-  // getChannel: function(prefix) {
-  //   var token = window.localStorage.getItem('token-'+this.user.username);
-  //   var channel = this.socket.channel(prefix + this.user.username, { guardian_token: token });
-  //   return channel;
-  // },
+  getChannel: function(prefix) {
+    var token = window.localStorage.getItem('token-'+this.user.username);
+    var channel = this.socket.channel(prefix + this.user.username, { guardian_token: token });
+    return channel;
+  },
   authenticated: function() {
     const jwt = window.localStorage.getItem('token-'+this.user.username);
     return !!jwt;

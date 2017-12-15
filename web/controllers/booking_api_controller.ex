@@ -11,7 +11,9 @@ defmodule Tartupark.BookingAPIController do
     user = Guardian.Plug.current_resource(conn)
     query = from booking in Booking,
             join: user in User, on: booking.user_id == user.id,
+            where: user.id == ^user.id,
             select: booking
+
     bookings = Repo.all(query) |> Repo.preload([:payment, place: [:zone]])
     bookings = bookings
     |> Enum.map(fn book ->
@@ -21,7 +23,7 @@ defmodule Tartupark.BookingAPIController do
                     inserted_at: book.inserted_at,
                     paymentTime: book.paymentTime,
                     paymentType: book.paymentType,
-                    cancelationPermission: NaiveDateTime.compare(book.startDateTime, NaiveDateTime.utc_now()) == :gt,
+                    startAndCurrentTimeComparison: NaiveDateTime.compare(book.startDateTime, NaiveDateTime.utc_now()),
                     status: book.status,
                     place: Enum.map(book.place.area.coordinates,
                                      fn point -> {lng, lat} = point
@@ -56,30 +58,44 @@ defmodule Tartupark.BookingAPIController do
      } = params["parking_address"]
 
      start_time = parseToNaiveDateTime(startDateTime)
+     end_time =
      case paymentType do
-         "Hourly" -> end_time = parseToNaiveDateTime(endDateTime)
-          _       -> end_time = nil
+         "Hourly" -> parseToNaiveDateTime(endDateTime)
+          _       -> nil
      end
-     booking_params = %{startDateTime: start_time, endDateTime: end_time, paymentTime: paymentTime, paymentType: paymentType, status: "available"}
-     booking_place_bind = Ecto.build_assoc(Repo.get(Place, place_id), :bookings, booking_params)
-     booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
-               |> Repo.insert!
 
-    payment =
-    case Map.get(Map.get(params, "paymentParams"), "cost") do
-       nil   ->  nil
-       cost -> Tartupark.PaymentAPIController.create(conn, %{"booking_id" => booking.id, "cost" => cost})
-    end
+     perfectCondition =
+       case {start_time, end_time} do
+         {stime, nil} -> NaiveDateTime.compare(stime, NaiveDateTime.utc_now()) != :lt
+         {stime, etime} -> NaiveDateTime.compare(stime, NaiveDateTime.utc_now()) != :lt and
+                           NaiveDateTime.compare(etime, NaiveDateTime.utc_now()) == :gt and
+                           NaiveDateTime.compare(etime, stime) == :gt
+       end
 
-    case payment do
-       nil          -> conn |> put_status(201) |> json(%{msg: "Booking has been done.", booking_id: booking.id})
+     if perfectCondition do
+       booking_params = %{startDateTime: start_time, endDateTime: end_time, paymentTime: paymentTime, paymentType: paymentType, status: "available"}
+       booking_place_bind = Ecto.build_assoc(Repo.get(Place, place_id), :bookings, booking_params)
+       booking = Ecto.build_assoc(user, :bookings, booking_place_bind)
+                 |> Repo.insert!
 
-       payment_conn ->
-         case payment_conn.status do
-            201 -> conn |> put_status(201) |> json(%{msg: "Booking with payment has been done.", booking_id: booking.id})
-            _   ->  Repo.delete booking
-                    conn |> put_status(402) |> json(%{msg: "Payment error has occured."})
-         end
+      payment =
+      case Map.get(Map.get(params, "paymentParams"), "cost") do
+         nil   ->  nil
+         cost -> Tartupark.PaymentAPIController.create(conn, %{"booking_id" => booking.id, "cost" => cost})
+      end
+
+      case payment do
+         nil          -> conn |> put_status(201) |> json(%{msg: "Booking has been done.", booking_id: booking.id})
+
+         payment_conn ->
+           case payment_conn.status do
+              201 -> conn |> put_status(201) |> json(%{msg: "Booking with payment has been done.", booking_id: booking.id})
+              _   ->  Repo.delete booking
+                      payment_conn
+           end
+      end
+    else
+      conn |> put_status(406) |> json(%{msg: "Booking has wrong time stamps."})
     end
   end
 
@@ -174,7 +190,6 @@ defmodule Tartupark.BookingAPIController do
                           end))
 
     locations = Enum.filter(locations, fn loc -> loc.capacity > 0 end)
-    # IO.inspect locations
     # IO.inspect locations
     conn
     |> put_status(200)
