@@ -420,14 +420,14 @@ input[type=range] {
     appearance: none;
     width: 25px;  
     height: 25px;
-    background: #4CAF50;
+    background: #008CBA;
     cursor: pointer;
 }
 
 .slider::-moz-range-thumb {
     width: 25px;
     height: 25px;
-    background: #4CAF50;
+    background: #008CBA;
     cursor: pointer;
 }
 
@@ -441,7 +441,7 @@ input[type=range] {
 #parkingPlaceH4 {
     text-align: center;
     text-transform: uppercase;
-    color: #4CAF50;
+    color: #008CBA;
 }
 
 #parkingPlaceParagraph {
