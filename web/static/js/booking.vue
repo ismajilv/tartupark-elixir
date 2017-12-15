@@ -38,7 +38,7 @@
                 <ul id="listBtns">
                     <button type="submit" class="btn btn-default" id="btn_usr" style="padding: 3px 6px !important;"><i class="glyphicon glyphicon-user"></i></button>
                     <li class="ul-li"><router-link class="btn btn-default usercridentials-btns" :to="{ name: 'summary'}">Booking History</router-link></li>
-                    <li class="ul-li"><p <a href="/login" class="btn btn-default usercridentials-btns" @click.prevent="logout">Log out</a></p></li>
+                    <li class="ul-li"><p><a href="/login" class="btn btn-default usercridentials-btns" @click.prevent="logout">Log out</a></p></li>
                 </ul>
             </div>
 
@@ -474,7 +474,7 @@ export default {
             new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});
         });
 
-        this.fullScreenMap();
+        // this.fullScreenMap();
 
        
   }
