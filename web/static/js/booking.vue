@@ -165,18 +165,20 @@ export default {
                 var endDateTime = this.parking_end_time;
               }
 
-              try {
-                  var startTime = (startDateTime != null ) ? startDateTime.toISOString() : null;
-                  var endTime = (endDateTime != null) ? endDateTime.toISOString() : null;
-              }
-              catch(err) {
-                  var startTime = (startDateTime != null ) ? startDateTime : null;
-                  var endTime = (endDateTime != null) ? endDateTime : null;
+              console.log("startDateTime: " + startDateTime);
+              console.log("endDateTime: " + endDateTime);
+              
+              var startTime = (startDateTime != null ) ? startDateTime : null;
+              var endTime = (endDateTime != null) ? endDateTime : null;
 
-                  startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
-                  endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
+              startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
+              endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
-              }
+
+              console.log("-----after convertion-----");
+              console.log("startDateTime: " + startTime);
+              console.log("endDateTime: " + endTime);
+
               axios.post("/api/search",
                   { lngLat: lngLat,
                     startDateTime: startTime,
