@@ -7,6 +7,7 @@ import 'eonasdan-bootstrap-datetimepicker';
 import "axios";
 import "./socket";
 import "phoenix";
+import "vueify/lib/insert-css";
 
 import auth from "./auth";
 import booking from "./booking";

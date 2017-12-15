@@ -40,12 +40,9 @@
 
     <div class="row">
       <label class="control-label col-sm-3" style="margin: 10px auto; margin-right: 15px;">Search Radius:</label>
-      <select v-model="parking_search_radius" style="margin: 10px auto; margin-right: 15px;">
-        <option disabled value="">Please select redius</option>
-        <option>100 meters</option>
-        <option>500 meters</option>
-        <option>1000 meters</option>
-      </select>
+      
+      <input type="range" min="100" max="1000" value="500" step="50" class="slider" id="myRange">
+      <p>Radius: <span id="demo"></span></p>
     </div>
 
     <div class="row">
@@ -83,7 +80,6 @@
     </div>
   </my-modal>
 
-
 </div>
 </template>
 
@@ -92,6 +88,7 @@ import axios from "axios";
 import socket from "./socket";
 import auth from "./auth";
 import moment from "moment";
+import "vueify/lib/insert-css";
 
 export default {
     data: function() {
@@ -106,7 +103,6 @@ export default {
             payment_type: "Real Time",
             parking_start_time: new Date(),
             parking_end_time: null,
-            parking_search_radius: '100 meters',
             payment_selected: "Before Parking",
             config: {
               useCurrent: false,
@@ -164,9 +160,6 @@ export default {
               } else {
                 var endDateTime = this.parking_end_time;
               }
-
-              console.log("startDateTime: " + startDateTime);
-              console.log("endDateTime: " + endDateTime);
               
               var startTime = (startDateTime != null ) ? startDateTime : null;
               var endTime = (endDateTime != null) ? endDateTime : null;
@@ -174,16 +167,13 @@ export default {
               startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
               endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
-
-              console.log("-----after convertion-----");
-              console.log("startDateTime: " + startTime);
-              console.log("endDateTime: " + endTime);
+              var radius = document.getElementById("myRange").value;
 
               axios.post("/api/search",
                   { lngLat: lngLat,
                     startDateTime: startTime,
                     endDateTime: endTime,
-                    parkingSearchRadius: this.parking_search_radius,
+                    parkingSearchRadius: radius,
                     paymentTime: this.payment_selected,
                     paymentType: this.payment_type
                     },
@@ -198,8 +188,6 @@ export default {
                       } else {
                         document.getElementById("btn_submit").style.display = "none";
                       }
-
-                      // console.log(searchingResult);
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -349,6 +337,15 @@ export default {
     },
     mounted: function() {
 
+      var slider = document.getElementById("myRange");
+      var output = document.getElementById("demo");
+      output.innerHTML = slider.value;
+
+      slider.oninput = function() {
+        output.innerHTML = this.value;
+        console.log("this.value " + this.value);
+      }
+
         Date.prototype.addHours= function(h){
             this.setHours(this.getHours()+h);
             return this;
@@ -392,3 +389,43 @@ export default {
   }
 }
 </script>
+
+
+<style>
+
+input[type=range] {
+    display: block;
+    width: 73%;
+    margin-top: 10px;
+}
+
+.slider {
+    -webkit-appearance: none;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;  
+    height: 25px;
+    background: #4CAF50;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #4CAF50;
+    cursor: pointer;
+}
+</style>
