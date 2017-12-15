@@ -54,6 +54,7 @@
                 <br class="">
             </div>
         </my-modal>
+        <router-link class="btn btn-default" :to="{ name: 'main'}">Back</router-link>
     </div>
 </template>
 

@@ -7,6 +7,7 @@ import 'eonasdan-bootstrap-datetimepicker';
 import "axios";
 import "./socket";
 import "phoenix";
+import "vueify/lib/insert-css";
 
 import auth from "./auth";
 import booking from "./booking";
@@ -57,7 +58,7 @@ Vue.component('my-modal', {
 var router = new VueRouter({
     routes:[
         {path: '/login', component: login, beforeEnter: afterAuth},
-        {path: '/', component: main, beforeEnter: requireAuth},
+        {path: '/', component: main, name: 'main', beforeEnter: requireAuth},
         {path: '/bookings/summary', component: summary, name: 'summary', beforeEnter: requireAuth},
         {path: '*', redirect: '/'}
     ]

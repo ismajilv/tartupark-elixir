@@ -40,12 +40,9 @@
 
     <div class="row">
       <label class="control-label col-sm-3" style="margin: 10px auto; margin-right: 15px;">Search Radius:</label>
-      <select v-model="parking_search_radius" style="margin: 10px auto; margin-right: 15px;">
-        <option disabled value="">Please select redius</option>
-        <option>100 meters</option>
-        <option>500 meters</option>
-        <option>1000 meters</option>
-      </select>
+      
+      <input type="range" min="100" max="1000" value="500" step="50" class="slider" id="myRange">
+      <p>Radius: <span id="demo"></span></p>
     </div>
 
     <div class="row">
@@ -83,7 +80,6 @@
     </div>
   </my-modal>
 
-
 </div>
 </template>
 
@@ -92,6 +88,7 @@ import axios from "axios";
 import socket from "./socket";
 import auth from "./auth";
 import moment from "moment";
+import "vueify/lib/insert-css";
 
 export default {
     data: function() {
@@ -106,7 +103,6 @@ export default {
             payment_type: "Real Time",
             parking_start_time: new Date(),
             parking_end_time: null,
-            parking_search_radius: '100 meters',
             payment_selected: "Before Parking",
             config: {
               useCurrent: false,
@@ -164,26 +160,34 @@ export default {
               } else {
                 var endDateTime = this.parking_end_time;
               }
+<<<<<<< HEAD
 
               // console.log("startDateTime: " + startDateTime);
               // console.log("endDateTime: " + endDateTime);
 
+=======
+              
+>>>>>>> ef394af16055cf934df835a3f5a5606c2db9d4e5
               var startTime = (startDateTime != null ) ? startDateTime : null;
               var endTime = (endDateTime != null) ? endDateTime : null;
 
               startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
               endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
+<<<<<<< HEAD
 
               // console.log("-----after convertion-----");
               // console.log("startDateTime: " + startTime);
               // console.log("endDateTime: " + endTime);
+=======
+              var radius = document.getElementById("myRange").value;
+>>>>>>> ef394af16055cf934df835a3f5a5606c2db9d4e5
 
               axios.post("/api/search",
                   { lngLat: lngLat,
                     startDateTime: startTime,
                     endDateTime: endTime,
-                    parkingSearchRadius: this.parking_search_radius,
+                    parkingSearchRadius: radius,
                     paymentTime: this.payment_selected,
                     paymentType: this.payment_type
                     },
@@ -198,8 +202,6 @@ export default {
                       } else {
                         document.getElementById("btn_submit").style.display = "none";
                       }
-
-                      // console.log(searchingResult);
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -294,33 +296,41 @@ export default {
 
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
-                          var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
+                          var contenString = "<div id='parkingPlaceInformation'> <h4 id='parkingPlaceH4'>Parking Place Information</h4> <p id='parkingPlaceParagraph'>"
+                          contenString += "Description: This parking belongs to <strong>" + coordsForMarker[i][5] +    "</strong>. <br>"
                           var cost = null;
 
                           if(that.payment_type == "Hourly"){
-                            var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
+                            var paymentTypeString = "Hourly payment is <strong>" + coordsForMarker[i][3] +   "</strong> Euro. <br>";
                             var hourlyFee = (coordsForMarker[i][5] == zoneA) ? (2/3600) : (1/3600);
                             cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
                             cost = cost.toFixed(2);
-                            paymentTypeString += "Total cost is " + cost + " Euro. <br>";
+                            paymentTypeString += "Total cost is <strong>" + cost + "</strong> Euro. <br>";
                           } else{
-                            var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
+                            var paymentTypeString = "Real Time payment is <strong>" + coordsForMarker[i][4] +  "</strong> Euro. <br>";
                           }
 
                           if(that.payment_selected == "Before Parking" && that.payment_type == "Hourly"){
-                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit\").click()'>";
+                            
+                            if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
+                              var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit\").click()'>";
+                            } else {
+                              var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit2\").click()'>";  
+                            }
+
                           } else {
-                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit2\").click()'>";
+                            var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit2\").click()'>";
                           }
 
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
                             contenString += paymentTypeString +
-                                            "Free time limit is " + coordsForMarker[i][6] + " minutes. <br>"
+                                            "Free time limit is <strong>" + coordsForMarker[i][6] + "</strong> minutes. <br>"
                           } else {
                             cost = null;
                           }
 
-                          contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
+                          contenString += "Capacity is <strong>" + coordsForMarker[i][12] +    "</strong> lots. <br> <br>" + contenStringBtn;
+                          contenString += "</p></div>"
 
                           markerCoords[i] = {id: coordsForMarker[i][0],endDateTime: coordsForMarker[i][8],startDateTime: coordsForMarker[i][7],
                             paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
@@ -348,6 +358,15 @@ export default {
         },
     },
     mounted: function() {
+
+      var slider = document.getElementById("myRange");
+      var output = document.getElementById("demo");
+      output.innerHTML = slider.value;
+
+      slider.oninput = function() {
+        output.innerHTML = this.value;
+        console.log("this.value " + this.value);
+      }
 
         Date.prototype.addHours= function(h){
             this.setHours(this.getHours()+h);
@@ -392,3 +411,77 @@ export default {
   }
 }
 </script>
+
+
+<style>
+
+input[type=range] {
+    display: block;
+    width: 73%;
+    margin-top: 10px;
+}
+
+.slider {
+    -webkit-appearance: none;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;  
+    height: 25px;
+    background: #008CBA;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #008CBA;
+    cursor: pointer;
+}
+
+/* google marker content css */
+
+#parkingPlaceInformation {
+    margin: auto;
+    padding: 8px;
+}
+
+#parkingPlaceH4 {
+    text-align: center;
+    text-transform: uppercase;
+    color: #008CBA;
+}
+
+#parkingPlaceParagraph {
+    text-align: justify;
+    letter-spacing: 3px;
+    font-family: "Arial", Helvetica, sans-serif;
+}
+
+.btnInfowWindow{
+  background-color: #008CBA; 
+  border: none;
+  color: white;
+  padding: 5px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  width: 100%;
+  cursor: pointer;
+}
+
+</style>

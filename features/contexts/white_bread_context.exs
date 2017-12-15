@@ -37,6 +37,8 @@ defmodule WhiteBreadContext do
       fill_field({:id, "log-password"}, "parool")
 
       click({:id, "login-for-test"})
+
+      Process.sleep(30000)
     end
     {:ok, state}
   end
