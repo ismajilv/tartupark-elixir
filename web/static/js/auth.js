@@ -14,6 +14,8 @@ export default {
         localStorage.setItem("user", this.user.username);
 
         this.socket = new Socket("/socket", {params: {token: response.data.token}});
+        console.log(this.socket);
+
         this.socket.connect();
         if (redirect)
           context.$router.push({path: redirect});

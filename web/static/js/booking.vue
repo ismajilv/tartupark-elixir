@@ -165,9 +165,9 @@ export default {
                 var endDateTime = this.parking_end_time;
               }
 
-              console.log("startDateTime: " + startDateTime);
-              console.log("endDateTime: " + endDateTime);
-              
+              // console.log("startDateTime: " + startDateTime);
+              // console.log("endDateTime: " + endDateTime);
+
               var startTime = (startDateTime != null ) ? startDateTime : null;
               var endTime = (endDateTime != null) ? endDateTime : null;
 
@@ -175,9 +175,9 @@ export default {
               endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
 
-              console.log("-----after convertion-----");
-              console.log("startDateTime: " + startTime);
-              console.log("endDateTime: " + endTime);
+              // console.log("-----after convertion-----");
+              // console.log("startDateTime: " + startTime);
+              // console.log("endDateTime: " + endTime);
 
               axios.post("/api/search",
                   { lngLat: lngLat,
