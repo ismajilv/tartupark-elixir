@@ -22,6 +22,7 @@ export default {
       })
       .catch(error => {
         console.log(error);
+        return error;
       });
   },
   logout: function(context, options) {
