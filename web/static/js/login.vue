@@ -1,14 +1,14 @@
 <template>
   <div class="module form-module">
-    <div class="toggle"><i class="glyphicon glyphicon-arrow-up"></i>
-      <div class="tooltip" id="reg_btn">Click Me</div>
+    <div class="toggle" id="reg-btn"><i class="glyphicon glyphicon-arrow-up"></i>
+      <div class="tooltip">Click Me</div>
     </div>
     <div class="form">
       <h2>Login to your account</h2>
       <form>
         <input type="text" placeholder="Username" id="log-username" v-model="username"/>
         <input type="password" placeholder="Password" id="log-password" v-model="password"/>
-        <button type="submit" v-on:click="login">Login</button>
+        <button id="login-for-test" type="submit" v-on:click="login" class="btn">Login</button>
       </form>
     </div>
 
