@@ -11,7 +11,7 @@ export default {
         // this.user.role = response.data.role;
         window.localStorage.setItem('token-'+this.user.username, response.data.token);
         window.localStorage.setItem('user', this.user.username);
-        localStorage.setItem("user", this.user.username);
+        // localStorage.setItem("user", this.user.username);
 
         this.socket = new Socket("/socket", {params: {token: response.data.token}});
         this.socket.connect();

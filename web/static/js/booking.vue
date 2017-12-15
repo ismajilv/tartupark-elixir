@@ -282,33 +282,35 @@ export default {
 
                         google.maps.event.addListener(marker, 'click', (function(marker, i) {
 
-                          var contenString = "Description: This parking belongs to " + coordsForMarker[i][5] +    ". <br>"
+                          var contenString = "<div id='parkingPlaceInformation'> <h4 id='parkingPlaceH4'>Parking Place Information</h4> <p id='parkingPlaceParagraph'>"
+                          contenString += "Description: This parking belongs to <strong>" + coordsForMarker[i][5] +    "</strong>. <br>"
                           var cost = null;
 
                           if(that.payment_type == "Hourly"){
-                            var paymentTypeString = "Hourly payment is " + coordsForMarker[i][3] +   " Euro. <br>";
+                            var paymentTypeString = "Hourly payment is <strong>" + coordsForMarker[i][3] +   "</strong> Euro. <br>";
                             var hourlyFee = (coordsForMarker[i][5] == zoneA) ? (2/3600) : (1/3600);
                             cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
                             cost = cost.toFixed(2);
-                            paymentTypeString += "Total cost is " + cost + " Euro. <br>";
+                            paymentTypeString += "Total cost is <strong>" + cost + "</strong> Euro. <br>";
                           } else{
-                            var paymentTypeString = "Real Time payment is " + coordsForMarker[i][4] +  " Euro. <br>";
+                            var paymentTypeString = "Real Time payment is <strong>" + coordsForMarker[i][4] +  "</strong> Euro. <br>";
                           }
 
                           if(that.payment_selected == "Before Parking" && that.payment_type == "Hourly"){
-                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit\").click()'>";
+                            var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit\").click()'>";
                           } else {
-                            var contenStringBtn = "<input type='button' value='Choose' onclick='document.getElementById(\"btn_submit2\").click()'>";
+                            var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit2\").click()'>";
                           }
 
                           if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
                             contenString += paymentTypeString +
-                                            "Free time limit is " + coordsForMarker[i][6] + " minutes. <br>"
+                                            "Free time limit is <strong>" + coordsForMarker[i][6] + "</strong> minutes. <br>"
                           } else {
                             cost = null;
                           }
 
-                          contenString += "Capacity is " + coordsForMarker[i][12] +    " lots. <br> <br>" + contenStringBtn;
+                          contenString += "Capacity is <strong>" + coordsForMarker[i][12] +    "</strong> lots. <br> <br>" + contenStringBtn;
+                          contenString += "</p></div>"
 
                           markerCoords[i] = {id: coordsForMarker[i][0],endDateTime: coordsForMarker[i][8],startDateTime: coordsForMarker[i][7],
                             paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
@@ -428,4 +430,38 @@ input[type=range] {
     background: #4CAF50;
     cursor: pointer;
 }
+
+/* google marker content css */
+
+#parkingPlaceInformation {
+    margin: auto;
+    padding: 8px;
+}
+
+#parkingPlaceH4 {
+    text-align: center;
+    text-transform: uppercase;
+    color: #4CAF50;
+}
+
+#parkingPlaceParagraph {
+    text-align: justify;
+    letter-spacing: 3px;
+    font-family: "Arial", Helvetica, sans-serif;
+}
+
+.btnInfowWindow{
+  background-color: #008CBA; 
+  border: none;
+  color: white;
+  padding: 5px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  width: 100%;
+  cursor: pointer;
+}
+
 </style>
