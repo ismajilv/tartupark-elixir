@@ -4,9 +4,9 @@ Feature: Parking allocation
   I want to get the information about the parking space that are closer to the destination address
         and book the available parking space
   Scenario Outline: Parking via web browser
-      Given the following person
+      Given the following person, user register on the STRS Customer app
           | fullName      | username | password | email     | license_number |
-          | Name          | username | 1parool   | 1ns@ns.com | 1ns123     |
+          | Name          | username | parool   | ns@ns.com | ns123     |
     When I enter the booking information on the STRS Customer app
     Then I press the registration button
     And I fill the registration page with my details and submit

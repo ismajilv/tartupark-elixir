@@ -22,9 +22,9 @@
                     <td>{{ (booking.payment != null) ? booking.payment.payment_code : null }}</td>
                     <td>{{ (booking.payment != null) ? (booking.payment.cost).toFixed(2) : (booking.cost != null) ? (booking.cost).toFixed(2) : null}}</td>
                     <td class="text-right">
-                        <button type="submit" v-if="'gt' == booking.startAndCurrentTimeComparison && booking.paymentType == 'Real Time' && booking.endDateTime == null" style="width: 100px;" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button>
+                        <button type="submit" v-if="'lt' == booking.startAndCurrentTimeComparison && booking.paymentType == 'Real Time' && booking.endDateTime == null" style="width: 100px;" class="btn btn-info btn-xs" id="btn_end" v-on:click="endParking(booking.booking_id)">End Parking</button>
                         <button v-if="booking.endDateTime != null && booking.payment == null" style="width: 100px;" class="btn btn-success btn-xs" @click="showModal=true" v-on:click="sendInfoToPopUp(booking.booking_id, booking.cost)" id="btn_pay2">Pay</button>
-                        <button type="submit" v-if="'lt' == booking.startAndCurrentTimeComparison && booking.payment == null" style="width: 100px;" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking(booking.booking_id)">Cancel Booking</button>
+                        <button type="submit" v-if="'gt' == booking.startAndCurrentTimeComparison && booking.payment == null" style="width: 100px;" class="btn btn-danger btn-xs" id="btn_cancel" v-on:click="cancelBooking(booking.booking_id)">Cancel Booking</button>
                     </td>
                 </tr>
             </tbody>

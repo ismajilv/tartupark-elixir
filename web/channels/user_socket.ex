@@ -7,7 +7,6 @@ defmodule Tartupark.UserSocket do
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
   # transport :longpoll, Phoenix.Transports.LongPoll
-  channel "driver:*", Tartupark.DriverChannel
   channel "customer:*", Tartupark.CustomerChannel
 
   # Socket params are passed from the client and can

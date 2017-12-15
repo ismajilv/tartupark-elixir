@@ -19,16 +19,26 @@ defmodule WhiteBreadContext do
     Hound.end_session
   end
 
-  given_ ~r/^the following person$/,
-  fn state, %{table_data: table} ->
-    table = List.first table
-    table.email
+  given_ ~r/^the following person, user register on the STRS Customer app$/, fn state,
+  %{table_data: table} ->
+    table
+    |> Enum.map(fn user_data -> User.changeset(%User{}, user_data) end)
+    |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
     {:ok, state}
   end
 
   when_ ~r/^I enter the booking information on the STRS Customer app$/, fn state ->
     session = to_string(Enum.random(0..100000))
+
     in_browser_session String.to_atom(session), fn ->
+      navigate_to "/#/login"
+
+      fill_field({:id, "log-username"}, "username")
+      fill_field({:id, "log-password"}, "parool")
+
+      click({:id, "login-for-test"})
+
+      Process.sleep(30000)
     end
     {:ok, state}
   end
