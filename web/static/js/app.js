@@ -11,6 +11,7 @@ import "vueify/lib/insert-css";
 
 import auth from "./auth";
 import booking from "./booking";
+// import sample from "./sample";
 import login from "./login";
 import main from "./main";
 import summary from "./summary";
@@ -41,6 +42,7 @@ Vue.use(VueRouter);
 Vue.use(datePicker);
 
 Vue.component("booking", booking);
+// Vue.component("sample", sample);
 Vue.component('my-modal', {
     template: `
             <div class="modal is-active">

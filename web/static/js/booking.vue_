@@ -1,77 +1,86 @@
 <template>
+<div>
+  <div class="form-group" style="width: 90%;">
     <div class="row">
-        <div class="col-sm-12" id="mapDiv">
-            <div class="center">
-
-                <input type="text" class="form-control search-field" id="parking_address" v-model="parking_address">
-                <button type="submit" class="btn btn-default" id="btn_map"><i class="glyphicon glyphicon-list"></i></button>
-                    
-                <date-picker v-model="parking_start_time" :config="config" class="search-field" id="parking_start_time"  ></date-picker>
-            
-                <date-picker v-model="parking_end_time" :config="config" class="search-field" id="parking_end_time"  ></date-picker>
-        
-                <div id="radioBtn" class="btn-group search-field">
-                    <a class="btn btn-primary btn-sm notActive radioBtn" data-toggle="fun" data-title="Y" v-on:click="dateTimeStatusWrite">Hourly</a>
-                    <a class="btn btn-primary btn-sm active radioBtn" data-toggle="fun" data-title="X" v-on:click="dateTimeStatusRead">Real Time</a>
-
-                    <select class="select" id="payment_type" v-model="payment_selected">
-                        <option disabled value="">When will you pay?</option>
-                        <option>Before Parking</option>
-                        <option>End of Month</option>
-                    </select>
-                </div>
-
-                <div class="btn-group search-field" id="searchRadiusContainer"  >
-                    <input type="range" min="100" max="1000" value="500" step="50" class="slider" id="myRange">
-                    <p id="radiusPanel">Radius: <span id="demo"></span></p>
-                </div>
-
-                <div class="btn-group search-field" id="buttons">
-                    <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
-                    <button type="submit" class="btn btn-default" id="btn_submit2" style="display: none;" v-on:click="submit">Submit</button>
-                    <button type="submit" class="btn btn-default" id="btn_search" v-on:click="search">Search</button>
-                </div>
-
-            </div>
-
-            <div id="usercridentials">
-                <ul id="listBtns">
-                    <button type="submit" class="btn btn-default" id="btn_usr" style="padding: 3px 6px !important;"><i class="glyphicon glyphicon-user"></i></button>
-                    <li class="ul-li"><router-link class="btn btn-default usercridentials-btns" :to="{ name: 'summary'}">Booking History</router-link></li>
-                    <li class="ul-li"><p <a href="/login" class="btn btn-default usercridentials-btns" @click.prevent="logout">Log out</a></p></li>
-                </ul>
-            </div>
-
-
-            <div id="map"></div>
-
-            <my-modal v-show="showModal" @close="showModal=false">
-                <form class="col-md-10 col-md-offset-1" style="padding:0">
-                    <div class="form-group col-md-12">
-                        <input type="text" class="form-control" id="cardNumber" v-model="cardNumber" placeholder="Card Number" contenteditable="false">
-                    </div>
-                    <p style="text-align:center;">Expiration</p>
-                    <div class="form-group col-md-6">
-                        <input type="text" class="form-control" id="cardMonth" v-model="cardMonth" placeholder="Month" contenteditable="false">
-                    </div>
-                    <div class="form-group col-md-6">
-                        <input type="text" class="form-control" id="cardYear" v-model="cardYear" placeholder="Year" contenteditable="false">
-                    </div>
-                    <div class="form-group col-md-12">
-                        <input type="text" class="form-control" id="cardPAC" v-model="cardPAC" placeholder="Premier Access Code">
-                    </div>
-                    <div class="clearfix"></div>
-                </form>
-
-                <div class="row text-center">
-                    <hr>
-                    <button type="button" v-on:click="submit" class="btn btn-primary col-md-8 col-md-offset-2">Pay</button>
-                    <br class="">
-                </div>
-            </my-modal>
-
-        </div>
+      <label class="control-label col-sm-3" for="parking_address" style="margin: 10px auto;">Parking address:</label>
+      <div class="col-sm-9">
+        <input type="text" class="form-control" id="parking_address" style="margin: 10px auto;" v-model="parking_address" required>
+      </div>
     </div>
+
+    <div class="row">
+      <label class="control-label col-sm-3" for="parking_start_time" style="margin: 10px auto;">Start Date:</label>
+      <div class="col-sm-9">
+        <date-picker v-model="parking_start_time" :config="config" id="parking_start_time" style="margin: 10px auto;"></date-picker>
+      </div>
+    </div>
+
+    <div class="row">
+      <label class="control-label col-sm-3" for="parking_end_time" style="margin: 10px auto;">End Date:</label>
+      <div class="col-sm-9">
+        <date-picker v-model="parking_end_time" :config="config" id="parking_end_time" style="margin: 10px auto;"></date-picker>
+      </div>
+    </div>
+
+    <div class="row">
+      <label class="control-label col-sm-3" style="margin: 10px auto; margin-right: 10px;">Payment Type:</label>
+
+      <input type="radio" id="hourly" value="Hourly" v-on:click="dateTimeStatusWrite" style="margin: 20px auto;"v-model="payment_type">
+      <label for="hourly">Hourly</label>
+
+      <input type="radio" id="realtime" value="Real Time" checked="checked" v-on:click="dateTimeStatusRead" v-model="payment_type">
+      <label for="realtime">Real Time</label>
+
+      <select v-model="payment_selected" id="payment_type">
+        <option disabled value="">When will you pay?</option>
+        <option>Before Parking</option>
+        <option>End of Month</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <label class="control-label col-sm-3" style="margin: 10px auto; margin-right: 15px;">Search Radius:</label>
+      
+      <input type="range" min="100" max="1000" value="500" step="50" class="slider" id="myRange">
+      <p>Radius: <span id="demo"></span></p>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-default" id="btn_search" v-on:click="search">Search</button>
+        <button class="btn btn-default" @click="showModal=true" style="display: none;" id="btn_submit">Submit</button>
+        <button type="submit" class="btn btn-default" id="btn_submit2" style="display: none;" v-on:click="submit">Submit</button>
+      </div>
+    </div>
+  </div> <!--  end of form-group -->
+<div id="map" style="width:90%;height:500px; margin: 0 auto; margin-top:25px"></div>
+
+  <my-modal v-show="showModal" @close="showModal=false">
+    <form class="col-md-10 col-md-offset-1" style="padding:0">
+        <div class="form-group col-md-12">
+            <input type="text" class="form-control" id="cardNumber" v-model="cardNumber" placeholder="Card Number" contenteditable="false">
+        </div>
+        <p style="text-align:center;">Expiration</p>
+        <div class="form-group col-md-6">
+            <input type="text" class="form-control" id="cardMonth" v-model="cardMonth" placeholder="Month" contenteditable="false">
+        </div>
+        <div class="form-group col-md-6">
+            <input type="text" class="form-control" id="cardYear" v-model="cardYear" placeholder="Year" contenteditable="false">
+        </div>
+        <div class="form-group col-md-12">
+            <input type="text" class="form-control" id="cardPAC" v-model="cardPAC" placeholder="Premier Access Code">
+        </div>
+        <div class="clearfix"></div>
+    </form>
+
+    <div class="row text-center">
+        <hr>
+        <button type="button" v-on:click="submit" class="btn btn-primary col-md-8 col-md-offset-2">Pay</button>
+        <br class="">
+    </div>
+  </my-modal>
+
+</div>
 </template>
 
 <script>
@@ -105,21 +114,6 @@ export default {
         }
     },
     methods: {
-        fullScreenMap: function(){
-            // var handler;
-            // handler = Gmaps.build("Google");
-            
-            // return handler.buildMap({
-            //     internal: {
-            //         id: "map"
-            //     }
-            // }, function() {
-            //     handler.fitMapToBounds();
-            // });
-        },
-        logout: function() {
-            auth.logout(this, { headers: auth.getAuthHeader() });
-        },
         submit: function() {
           if(this.lotSearchingResult != null){
             axios.post("/api/bookings",
@@ -132,6 +126,7 @@ export default {
                     document.getElementById("btn_submit2").style.display = "none";
                     document.getElementById("btn_search").click();
                     document.getElementById("btn_modal").click();
+                    // console.log(response.data);
                     alert(response.data.msg);
                 })
                 .catch(error => {
@@ -143,13 +138,11 @@ export default {
           document.getElementById("parking_end_time").readOnly = true;
           document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
           this.payment_selected = "End of Month";
-          this.payment_type = "Real Time";
         },
         dateTimeStatusWrite: function(){
           document.getElementById("parking_end_time").readOnly = false;
           document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
           this.payment_selected = "Before Parking";
-          this.payment_type = "Hourly";
         },
         search: function() {
           this.lotSearchingResult = null;
@@ -195,13 +188,6 @@ export default {
                       } else {
                         document.getElementById("btn_submit").style.display = "none";
                       }
-
-
-                    document.getElementById("parking_start_time").style.display = "none";
-                    document.getElementById("parking_end_time").style.display = "none";
-                    document.getElementById("radioBtn").style.display = "none";
-                    document.getElementById("searchRadiusContainer").style.display = "none";
-                    document.getElementById("btn_search").style.display = "none";
 
                       var map = new google.maps.Map(document.getElementById('map'), {
                           zoom: 14,
@@ -355,128 +341,59 @@ export default {
                   alert('Geocode was not successful for the following reason: ' + status);
                 }
               }); // end of geocode
-        }
+        },
     },
     mounted: function() {
 
-        // visibility
-        document.getElementById("parking_start_time").style.display = "none";
-        document.getElementById("parking_end_time").style.display = "none";
-        document.getElementById("radioBtn").style.display = "none";
-        document.getElementById("searchRadiusContainer").style.display = "none";
-        document.getElementById("btn_search").style.display = "none";
+      var slider = document.getElementById("myRange");
+      var output = document.getElementById("demo");
+      output.innerHTML = slider.value;
 
-        var that = this;
-        var flag = false;
-        var flagUser = false;
+      slider.oninput = function() {
+        output.innerHTML = this.value;
+        console.log("this.value " + this.value);
+      }
 
-        $(document).ready(function(){
-            $("#btn_map").click(function(){
-
-                console.log("payment type: " + that.payment_type);
-
-                if (that.payment_type == "Real Time"){
-                    document.getElementById("parking_end_time").readOnly = true;
-                    document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
-                    this.payment_selected = "End of Month";
-                } else {
-                    document.getElementById("parking_end_time").readOnly = false;
-                    document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
-                    that.payment_selected = "Before Parking";
-                }
-
-                if(this.flag){
-                    $("#parking_start_time").fadeOut("slow");
-                    $("#parking_end_time").fadeOut("slow");
-                    $("#radioBtn").fadeOut("slow");
-                    $("#searchRadiusContainer").fadeOut("slow");
-                    $("#btn_search").fadeOut("slow");
-
-                    this.flag = false;
-
-                } else {
-                    $("#parking_start_time").fadeIn("slow");
-                    $("#parking_end_time").fadeIn("slow");
-                    $("#radioBtn").fadeIn("slow");
-                    $("#searchRadiusContainer").fadeIn("slow");
-                    $("#btn_search").fadeIn("slow");
-
-
-                    this.flag = true;
-
-                }
-            });
-
-
-            $("#btn_usr").click(function(){
-                
-                if(this.flagUser){
-                    $(".ul-li").fadeOut("slow");
-                    this.flagUser = false;
-
-                } else {
-                    $(".ul-li").fadeIn("slow");
-                    this.flagUser = true;
-
-                }
-            });
-        });
-
-        // search radius
-        var slider = document.getElementById("myRange");
-        var output = document.getElementById("demo");
-        output.innerHTML = slider.value;
-
-        slider.oninput = function() {
-            output.innerHTML = this.value;
-        }
-
-        // radio buttons
-        $('#radioBtn a').on('click', function(){
-            var sel = $(this).data('title');
-            var tog = $(this).data('toggle');
-            $('#'+tog).prop('value', sel);
-            
-            $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
-            $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-        })
-
-         if (that.payment_type == "Real Time"){
-          document.getElementById("parking_end_time").readOnly = true;
-          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
-          that.payment_selected = "End of Month";
-        } else {
-          document.getElementById("parking_end_time").readOnly = false;
-          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
-          that.payment_selected = "Before Parking";
-        }
-
-        // add date time to end time field
         Date.prototype.addHours= function(h){
             this.setHours(this.getHours()+h);
             return this;
         };
+
         this.parking_end_time = new Date().addHours(1);
 
-        // find current place of customer
         navigator.geolocation.getCurrentPosition(position => {
-            let loc = {lat: position.coords.latitude, lng: position.coords.longitude};
-            this.geocoder = new google.maps.Geocoder;
-            this.geocoder.geocode({location: loc}, (results, status) => {
-                if (status === "OK" && results[0]){
-                    this.parking_address = results[0].formatted_address;
-                    console.log("parking address: " + this.parking_address);
-                }else {
-                    alert('Geocode was not successful for the following reason: ' + status);
-                }
+          let loc = {lat: position.coords.latitude, lng: position.coords.longitude};
+          this.geocoder = new google.maps.Geocoder;
+          this.geocoder.geocode({location: loc}, (results, status) => {
+              if (status === "OK" && results[0]){
+                this.parking_address = results[0].formatted_address;
+              }else {
+                alert('Geocode was not successful for the following reason: ' + status);
+              }
             });
-            this.map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: loc});
-            new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});
+          this.map = new google.maps.Map(document.getElementById('map'), {zoom: 14, center: loc});
+          new google.maps.Marker({position: loc, map: this.map, title: "Parking address"});
         });
 
-        this.fullScreenMap();
+        if (this.payment_type == "Real Time"){
+          document.getElementById("parking_end_time").readOnly = true;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = true;
+          this.payment_selected = "End of Month";
+        } else {
+          document.getElementById("parking_end_time").readOnly = false;
+          document.getElementById("payment_type").getElementsByTagName("option")[1].disabled = false;
+          this.payment_selected = "Before Parking";
+        }
 
-       
+        if (auth.socket) {
+          var channel = auth.getChannel("customer:");
+          channel.join()
+              .receive("ok", resp => { console.log("Joined successfully", resp) })
+              .receive("error", resp => { console.log("Unable to join", resp) });
+          channel.on("requests", payload => {
+              alert(payload);
+          });
+      }
   }
 }
 </script>
@@ -484,113 +401,18 @@ export default {
 
 <style>
 
-#mapDiv, #map {
-    height: 100%;
-    width: 100%;
-    position: static !important;
-}
-
-.center {
-    position: absolute;
-    width: 40%;
-    height: 40px;
-    top: 10%;
-    z-index: 999999;
-    text-align: center;
-}
-
-#usercridentials{
-    position: absolute;
-    width: 40%;
-    height: 40px;
-    top: 10%;    
-    right: 12px;
-    z-index: 999999;
-    text-align: right;
-}
-
-.ul-li{
-    text-align: right;
-    margin-top: 5px;
-    display: none;
-}
-
-.usercridentials-btns{
-    width: 125px;
-}
-
-.search-field{
-    position: relative;
-    bottom: -50%;
-    padding: 14px 8px;
-    font-family: 'Source Sans Pro', Arial, sans-serif;
-    width: 90%;
-    height: 100%;
-    margin-top: 5px;
-}
-
-#btn_map{
-    margin-left: -50px;
-    height: 38px;
-    background: #3333ff;
-    color: white;
-    border: 0;
-    -webkit-appearance: none;
-    position: relative;
-    float: right;
-    margin-right: 52px;
-    margin-top: -19px;
-}
-
-#radioBtn{
-    margin-top: 15px;
-    float: left;
-    width: 91%;
-}
-
-#radioBtn .notActive{
-    color: #3276b1;
-    background-color: #fff;
-}
-
-.radioBtn{
-    width: 50%;
-}
-
-.select{
-    width: 100%;
-    margin-top: 10px;
-    border-radius: 5%;
-}
-
-#searchRadiusContainer{
-    margin-top: 35px;
-    width: 90%;
-    margin-left: -50px;
-}
-
-#radiusPanel {
-    width: 20%;
-    font-weight: bold;
-    margin-top: -25px;
-    margin-left: 360px;
-    background-color: white;
-    height: 25px;
-    padding-top: 2px;
-}
-
 input[type=range] {
     display: block;
-    width: 81%;
+    width: 73%;
     margin-top: 10px;
 }
 
 .slider {
     -webkit-appearance: none;
     height: 25px;
-    background: #fff;
+    background: #d3d3d3;
     outline: none;
-    opacity: 1;
+    opacity: 0.7;
     -webkit-transition: .2s;
     transition: opacity .2s;
 }
@@ -646,15 +468,6 @@ input[type=range] {
   margin: 4px 2px;
   width: 100%;
   cursor: pointer;
-}
-
-#buttons{
-    margin-top: 5px;
-}
-
-#btn_search{
-    float: right;
-    margin-right: 20px;
 }
 
 </style>
