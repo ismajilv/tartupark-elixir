@@ -297,7 +297,13 @@ export default {
                           }
 
                           if(that.payment_selected == "Before Parking" && that.payment_type == "Hourly"){
-                            var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit\").click()'>";
+                            
+                            if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
+                              var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit\").click()'>";
+                            } else {
+                              var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit2\").click()'>";  
+                            }
+
                           } else {
                             var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit2\").click()'>";
                           }
