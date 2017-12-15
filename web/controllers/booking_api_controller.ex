@@ -13,6 +13,7 @@ defmodule Tartupark.BookingAPIController do
             join: user in User, on: booking.user_id == user.id,
             where: user.id == ^user.id,
             select: booking
+
     bookings = Repo.all(query) |> Repo.preload([:payment, place: [:zone]])
     bookings = bookings
     |> Enum.map(fn book ->
