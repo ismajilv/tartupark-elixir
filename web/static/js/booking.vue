@@ -37,8 +37,8 @@
             <div id="usercridentials">
                 <ul id="listBtns">
                     <button type="submit" class="btn btn-default" id="btn_usr" style="padding: 3px 6px !important;"><i class="glyphicon glyphicon-user"></i></button>
-                    <li class="ul-li"><router-link class="btn btn-default usercridentials-btns" :to="{ name: 'summary'}">Booking History</router-link></li>
-                    <li class="ul-li"><p><a href="/login" class="btn btn-default usercridentials-btns" @click.prevent="logout">Log out</a></p></li>
+                    <li class="ul-li"><router-link class="btn btn-default usercridentials-btns" :to="{ name: 'summary'}" style="padding: 3px 6px !important;"><i class="glyphicon glyphicon-list"></i></router-link></li>
+                    <li class="ul-li"><p><a href="/login" class="btn btn-default usercridentials-btns" @click.prevent="logout" style="padding: 3px 6px !important;"><i class="glyphicon glyphicon-log-out"></i></a></p></li>
                 </ul>
             </div>
 
@@ -516,7 +516,7 @@ export default {
 }
 
 .usercridentials-btns{
-    width: 125px;
+    /* width: 125px; */
 }
 
 .search-field{
@@ -573,7 +573,7 @@ export default {
     width: 20%;
     font-weight: bold;
     margin-top: -25px;
-    margin-left: 360px;
+    margin-left: 355px;
     background-color: white;
     height: 25px;
     padding-top: 2px;
