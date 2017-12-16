@@ -21,6 +21,7 @@ defmodule WhiteBreadContext do
 
   given_ ~r/^the following person, user register on the STRS Customer app$/, fn state,
   %{table_data: table} ->
+    IO.puts table
     table
     |> Enum.map(fn user_data -> User.changeset(%User{}, user_data) end)
     |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
