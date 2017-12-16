@@ -4,28 +4,36 @@ Feature: Parking allocation
   I want to get the information about the parking space that are closer to the destination address
         and book the available parking space
   Scenario Outline: Parking via web browser
-      Given the following person, user register on the STRS Customer app
+    Given the following user
           | fullName      | username | password | email     | license_number |
-          | Name          | username | parool   | ns@ns.com | ns123     |
-    When I enter the booking information on the STRS Customer app
-    Then I press the registration button
-    And I fill the registration page with my details and submit
-    And The web page is directed to Main page
-    When I enter the parlking address of "<destinations>"
-    Then I specify payment type of "<payment_type>"
-    And I specify start date of "<start_date>"
-    And I specify start date of "<end_date>"
-    And I spesify search radius of "<search_radius>"
-    And I want to park my car in "<street choice>"
-    And I press choose
-    And I get notification of "<notification>"
-    When Payment method is Hourly and payment time is Before Parking
-    Then I add credit card details
-    And I submit payment
-    When Payment method is Hourly and payment time is End of month
-    Then I redirected to main page
-    When Payment method is Real time and payment time is Before Parking
-    Then I directed to main page
+          | Name          | username | parool   | ns@ns.com | ns123          |
+    When User log in on the app
+    Then User enter the parking address of "<destinations>"
+    And User specify payment type of "<payment_type>"
+    And User specify start date of "<start_date>"
+    And User specify start date of "<end_date>"
+    And User spesify search radius of "<search_radius>"
+    And User want to park his car in "<street choice>"
+    And User press choose
+    And User enter the parking address of "<destinations>"
+    And User specify payment type of "<payment_type>"
+    And User specify start date of "<start_date>"
+    And User specify start date of "<end_date>"
+    And User spesify search radius of "<search_radius>"
+    And User want to park his car in "<street choice>"
+    And User press choose
+    And User add payment details and pay
+    And User enter the parking address of "<destinations>"
+    And User specify payment type of "<payment_type>"
+    And User specify start date of "<start_date>"
+    And User specify start date of "<end_date>"
+    And User spesify search radius of "<search_radius>"
+    And User want to park his car in "<street choice>"
+    And User press choose
+    When User enter to booking history
+    Then User see all booked places
+    And User pay the booking place with end of month
+    And User cancel all of them and return to main page
 
     Examples:
         | destinations     | real_time_configured    | start_date | payment_type | street_choice  | payment_choice  | start_time_choice | end_time_choice | notification |
