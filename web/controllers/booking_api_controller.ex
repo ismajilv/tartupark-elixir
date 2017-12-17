@@ -7,7 +7,7 @@ defmodule Tartupark.BookingAPIController do
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
   json: Poison)
 
-  def index(conn, _params) do
+  def index(conn, %{"current_datetime" => current_datetime}) do
     user = Guardian.Plug.current_resource(conn)
     query = from booking in Booking,
             join: user in User, on: booking.user_id == user.id,
@@ -23,7 +23,7 @@ defmodule Tartupark.BookingAPIController do
                     inserted_at: book.inserted_at,
                     paymentTime: book.paymentTime,
                     paymentType: book.paymentType,
-                    startAndCurrentTimeComparison: NaiveDateTime.compare(book.startDateTime, NaiveDateTime.utc_now()),
+                    startAndCurrentTimeComparison: NaiveDateTime.compare(book.startDateTime, parseToNaiveDateTime(current_datetime)),
                     status: book.status,
                     place: Enum.map(book.place.area.coordinates,
                                      fn point -> {lng, lat} = point
@@ -66,9 +66,9 @@ defmodule Tartupark.BookingAPIController do
 
      perfectCondition =
        case {start_time, end_time} do
-         {stime, nil} -> NaiveDateTime.compare(stime, NaiveDateTime.utc_now()) != :lt
-         {stime, etime} -> NaiveDateTime.compare(stime, NaiveDateTime.utc_now()) != :lt and
-                           NaiveDateTime.compare(etime, NaiveDateTime.utc_now()) == :gt and
+         {stime, nil} -> NaiveDateTime.compare(stime, parseToNaiveDateTime(params["currentDateTime"])) != :lt
+         {stime, etime} -> NaiveDateTime.compare(stime, parseToNaiveDateTime(params["currentDateTime"])) != :lt and
+                           NaiveDateTime.compare(etime, parseToNaiveDateTime(params["currentDateTime"])) == :gt and
                            NaiveDateTime.compare(etime, stime) == :gt
        end
 
@@ -103,22 +103,28 @@ defmodule Tartupark.BookingAPIController do
 
   def update(conn, %{"booking_id" => booking_id, "endDateTime" => end_time}) do
     booking = Repo.get!(Booking, booking_id)
-    changeset = Ecto.Changeset.change(booking, endDateTime: parseToNaiveDateTime(end_time))
-    case Repo.update changeset do
-      {:ok, _struct}       -> conn
-                             |> put_status(200)
-                             |> json(%{msg: "Booking parameters successfully updated"})
-      {:error, _changeset} -> conn
-                             |> put_status(400)
-                             |> json(%{msg: "Booking parameters were not updated"})
+    end_time = parseToNaiveDateTime(end_time)
+    start_time = booking.startDateTime
+    if NaiveDateTime.compare(end_time, start_time) == :gt do
+      changeset = Ecto.Changeset.change(booking, endDateTime: )
+      case Repo.update changeset do
+        {:ok, _struct}       -> conn
+                               |> put_status(200)
+                               |> json(%{msg: "Booking parameters successfully updated"})
+        {:error, _changeset} -> conn
+                               |> put_status(400)
+                               |> json(%{msg: "Booking parameters were not updated"})
+      end
+    else
+      conn |> put_status(406) |> json(%{msg: "Booking has wrong time stamps."})
     end
   end
 
 
 
-  def delete(conn, %{"booking_id" => booking_id}) do
+  def delete(conn, %{"booking_id" => booking_id, "currentDateTime" => current_date_time}) do
     booking = Repo.get!(Booking, booking_id)
-    if NaiveDateTime.compare(booking.startDateTime, NaiveDateTime.utc_now()) == :gt do
+    if NaiveDateTime.compare(booking.startDateTime, parseToNaiveDateTime(current_date_time)) == :gt do
       changeset = Ecto.Changeset.change(booking, status: "canceled")
       case Repo.update changeset do
         {:ok, _struct}       -> conn

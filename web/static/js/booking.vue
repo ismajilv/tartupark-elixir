@@ -123,7 +123,8 @@ export default {
           if(this.lotSearchingResult != null){
             axios.post("/api/bookings",
                 {parking_address: this.lotSearchingResult,
-                paymentParams: this.paymentParams},
+                paymentParams: this.paymentParams,
+                currentDateTime: new Date()},
                 {headers: auth.getAuthHeader()})
                 .then(response => {
                     this.lotSearchingResult = null;

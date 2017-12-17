@@ -62,6 +62,7 @@
 import axios from "axios";
 import socket from "./socket";
 import auth from "./auth";
+import moment from "moment";
 
 
 export default {
@@ -80,9 +81,8 @@ export default {
     },
     methods: {
         endParking: function(booking_id){
-          // console.log(booking_id)
             axios.patch("/api/bookings/"+ booking_id,
-            {endDateTime: new Date()},
+            {endDateTime: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z"},
             {headers: auth.getAuthHeader()})
             .then(response => {
                 console.log(response.data);
@@ -97,6 +97,7 @@ export default {
         cancelBooking: function(bookingId){
             // console.log("booking id: " + bookingId);
             axios.delete("/api/bookings/"+bookingId,
+            {currentDateTime: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z"},
             {headers: auth.getAuthHeader()})
             .then(response => {
                 console.log(response.data.msg);
@@ -127,7 +128,9 @@ export default {
           });
         },
         getSummary: function(){
-            axios.get("/api/bookings/summary", {headers: auth.getAuthHeader()})
+            let currentDateTime = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z"
+            axios.get("/api/bookings/summary/" + currentDateTime,
+            {headers: auth.getAuthHeader()})
             .then(response => {
                 console.log(response.data.bookings);
                 this.bookings = response.data.bookings;
