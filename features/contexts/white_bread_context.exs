@@ -21,10 +21,12 @@ defmodule WhiteBreadContext do
 
   given_ ~r/^the following person, user register on the STRS Customer app$/, fn state,
   %{table_data: table} ->
-    table
-    |> Enum.map(fn user_data -> User.changeset(%User{}, user_data) end)
-    |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
-    {:ok, state}
+    [%{fullName: "ns", username: "ns", password: "ns", email: "customer@gmail.com", license_number: "123"}]
+    # table
+     |> Enum.map(fn user_data -> User.changeset(%User{}, user_data) end)
+     |> Enum.each(fn changeset -> Repo.insert!(changeset) end)
+     |> IO.inspect
+    # {:ok, state}
   end
 
   when_ ~r/^I enter the booking information on the STRS Customer app$/, fn state ->
@@ -33,12 +35,13 @@ defmodule WhiteBreadContext do
     in_browser_session String.to_atom(session), fn ->
       navigate_to "/#/login"
 
-      fill_field({:id, "log-username"}, "username")
-      fill_field({:id, "log-password"}, "parool")
+      fill_field({:id, "log-username"}, "ns")
+      fill_field({:id, "log-password"}, "ns")
 
       click({:id, "login-for-test"})
 
       Process.sleep(30000)
+
     end
     {:ok, state}
   end

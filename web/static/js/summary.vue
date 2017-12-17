@@ -54,7 +54,7 @@
                 <br class="">
             </div>
         </my-modal>
-        <router-link class="btn btn-default" :to="{ name: 'main'}">Back</router-link>
+        <router-link class="btn btn-default" :to="{ name: 'main'}" style="margin: 10px auto;">Back</router-link>
     </div>
 </template>
 
@@ -142,3 +142,38 @@ export default {
     }
 }
 </script>
+
+
+<style>
+table {
+  border-collapse: separate;
+  border-spacing: 0 5px;
+}
+
+thead th {
+  background-color: #006DCC;
+  color: white;
+}
+
+tbody td {
+  background-color: #EEEEEE;
+}
+
+tr td:first-child,
+tr th:first-child {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+tr td:last-child,
+tr th:last-child {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.table>thead>tr>th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #ddd;
+    color: white;
+}
+</style>

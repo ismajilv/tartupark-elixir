@@ -16,6 +16,7 @@ config :tartupark, Tartupark.Repo,
   password: "postgres",
   database: "tartupark_test",
   hostname: "localhost",
+  ownership_timeout: 60_000,
   pool: Ecto.Adapters.SQL.Sandbox,
   extensions: [{Geo.PostGIS.Extension, library: Geo}],
   types: Tartupark.PostgresTypes

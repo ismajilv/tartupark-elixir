@@ -1,11 +1,12 @@
 <template>
   <div>
-    <h1 id="projectName">TARTUPARK</h1>
+    <!-- <h1 id="projectName">TARTUPARK</h1> -->
     <booking></booking>
-    <ul id="listBtns">
+    <!-- <sample></sample> -->
+    <!-- <ul id="listBtns">
         <li style="display: inline-block;"><router-link class="btn btn-default" :to="{ name: 'summary'}">Booking History</router-link></li>
         <li style="display: inline-block;"><p <a href="/login" class="btn btn-default" @click.prevent="logout">Log out</a></p></li>
-    </ul>
+    </ul> -->
   </div>
 </template>
 
@@ -20,23 +21,11 @@ export default {
     }
 }
 </script>
-
 <style>
-.header {
-    border-bottom: 0px;
+html, body { 
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;   
 }
-
-#projectName{
-     text-align: center; 
-     text-transform: uppercase; 
-     color: #008CBA;
-     font-weight: bold;
-}
-
-#listBtns{
-    margin-right: 60px;
-    float: right;
-}
-
 </style>
-
