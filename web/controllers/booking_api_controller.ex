@@ -106,7 +106,7 @@ defmodule Tartupark.BookingAPIController do
     end_time = parseToNaiveDateTime(end_time)
     start_time = booking.startDateTime
     if NaiveDateTime.compare(end_time, start_time) == :gt do
-      changeset = Ecto.Changeset.change(booking, endDateTime: )
+      changeset = Ecto.Changeset.change(booking, endDateTime: end_time)
       case Repo.update changeset do
         {:ok, _struct}       -> conn
                                |> put_status(200)
