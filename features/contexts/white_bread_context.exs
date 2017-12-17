@@ -28,7 +28,7 @@ defmodule WhiteBreadContext do
   end
 
   when_ ~r/^User log in on the app$/, fn state ->
-    in_browser_session String.to_atom(to_string(Enum.random(0..100000))), fn ->
+    in_browser_session String.to_atom(to_string(1)), fn ->
 
       navigate_to "/"
       fill_field({:id, "log-username"}, "ns")
@@ -39,38 +39,26 @@ defmodule WhiteBreadContext do
       fill_field({:id, "log-password"}, "parool")
       click({:id, "login-for-test"})
 
-      Process.sleep(30000)
+      Process.sleep(1000)
     end
     {:ok, state}
-  end
+    end
 
-  then_ ~r/^User enter the parking address of "(?<destinations>[^"]+)"$/,
-  fn state, %{destinations: destinations} ->
-    fill
-    {:ok, state}
-  end
+    then_ ~r/^User enter the parking address of "(?<destinations>[^"]+)", "(?<payment_type>[^"]+)", "(?<start_date>[^"]+)", "(?<end_date>[^"]+)" and "(?<search_radius>[^"]+)"$/,
+    fn state, %{destinations: destinations,payment_type: payment_type,start_date: start_date,end_date: end_date,search_radius: search_radius} ->
+      in_browser_session String.to_atom(to_string(1)), fn ->
+        click({:id, "btn_map"})
+        Process.sleep(3000)
+        fill_field({:id, "parking_address"}, to_string(destinations) <> ", Tartu, Estonia")
+        fill_field({:id, "parking_start_time"}, "12/20/2017 9:11 PM")
 
-  and_ ~r/^User specify payment type of "(?<argument_one>[^"]+)"$/,
-  fn state, %{argument_one: _argument_one} ->
-    {:ok, state}
-  end
+        submit_element({:id, "payment-hourly"})
+        Process.sleep(4000)
+      end
+      {:ok, state}
+    end
 
-  and_ ~r/^User specify start date of "(?<argument_one>[^"]+)"$/,
-  fn state, %{argument_one: _argument_one} ->
-    {:ok, state}
-  end
-
-  and_ ~r/^User spesify search radius of "(?<argument_one>[^"]+)"$/,
-  fn state, %{argument_one: _argument_one} ->
-    {:ok, state}
-  end
-
-  and_ ~r/^User want to park his car in "(?<argument_one>[^"]+)"$/,
-  fn state, %{argument_one: _argument_one} ->
-    {:ok, state}
-  end
-
-  and_ ~r/^User press choose$/, fn state ->
-    {:ok, state}
-  end
+    and_ ~r/^User press choose$/, fn state ->
+      {:ok, state}
+    end
 end
