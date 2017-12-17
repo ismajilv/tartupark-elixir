@@ -40,7 +40,7 @@
 
     <div class="row">
       <label class="control-label col-sm-3" style="margin: 10px auto; margin-right: 15px;">Search Radius:</label>
-      
+
       <input type="range" min="100" max="1000" value="500" step="50" class="slider" id="myRange">
       <p>Radius: <span id="demo"></span></p>
     </div>
@@ -160,28 +160,18 @@ export default {
               } else {
                 var endDateTime = this.parking_end_time;
               }
-<<<<<<< HEAD
-
-              // console.log("startDateTime: " + startDateTime);
-              // console.log("endDateTime: " + endDateTime);
-
-=======
               
->>>>>>> ef394af16055cf934df835a3f5a5606c2db9d4e5
               var startTime = (startDateTime != null ) ? startDateTime : null;
               var endTime = (endDateTime != null) ? endDateTime : null;
 
               startTime = moment(String(startTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z";
               endTime = (endTime != null) ? moment(String(endTime)).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z" : null;
 
-<<<<<<< HEAD
 
               // console.log("-----after convertion-----");
               // console.log("startDateTime: " + startTime);
               // console.log("endDateTime: " + endTime);
-=======
               var radius = document.getElementById("myRange").value;
->>>>>>> ef394af16055cf934df835a3f5a5606c2db9d4e5
 
               axios.post("/api/search",
                   { lngLat: lngLat,
@@ -311,11 +301,11 @@ export default {
                           }
 
                           if(that.payment_selected == "Before Parking" && that.payment_type == "Hourly"){
-                            
+
                             if(coordsForMarker[i][5] == zoneB || coordsForMarker[i][5] == zoneA){
                               var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit\").click()'>";
                             } else {
-                              var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit2\").click()'>";  
+                              var contenStringBtn = "<input type='button' class='btnInfowWindow' value='Book a place from this zone' onclick='document.getElementById(\"btn_submit2\").click()'>";
                             }
 
                           } else {
@@ -438,7 +428,7 @@ input[type=range] {
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 25px;  
+    width: 25px;
     height: 25px;
     background: #008CBA;
     cursor: pointer;
@@ -471,7 +461,7 @@ input[type=range] {
 }
 
 .btnInfowWindow{
-  background-color: #008CBA; 
+  background-color: #008CBA;
   border: none;
   color: white;
   padding: 5px 32px;
