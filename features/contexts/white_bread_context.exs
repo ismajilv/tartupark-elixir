@@ -48,6 +48,7 @@ defmodule WhiteBreadContext do
     fn state, %{destinations: destinations,payment_type: payment_type,start_date: start_date,end_date: end_date,search_radius: search_radius} ->
       in_browser_session String.to_atom(to_string(1)), fn ->
         click({:id, "btn_map"})
+        clear_field({:id, "parking_address"})
         fill_field({:id, "parking_address"}, to_string(destinations) <> ", Tartu, Estonia")
         Process.sleep(10000)
         #fill_field({:id, parking_start_time}, "")
