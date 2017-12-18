@@ -11,8 +11,8 @@
                 <date-picker v-model="parking_end_time" :config="config" class="search-field" id="parking_end_time"  ></date-picker>
 
                 <div id="radioBtn" class="btn-group search-field">
-                    <a class="btn btn-primary btn-sm notActive radioBtn" data-toggle="fun" data-title="Y" v-on:click="dateTimeStatusWrite">Hourly</a>
-                    <a class="btn btn-primary btn-sm active radioBtn" data-toggle="fun" data-title="X" v-on:click="dateTimeStatusRead">Real Time</a>
+                    <a id="payment-hourly" class="btn btn-primary btn-sm notActive radioBtn" data-toggle="fun" data-title="Y" v-on:click="dateTimeStatusWrite">Hourly</a>
+                    <a id="payment-real_time" class="btn btn-primary btn-sm active radioBtn" data-toggle="fun" data-title="X" v-on:click="dateTimeStatusRead">Real Time</a>
 
                     <select class="select" id="payment_type" v-model="payment_selected">
                         <option disabled value="">When will you pay?</option>
