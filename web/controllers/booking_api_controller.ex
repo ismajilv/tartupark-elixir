@@ -49,6 +49,9 @@ defmodule Tartupark.BookingAPIController do
 
   def create(conn,  params) do
     user = Guardian.Plug.current_resource(conn)
+
+    Tartupark.MonthlyNofications.start_link("simple_request")
+
     %{
        "id" => place_id,
        "startDateTime" => startDateTime,

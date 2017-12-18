@@ -1,6 +1,7 @@
 defmodule Tartupark.MonthlyNofications do
     use GenServer
     alias Tartupark.{Booking, Payment}
+    alias Tartupark.Repo
 
     # Receiving "request" and starting process
     def start_link(request) do
@@ -31,7 +32,7 @@ defmodule Tartupark.MonthlyNofications do
           already_notified = %{}
           for booking <- bookings do
              if Map.get(already_notified, String.to_atom(booking.user.id)) == nil do
-               Takso.Endpoint.broadcast("customer:"<>booking.user.username, "requests", %{msg: "Monthly payment notification. You have booking(s) that should be payed. Go to 'Bookings Summary' to pay."})
+               Tartupark.Endpoint.broadcast("customer:"<>booking.user.username, "requests", %{msg: "Monthly payment notification. You have booking(s) that should be payed. Go to 'Bookings Summary' to pay."})
                already_notified = Map.put_new(already_notified, String.to_atom(booking.user.id), booking.user.username)
              end
           end
@@ -69,7 +70,7 @@ defmodule Tartupark.MonthlyNofications do
       remaining_days = curr_last_day_of_month - time.day
       case remaining_days > 0 do
         true -> DateTime.diff(current_last_date_of_month, time, :millisecond)
-        _    -> DateTime.diff(next_last_day_of_month, current_last_date_of_month, :millisecond)
+        _    -> DateTime.diff(next_last_date_of_month, current_last_date_of_month, :millisecond)
       end
     end
 end

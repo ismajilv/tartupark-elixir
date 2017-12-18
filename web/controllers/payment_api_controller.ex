@@ -69,7 +69,6 @@ defmodule Tartupark.PaymentAPIController do
          payment_type == "Hourly" && zone.costHourly == 1.0                -> cost - 1.5
          true                                                              -> cost
        end
-      IO.inspect "-----------cost #{collaborated_cost}"
       collaborated_cost
   end
 end

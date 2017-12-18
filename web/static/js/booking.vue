@@ -83,10 +83,10 @@ import "vueify/lib/insert-css";
 export default {
     data: function() {
         return {
-            cardNumber: "19293748203910",
-            cardMonth: "12",
-            cardYear: "20",
-            cardPAC: "123",
+            cardNumber: null,
+            cardMonth: null,
+            cardYear: null,
+            cardPAC: null,
             showModal: false,
             parking_address: "",
             message: "",
@@ -100,22 +100,11 @@ export default {
               showClose: true,
             },
             lotSearchingResult: null,
-            paymentParams: null
+            paymentParams: null,
+            messages: null
         }
     },
     methods: {
-        fullScreenMap: function(){
-            // var handler;
-            // handler = Gmaps.build("Google");
-
-            // return handler.buildMap({
-            //     internal: {
-            //         id: "map"
-            //     }
-            // }, function() {
-            //     handler.fitMapToBounds();
-            // });
-        },
         logout: function() {
             auth.logout(this, { headers: auth.getAuthHeader() });
         },
@@ -485,6 +474,9 @@ export default {
 
             channel.on("requests", payload => {
                 this.messages = payload.msg;
+                if(!!this.messages)
+                  alert(this.messages)
+                console.log(this.messages)
                 // document.getElementById('put-message-here').innerHTML = payload.msg;
             });
         }
