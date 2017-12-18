@@ -196,6 +196,7 @@ defmodule Tartupark.BookingAPIController do
                           end))
 
     locations = Enum.filter(locations, fn loc -> loc.capacity > 0 end)
+
     # IO.inspect locations
     conn
     |> put_status(200)

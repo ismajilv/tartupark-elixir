@@ -54,10 +54,22 @@ defmodule Tartupark.PaymentAPIController do
      payment_type = booking.paymentType
      cost_hourly_per_second = zone.costHourly / 3600
      cost_real_time_per_second = zone.costRealTime / 300
-     case {payment_type, end_date} do
-       {_, nil}                 -> nil
-       {"Hourly", _end_time}    -> (NaiveDateTime.diff(end_date, start_date)*cost_hourly_per_second) |> Float.round(2)
-       {"Real Time", _end_time} -> (NaiveDateTime.diff(end_date, start_date)*cost_real_time_per_second) |> Float.round(2)
-     end
+     cost =
+       case {payment_type, end_date} do
+         {_, nil}                 -> nil
+         {"Hourly", _end_time}    -> (NaiveDateTime.diff(end_date, start_date)*cost_hourly_per_second) |> Float.round(2)
+         {"Real Time", _end_time} -> (NaiveDateTime.diff(end_date, start_date)*cost_real_time_per_second) |> Float.round(2)
+       end
+     collaborated_cost =
+       cond do
+         cost == nil                                                       -> nil
+         payment_type == "Hourly" && zone.costHourly == 2.0 && cost <= 0.5 -> 0.0
+         payment_type == "Hourly" && zone.costHourly == 1.0 && cost <= 1.5 -> 0.0
+         payment_type == "Hourly" && zone.costHourly == 2.0                -> cost - 0.5
+         payment_type == "Hourly" && zone.costHourly == 1.0                -> cost - 1.5
+         true                                                              -> cost
+       end
+      IO.inspect "-----------cost #{collaborated_cost}"
+      collaborated_cost
   end
 end

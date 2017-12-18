@@ -196,7 +196,7 @@ export default {
                         document.getElementById("btn_submit").style.display = "none";
                       }
 
-
+                      console.log(searchingResult);
                     document.getElementById("parking_start_time").style.display = "none";
                     document.getElementById("parking_end_time").style.display = "none";
                     document.getElementById("radioBtn").style.display = "none";
@@ -231,7 +231,8 @@ export default {
                                         searchingResult[j].paymentTime,
                                         searchingResult[j].paymentType,
                                         searchingResult[j].shape,
-                                        searchingResult[j].capacity];
+                                        searchingResult[j].capacity,
+                                        searchingResult[j].cost];
                         }
                         coordsForMarker[j] = coord;
                       }
@@ -299,14 +300,14 @@ export default {
 
                           var contenString = "<div id='parkingPlaceInformation'> <h4 id='parkingPlaceH4'>Parking Place Information</h4> <p id='parkingPlaceParagraph'>"
                           contenString += "Description: This parking belongs to <strong>" + coordsForMarker[i][5] +    "</strong>. <br>"
-                          var cost = null;
+                          // var cost = null;
 
                           if(that.payment_type == "Hourly"){
                             var paymentTypeString = "Hourly payment is <strong>" + coordsForMarker[i][3] +   "</strong> Euro. <br>";
                             var hourlyFee = (coordsForMarker[i][5] == zoneA) ? (2/3600) : (1/3600);
-                            cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
-                            cost = cost.toFixed(2);
-                            paymentTypeString += "Total cost is <strong>" + cost + "</strong> Euro. <br>";
+                            // cost = ((new Date(that.parking_end_time) - new Date(that.parking_start_time))/36e5*36e2) * hourlyFee;
+                            // cost = cost.toFixed(2);
+                            paymentTypeString += "Total cost is <strong>" + coordsForMarker[i][13] + "</strong> Euro. <br>";
                           } else{
                             var paymentTypeString = "Real Time payment is <strong>" + coordsForMarker[i][4] +  "</strong> Euro. <br>";
                           }
@@ -327,7 +328,7 @@ export default {
                             contenString += paymentTypeString +
                                             "Free time limit is <strong>" + coordsForMarker[i][6] + "</strong> minutes. <br>"
                           } else {
-                            cost = null;
+                            // cost = null;
                           }
 
                           contenString += "Capacity is <strong>" + coordsForMarker[i][12] +    "</strong> lots. <br> <br>" + contenStringBtn;
@@ -337,7 +338,7 @@ export default {
                             paymentTime: coordsForMarker[i][9],paymentType: coordsForMarker[i][10],
                             lat: coordsForMarker[i][1], lng: coordsForMarker[i][2]};
 
-                          parkingCosts[i] = {cost: cost};
+                          parkingCosts[i] = {cost: coordsForMarker[i][13]};
 
                           return function() {
                             that.lotSearchingResult = markerCoords[i];
@@ -476,7 +477,17 @@ export default {
         });
 
         // this.fullScreenMap();
+        if (auth.socket) {
+            var channel = auth.getChannel("customer:");
+            channel.join()
+                .receive("ok", resp => { console.log("Joined successfully", resp) })
+                .receive("error", resp => { console.log("Unable to join", resp) });
 
+            channel.on("requests", payload => {
+                this.messages = payload.msg;
+                // document.getElementById('put-message-here').innerHTML = payload.msg;
+            });
+        }
 
   }
 }
