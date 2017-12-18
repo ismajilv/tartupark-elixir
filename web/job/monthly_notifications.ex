@@ -29,7 +29,7 @@ defmodule Tartupark.MonthlyNofications do
                           end)
         if length(bookings) > 0 do
           already_notified = %{}
-          for booking in bookings do
+          for booking <- bookings do
              if Map.get(already_notified, String.to_atom(booking.user.id)) == nil do
                Takso.Endpoint.broadcast("customer:"<>booking.user.username, "requests", %{msg: "Monthly payment notification. You have booking(s) that should be payed. Go to 'Bookings Summary' to pay."})
                already_notified = Map.put_new(already_notified, String.to_atom(booking.user.id), booking.user.username)
