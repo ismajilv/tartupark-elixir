@@ -72,10 +72,10 @@ export default {
             selectedBookingForUpdate: null,
             bookingIdToPay: null,
             showModal: false,
-            cardNumber: "19293748203910",
-            cardMonth: "12",
-            cardYear: "20",
-            cardPAC: "123",
+            cardNumber: null,
+            cardMonth: null,
+            cardYear: null,
+            cardPAC: null,
             costToPAy: null
         }
     },
@@ -97,7 +97,6 @@ export default {
         cancelBooking: function(bookingId){
             // console.log("booking id: " + bookingId);
             axios.delete("/api/bookings/"+bookingId,
-            {currentDateTime: moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z"},
             {headers: auth.getAuthHeader()})
             .then(response => {
                 console.log(response.data.msg);
@@ -128,8 +127,7 @@ export default {
           });
         },
         getSummary: function(){
-            let currentDateTime = moment(new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS') + "Z"
-            axios.get("/api/bookings/summary/" + currentDateTime,
+            axios.get("/api/bookings/summary",
             {headers: auth.getAuthHeader()})
             .then(response => {
                 console.log(response.data.bookings);

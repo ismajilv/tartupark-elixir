@@ -7,13 +7,15 @@ defmodule Tartupark.BookingAPIController do
   [Geo.PostGIS.Extension] ++ Ecto.Adapters.Postgres.extensions(),
   json: Poison)
 
-  def index(conn, %{"current_datetime" => current_datetime}) do
+  def index(conn, params) do
+    {{year, month, day}, {hour, minute, second}} = :calendar.local_time()
+    current_datetime = NaiveDateTime.new(year, month, day, hour, minute, second) |> elem(1)
     user = Guardian.Plug.current_resource(conn)
     query = from booking in Booking,
             join: user in User, on: booking.user_id == user.id,
             where: user.id == ^user.id,
             select: booking
-
+    IO.inspect current_datetime
     bookings = Repo.all(query) |> Repo.preload([:payment, place: [:zone]])
     bookings = bookings
     |> Enum.map(fn book ->
@@ -23,7 +25,7 @@ defmodule Tartupark.BookingAPIController do
                     inserted_at: book.inserted_at,
                     paymentTime: book.paymentTime,
                     paymentType: book.paymentType,
-                    startAndCurrentTimeComparison: NaiveDateTime.compare(book.startDateTime, parseToNaiveDateTime(current_datetime)),
+                    startAndCurrentTimeComparison: NaiveDateTime.compare(book.startDateTime, current_datetime),
                     status: book.status,
                     place: Enum.map(book.place.area.coordinates,
                                      fn point -> {lng, lat} = point
@@ -49,7 +51,8 @@ defmodule Tartupark.BookingAPIController do
 
   def create(conn,  params) do
     user = Guardian.Plug.current_resource(conn)
-
+    {{year, month, day}, {hour, minute, second}} = :calendar.local_time()
+    current_datetime = NaiveDateTime.new(year, month, day, hour, minute, second) |> elem(1) |> NaiveDateTime.add(-360)
     Tartupark.MonthlyNofications.start_link("simple_request")
 
     %{
@@ -69,9 +72,9 @@ defmodule Tartupark.BookingAPIController do
 
      perfectCondition =
        case {start_time, end_time} do
-         {stime, nil} -> NaiveDateTime.compare(stime, parseToNaiveDateTime(params["currentDateTime"])) != :lt
-         {stime, etime} -> NaiveDateTime.compare(stime, parseToNaiveDateTime(params["currentDateTime"])) != :lt and
-                           NaiveDateTime.compare(etime, parseToNaiveDateTime(params["currentDateTime"])) == :gt and
+         {stime, nil}   -> NaiveDateTime.compare(stime, current_datetime) != :lt
+         {stime, etime} -> NaiveDateTime.compare(stime, current_datetime) != :lt and
+                           NaiveDateTime.compare(etime, current_datetime) == :gt and
                            NaiveDateTime.compare(etime, stime) == :gt
        end
 
@@ -125,9 +128,13 @@ defmodule Tartupark.BookingAPIController do
 
 
 
-  def delete(conn, %{"booking_id" => booking_id, "currentDateTime" => current_date_time}) do
+  def delete(conn, %{"booking_id" => booking_id}) do
     booking = Repo.get!(Booking, booking_id)
-    if NaiveDateTime.compare(booking.startDateTime, parseToNaiveDateTime(current_date_time)) == :gt do
+
+    {{year, month, day}, {hour, minute, second}} = :calendar.local_time()
+    current_datetime = NaiveDateTime.new(year, month, day, hour, minute, second) |> elem(1) |> NaiveDateTime.add(-360)
+
+    if NaiveDateTime.compare(booking.startDateTime, current_datetime) == :gt do
       changeset = Ecto.Changeset.change(booking, status: "canceled")
       case Repo.update changeset do
         {:ok, _struct}       -> conn
@@ -223,28 +230,19 @@ defmodule Tartupark.BookingAPIController do
 
 
 
-  def compareCurrentAndEndTime(current, end_time) do
-     case end_time do
-       nil -> false
-       _   -> NaiveDateTime.compare(current, end_time) == :lt
-     end
-  end
-
-
-
   def checkBetweenOrAfter(start_1, end_1, start_2, end_2) do
     case {start_1, end_1, start_2, end_2} do
-      {st1, nil, st2, nil} ->                                 true
-      {st1, nil, _st2, ed2} when ed2 != nil ->                 NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), st1) == :gt
+      {_st1, nil, _st2, nil} -> true
+      {st1, nil, _st2, ed2} when ed2 != nil -> NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), st1) == :gt
 
-      {_st1, ed1, st2, nil} when ed1 != nil ->                NaiveDateTime.compare(ed1, st2) == :gt or
-                                                              NaiveDateTime.compare(ed1, st2) == :eq
+      {_st1, ed1, st2, nil} when ed1 != nil -> NaiveDateTime.compare(ed1, st2) == :gt or
+                                               NaiveDateTime.compare(ed1, st2) == :eq
 
       {st1, ed1, st2, ed2} when ed1 != nil and ed2 != nil -> not ((NaiveDateTime.compare(st1, st2) == :lt   and
                                                                    NaiveDateTime.compare(ed1, st2) == :lt)  or
                                                                    NaiveDateTime.compare(NaiveDateTime.add(ed2, -120), st1) == :lt)
 
-       _ ->                                                   false
+       _ -> false
     end
   end
 end

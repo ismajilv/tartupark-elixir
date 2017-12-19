@@ -45,7 +45,7 @@
 
             <div id="map"></div>
 
-            <my-modal v-show="showModal" @close="showModal=false">
+            <my-modal id="mymodal" v-show="showModal" @close="showModal=false">
                 <form class="col-md-10 col-md-offset-1" style="padding:0">
                     <div class="form-group col-md-12">
                         <input type="text" class="form-control" id="cardNumber" v-model="cardNumber" placeholder="Card Number" contenteditable="false">
@@ -112,8 +112,7 @@ export default {
           if(this.lotSearchingResult != null){
             axios.post("/api/bookings",
                 {parking_address: this.lotSearchingResult,
-                paymentParams: this.paymentParams,
-                currentDateTime: new Date()},
+                paymentParams: this.paymentParams},
                 {headers: auth.getAuthHeader()})
                 .then(response => {
                     this.lotSearchingResult = null;
@@ -661,5 +660,9 @@ input[type=range] {
     margin-right: 20px;
 }
 
+
+#mymoda{
+  z-index: 999999;
+}
 
 </style>

@@ -22,6 +22,7 @@ defmodule Tartupark.MonthlyNofications do
           Repo.all(Booking)
           |> Repo.preload([:payment, :user, place: [:zone]])
           |> Enum.filter(fn booking ->
+                            booking.status == "available" and
                             booking.payment == nil and
                             booking.endDateTime != nil and
                             booking.endDateTime.year ==  year and
